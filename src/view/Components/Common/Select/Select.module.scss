@@ -1,0 +1,108 @@
+.selectRecord {
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    flex-direction: column;
+    // margin-bottom: 20px;
+    > label {
+        &::after {
+            content: " * ";
+            color: red;
+        }
+        display: block;
+        padding: 5px;
+        font-size: 0.9rem;
+    }
+    > span {
+        position: absolute;
+        color: red;
+        font-size: 0.7rem;
+        left: 0.3rem;
+        bottom: -20px;
+    }
+    .btnContainer{
+        padding: 0.3rem 0.6rem;
+        transition: 0.3s;
+        border-radius: 5px;
+        height: 45px;
+        // border: 1px solid rgb(229, 229, 229);
+        > section {
+            font-size: 1rem;
+            justify-content: start;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            text-transform: capitalize;
+        }
+        > div {
+            &::after {
+                transition: 0.2s;
+            }
+        }
+    }
+    .allRecordDrop {
+        width: 100%;
+        // width: 100px;
+        position: absolute;
+        top: 110%;
+        // left: 0;
+        right: 0;
+        background-color: white;
+        border-radius: 5px;
+        z-index: 3;
+        border: 1px solid lightgray;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.257);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        .searchRecord {
+            flex: none;
+            margin: auto;
+            width: 90%;
+            display: block;
+            margin-top: 10px;
+            padding: 5px;
+            border-radius: 2px;
+            outline: 0;
+            border: 1px solid rgb(229, 229, 229);
+        }
+        .recordBox {
+            flex: auto;
+            overflow-y: auto;
+            .Reject {
+                color: rgb(138, 0, 0);
+            }
+            .Accept {
+                color: rgb(0, 129, 71);
+            }
+            .recordItem {
+                background-color: #ffffff;
+                border-bottom: 1px solid rgb(236, 236, 236);
+                padding: 10px;
+                transition: 0.3s;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-size: 0.8rem;
+                &:hover {
+                    background-color: rgb(229, 229, 229);
+                }
+                .recordId {
+                    flex: none;
+                    width: 100%;
+                    text-transform: capitalize;
+                }
+                .recordName {
+                    flex: auto;
+                    text-align: end;
+                }
+            }
+        }
+    }
+}

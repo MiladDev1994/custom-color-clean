@@ -1,0 +1,222 @@
+$colorLightPrimary: #edf6fd;
+$colorPrimary: #4da9e4;
+$colorDarkPrimary: #4089C1;
+
+$colorLightSecondary: #FFF5EE;
+$colorSecondary: #FE9D58;
+$colorDarkSecondary: #F68554;
+
+$colorLightTertiary: #F7F6FB;
+$colorTertiary: #6D7C94;
+$colorDarkTertiary: #506485;
+
+$colorLightGrayText: #CCCCCC;
+$colorGrayText: #949494;
+$colorDarkGrayText: #606060;
+$colorBlackText: #33313C;
+$colorGrayLine: #D4D4D4;
+$colorGrayBackground: #F0F0F0;
+
+$colorLightRed: #FFEBEB;
+$colorRed: #FF4040;
+$colorDarkRed: #CC3333;
+
+$colorLightGreen: #E5F9F2;
+$colorGreen: #00C781;
+$colorDarkGreen: #00B374;
+
+$colorBlueBkg: #F5F8FA;
+
+$colorOverlay: #0000001A;
+
+$colorWhite: #ffffff;
+
+$colorSummerSky: rgb(77 169 228 / 13%);
+
+
+
+
+$colorBlack: #000;
+$colorLightBlack: #18181B;
+
+$colorNavy:  #58667E;
+$colorDarkNavy: #33313c;
+
+$colorBlue: #4da9e4;
+$colorDarkBlue: #4185ca;
+$colorLightBlue: #edf6fd;
+$colorLightestBlue: #f8fbff;
+
+$colorRed: #FF4040;
+$colorDarkRed: #CC3333;
+$colorLightRed: #FFEBEB;
+
+$colorGreen: #46bb5e;
+$colorDarkGreen: #00B374;
+$colorLightGreen: #E5F9F2;
+$colorPhosphorus: #81bf51;
+
+$colorOrange: #fe9d58;
+$colorDarkOrange: #F68554;
+$colorLightOrange: #fff5ee;
+
+$colorTertiary: #6D7C94;
+$colorDarkTertiary: #506485;
+$colorLightTertiary: #F7F6FB;
+
+$colorGray: #949494;
+$colorDarkGray: #767676;
+$colorDarkerGray: #606060;
+$colorLightGray: #9A9A9A;
+$colorLighterGray: #CCCCCC;
+$colorLightishGray: #ececec;
+
+$colorGreyMaverick: #bebcbd;
+$colorBorderDarkGrey: #BEBEBE;
+
+$colorAxis: #d3d2d2;
+$colorSilver: #BEBCBC;
+$colorDimGray: #707070;
+$colorOverlay: #00001A;
+$colorSuvaGray: #919191;
+$colorDarkGrape: #413e4f;
+$colorGainsboro: #DADADA;
+$colorAliceBlue:  #EFF2F5;
+$colorTriadGreen:  #D5F8E5;
+$colorDarkCyanBlue: #6d7c94;
+
+$colorHeaderGray: #cecece;
+
+
+
+
+
+$box-shadow-top: 0 -1px 10px 0px rgb(0 0 0 / 12%);
+$box-shadow-down: 0 1px 10px 0px rgb(0 0 0 / 12%);
+
+$border-radius: 20px;
+$border-radius-small: 5px;
+$border-radius-btn: 10px;
+
+$transitionHover: all 500ms;
+
+$thinBorderAttrs: 1px $colorGrayLine solid;
+$thinBorderAttrsHover: 1px $colorLightGrayText solid;
+$thinBorderAttrsLighter: 1px $colorLighterGray solid;
+$borderAttrs: 2px $colorGrayLine solid;
+$borderAttrsHover: 2px $colorLightGrayText solid;
+// $one-side-blue-border: 5px $colorBlue solid;
+
+// charts color pallet
+$chartColors: (
+  #33b0e4,
+  #a425d8,
+  #277da1,
+  #43aa8b,
+  #90be6d,
+  #f9c74f,
+  #f8961e,
+  #f94144,
+  #f77173,
+  #e433b5,
+  #e416cb,
+  #8731a9,
+  #b1396d,
+  #8d2d32,
+  #769830,
+  #d89e4a,
+  #42d9e8,
+  #0ebba7,
+  #006407,
+  #d1ede7,
+  #db5d09,
+  #68e972,
+  #6486ad,
+  #40f9bd,
+  #f8ab3b,
+  #fa9954,
+  #2770d2,
+  #68f2bf,
+  #404a75,
+  #281bc9,
+  #d449d4,
+  #d083e3,
+  #19046b,
+  #e17b4c,
+  #1c9d35,
+  #657d9c,
+  #d4b773,
+  #471dea,
+  #38e1f2,
+  #e378fa,
+  #a88eae,
+  #1ebf38,
+  #f6bb7f,
+  #be3f69,
+  #ba63ff,
+  #2ef38d,
+  #b4a94a,
+  #9bac14,
+  #dfe5d1,
+  #0e3e74,
+  #fa0c81,
+  #04ce0d,
+  #039a98,
+  #a2f642,
+  #f0db03,
+  #c35428,
+  #a284d3,
+  #217dee,
+  #ada1dc,
+  #c80461,
+  #97698c,
+  #f71957,
+  #5e69a7,
+  #af2735,
+  #1c095d,
+  #840362,
+  #fa0d12,
+  #d2b4d3,
+  #daabf4,
+  #56fd53,
+  #2eea08,
+  #f89f76,
+  #dd1d35,
+  #a5c079,
+  #f93ba5,
+  #f24b4f,
+  #4f4a2f,
+  #a3d250,
+  #c47b20,
+  #9b867e,
+  #b78ff7,
+  #4df1bb,
+  #0e648e,
+  #50fa94,
+  #e33c2b,
+  #bdfc06,
+  #49e6d1,
+  #e9b43b,
+  #4b4f3e,
+  #b75bca,
+  #0cb4c1,
+  #f052c1,
+  #c20d2d,
+  #64c252,
+  #27a1b6,
+  #38bbcc,
+  #68d354,
+  #e444fe,
+  #a7de28,
+  #f6ffaa,
+  #93b127,
+  #bac498,
+  #80421c,
+  #421faa,
+  #d620fb,
+  #fb070a,
+  #d020f7,
+  #4d4f0d,
+  #198a8c,
+  #4dbb51
+) !default;

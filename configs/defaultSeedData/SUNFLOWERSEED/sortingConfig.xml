@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><opencv_storage>
+
+  <sorterType>"SUNFLOWERSEED"</sorterType>
+  <programName>"sfid"</programName>
+  <programType>"SUNFLOWERSEED"</programType>
+
+  <reverse>0</reverse>
+  <PistachioWeight>0.18</PistachioWeight>
+  <attributeCount>15</attributeCount>
+
+  <attribute_0>
+    <name>"Total"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Total.svg"</imgPath>
+  </attribute_0>
+
+  <attribute_1>
+    <name>"OK"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"OK.svg"</imgPath>
+  </attribute_1>
+
+  <attribute_2>
+    <name>"Reject By Length"</name>
+    <active>0</active>
+    <max_value>25</max_value>
+    <min_value>10</min_value>
+    <first_count>0</first_count>
+    <imgPath>"Tokhme Reject By Length.svg"</imgPath>
+  </attribute_2>
+
+  <attribute_3>
+    <name>"Reject By Width"</name>
+    <active>0</active>
+    <max_value>20</max_value>
+    <min_value>5</min_value>
+    <first_count>0</first_count>
+    <imgPath>"Tokhme Reject By Width.svg"</imgPath>
+  </attribute_3>
+
+  <attribute_4>
+    <name>"Trash"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Trash.svg"</imgPath>
+    <hidden>1</hidden>
+    <hardParam>0</hardParam>
+  </attribute_4>
+
+  <attribute_5>
+    <name>"Unknown"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Tokhme Unknown.svg"</imgPath>
+    <hidden>1</hidden>
+    <hardParam>0</hardParam>
+  </attribute_5>
+
+  <attribute_6>
+    <name>"Aspect Ratio"</name>
+    <active>0</active>
+    <max_value>20</max_value>
+    <min_value>7</min_value>
+    <first_count>0</first_count>
+    <imgPath>"Tokhme Aspect Ratio.svg"</imgPath>
+  </attribute_6>
+
+  <attribute_7>
+    <name>"Area"</name>
+    <active>0</active>
+    <first_count>0</first_count>
+    <max_value>120</max_value>
+    <min_value>70</min_value>
+    <imgPath>"Tokhme Area.svg"</imgPath>
+  </attribute_7>
+
+  <attribute_8>
+    <name>"Rusted Sunflower Seed"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Tokhme Zangzade.svg"</imgPath>
+    <hardParam>0</hardParam>
+  </attribute_8>
+
+  <attribute_9>
+    <name>"Black Sunflower Seed"</name>
+    <active>0</active>
+    <first_count>0</first_count>
+    <imgPath>"Tokhmeh Siyah.svg"</imgPath>
+    <hardParam>-1</hardParam>
+  </attribute_9>
+
+  <attribute_10>
+    <name>"White Run Sunflower Seed"</name>
+    <active>0</active>
+    <first_count>0</first_count>
+    <imgPath>"Tokhmeh Dorsefid.svg"</imgPath>
+    <hardParam>0</hardParam>
+  </attribute_10>
+
+  <attribute_11>
+    <name>"Striped White Sunflower Seed"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Tokhmeh kamkhat.svg"</imgPath>
+    <hardParam>0</hardParam>
+  </attribute_11>
+
+  <attribute_12>
+    <name>"Zebra Sunflower Seed"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Tokhmeh Khatkhati.svg"</imgPath>
+    <hardParam>0</hardParam>
+  </attribute_12>
+
+  <attribute_13>
+    <name>"White Sunflower Seed"</name>
+    <active>0</active>
+    <first_count>0</first_count>
+    <imgPath>"Tokhmeh Sefid.svg"</imgPath>
+    <hardParam>1</hardParam>
+  </attribute_13>
+
+    <attribute_14>
+    <name>"Spotted Sunflower Seed"</name>
+    <active>0</active>
+    <first_count>0</first_count>
+    <imgPath>"Tokhmeh Kachali.svg"</imgPath>
+    <hardParam>1</hardParam>
+	<force>"13"</force>
+  </attribute_14>
+  
+</opencv_storage>

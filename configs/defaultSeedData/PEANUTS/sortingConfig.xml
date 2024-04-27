@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<opencv_storage>
+
+  <sorterType>"PEANUTS"</sorterType>
+  <programName>"Irani"</programName>
+  <programType>"Rashti"</programType>
+
+  <reverse>0</reverse>
+  <PistachioWeight>1.27</PistachioWeight>
+  <attributeCount>4</attributeCount>
+
+  <attribute_0>
+    <name>"Total"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Total.svg"</imgPath>
+  </attribute_0>
+
+  <attribute_1>
+    <name>"OK"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"OK.svg"</imgPath>
+  </attribute_1>
+  
+  <attribute_2>
+    <name>"Trash"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Trash.svg"</imgPath>
+    <hidden>1</hidden>
+    <hardParam>0</hardParam>
+  </attribute_2>
+
+  <attribute_3>
+    <name>"Unknown"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Peanutes Unknown.svg"</imgPath>
+    <hidden>1</hidden>
+    <hardParam>0</hardParam>
+  </attribute_3>
+
+</opencv_storage>

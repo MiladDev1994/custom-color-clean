@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<opencv_storage>
+
+  <sorterType>"PISTACHIO"</sorterType>
+  <programName>"Akbari3_iraqi"</programName>
+  <programType>"Reject All"</programType>
+
+  <reverse>0</reverse>
+  <PistachioWeight>1.27</PistachioWeight>
+  <attributeCount>18</attributeCount>
+
+  <attribute_0>
+    <name>"Total"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Total.svg"</imgPath>
+  </attribute_0>
+
+  <attribute_1>
+    <name>"OK"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"OK.svg"</imgPath>
+  </attribute_1>
+
+  <!-- ADHERING HULL == Goo -->
+  <attribute_2>
+    <name>"Adhering Hull"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Adhering Hull.svg"</imgPath>
+    <hardParam>0</hardParam>
+  </attribute_2>
+
+  <!-- CRINKLE SHELL == Nokhodoo -->
+  <attribute_3>
+    <name>"Crinkle Shell"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Crinkle Shell.svg"</imgPath>
+    <hardParam>0</hardParam>
+  </attribute_3>
+
+  <attribute_4>
+    <name>"Reject By Length"</name>
+    <active>1</active>
+    <max_value>25</max_value>
+    <min_value>10</min_value>
+    <first_count>0</first_count>
+    <imgPath>"Reject By Length.svg"</imgPath>
+  </attribute_4>
+
+  <attribute_5>
+    <name>"Reject By Width"</name>
+    <active>1</active>
+    <max_value>20</max_value>
+    <min_value>5</min_value>
+    <first_count>0</first_count>
+    <imgPath>"Reject By Width.svg"</imgPath>
+  </attribute_5>
+
+  <attribute_6>
+    <name>"Trash"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Trash.svg"</imgPath>
+    <hidden>1</hidden>
+    <hardParam>0</hardParam>
+  </attribute_6>
+
+  <!-- Yellow Stain == zardoo -->
+  <attribute_7>
+    <name>"Yellow Stain"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Yellow Stain.svg"</imgPath>
+    <hardParam>0</hardParam>
+  </attribute_7>
+
+  <attribute_8>
+    <name>"Unknown"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Unknown.svg"</imgPath>
+    <hidden>1</hidden>
+    <hardParam>0</hardParam>
+  </attribute_8>
+
+  <!-- Non Split Shell == dahan baste -->
+  <attribute_9>
+    <name>"Non Split Shell"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Non Split Shell.svg"</imgPath>
+    <hardParam>0</hardParam>
+  </attribute_9>
+
+  <!-- Half Split Shell == dahan cheft -->
+  <attribute_10>
+    <name>"Half Split Shell"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Half Split Shell.svg"</imgPath>
+    <force>"9"</force>
+    <hardParam>0</hardParam>
+  </attribute_10>
+  
+  <!-- Non Extra Split Shelll == dahan nime khandan -->
+  <attribute_11>
+    <name>"Non Extra Split Shell"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Non Extra Split Shelll.svg"</imgPath>
+    <force>"10"</force>
+    <hardParam>0</hardParam>
+  </attribute_11>
+
+  <!-- MOLD == lak keder -->
+  <attribute_12>
+    <name>"Mold"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Mold.svg"</imgPath>
+    <hardParam>0</hardParam>
+  </attribute_12>
+
+  <!-- DARK STAIN == lak khaldar -->
+  <attribute_13>
+    <name>"Dark Stain"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Dark Stain.svg"</imgPath>
+    <hardParam>0</hardParam>
+  </attribute_13>
+
+  <!-- Light Stain == lak palangi -->
+  <attribute_14>
+    <name>"Light Stain"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Light Stain.svg"</imgPath>
+    <warning>"this is a warning for this attr"</warning>
+    <force>"12,11"</force>
+    <hardParam>0</hardParam>
+  </attribute_14>
+  
+  <attribute_15>
+    <name>"Aspect Ratio"</name>
+    <active>1</active>
+    <max_value>20</max_value>
+    <min_value>7</min_value>
+    <first_count>0</first_count>
+    <imgPath>"Aspect Ratio.svg"</imgPath>
+  </attribute_15>
+  
+  <attribute_16>
+    <name>"Kernel"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Kernel.svg"</imgPath>
+  </attribute_16>
+  
+  <!-- Rancid == roqanzade -->
+  <attribute_17>
+    <name>"Rancid"</name>
+    <active>1</active>
+    <first_count>0</first_count>
+    <imgPath>"Rancid.svg"</imgPath>
+  </attribute_17>
+
+</opencv_storage>

@@ -1,0 +1,21 @@
+
+.progress {
+    // background-color: rgb(28, 145, 255);
+    box-shadow: inset 0 10px 20px rgba(131, 186, 248, 0.8);
+    background-image: 
+        linear-gradient(45deg,rgba(255,255,255,.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255,255,255,.15) 50%,
+        rgba(255,255,255,.15) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 5rem 5rem;
+    animation: loading 1s linear infinite;
+    @keyframes loading {
+      0% {
+        background-position-x: -5rem;
+      }
+    }
+  }

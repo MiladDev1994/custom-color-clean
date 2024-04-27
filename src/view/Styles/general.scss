@@ -1,0 +1,331 @@
+@use './pallet.scss';
+@use './colors.scss';
+
+
+
+@mixin defWidth {
+    width: 100%;
+}
+@mixin CardContainers {
+    // @include defWidth();
+    margin-bottom: 1em;
+    background: white;
+    border-radius: pallet.$border-radius-small;
+    box-shadow: pallet.$box-shadow-down;
+}
+
+@mixin FlexRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+@mixin FlexColumn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+@mixin fullWidthTitle {
+    width: 100%;
+    box-shadow: none;
+    background: white;
+    border-radius: 0;
+    box-shadow: none;
+}
+@mixin titlePreSet {
+    @include fullWidthTitle();
+    padding: 0 1em;
+    border-bottom: pallet.$borderAttrs;
+}
+
+@mixin stickyTableHeader {
+    position: sticky;
+    z-index: 1;
+    background-color: pallet.$colorGrayBackground;
+}
+
+@mixin bgChange($color:colors.$color-white) {
+    background-color: $color;
+}
+  
+@mixin colorChange($color:colors.$color-white) {
+    color: $color;
+}
+
+@mixin fontSizeChange($font-size:25px){
+    font-size: $font-size;
+}
+
+
+@mixin matrixIconTheme {
+    .success {
+        &::after {
+            background: green;
+        }
+    }
+    .success_dashed {
+        &::after {
+            background: green;
+        }
+    }
+    .danger {
+        &::after {
+            background: red;
+        }
+    }
+    .danger_dashed {
+        &::after {
+            background: red;
+        }
+    }
+    .sum {
+        &::after {
+            background: gray;
+        }
+    }
+    .sumAccuracy {
+        &::after {
+            background: lightgray;
+        }
+    }
+    .primary {
+        &::after {
+            background: rgb(0, 115, 255);
+        }
+    }
+}
+
+
+@mixin matrixTheme{
+    .success {
+        background-color: rgba(0, 255, 68, 0.2);
+        color: green;
+        border: 1px solid rgb(0, 211, 56);
+        &:hover{
+            background-color: rgba(0, 255, 68, 0.3);
+        }
+    }
+    .success_dashed {
+        background-color: rgba(0, 255, 68, 0.2);
+        color: green;
+        border: 1px dashed rgb(0, 211, 56);
+        &:hover{
+            background-color: rgba(0, 255, 68, 0.3);
+        }
+    }
+    .danger {
+        background-color: rgba(255, 0, 0, 0.2);
+        color: red;
+        border: 1px solid rgba(255, 0, 0, 1);
+        &:hover{
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+    }
+    .danger_dashed {
+        background-color: rgba(255, 0, 0, 0.2);
+        color: red;
+        border: 1px dashed rgba(255, 0, 0, 1);
+        &:hover{
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+    }
+    .sum {
+        background-color: rgba(128, 128, 128, 0.2);
+        border: 1px solid rgba(128, 128, 128, 0.2);
+        &:hover{
+            background-color: rgba(128, 128, 128, 0.3);
+        }
+    }
+    .sumAccuracy {
+        background-color: rgba(89, 89, 89, 0.9);
+        color: pallet.$colorWhite;
+        border: 1px solid rgba(89, 89, 89, 0.9);
+        &:hover{
+            background-color: rgba(89, 89, 89, 1);
+        }
+    }
+    .primary {
+        background-color: rgba(0, 166, 255, 0.2);
+        color: rgb(0, 115, 255);
+        border: 1px solid rgba(0, 166, 255, 1);
+        &:hover{
+            background-color: rgba(0, 166, 255, 0.3);
+        }
+    }
+}
+
+
+.titleCardGeneral{
+    height: 5rem;
+}
+.bodyCardGeneral{
+    height: 40rem;
+}
+
+.Btn {
+    width: calc(100% - 2em);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2.5rem;
+    margin: 1em;
+    border-radius: pallet.$border-radius-btn;
+    color: pallet.$colorWhite;
+    cursor: pointer;
+}
+
+
+.PrimaryBtn {
+    background: pallet.$colorPrimary;
+    color: pallet.$colorWhite;
+    &:hover {
+      background: pallet.$colorDarkPrimary;
+    }
+}
+.LightPrimaryBtn {
+    background: pallet.$colorLightPrimary;
+    color: pallet.$colorPrimary;
+    &:hover {
+      background: pallet.$colorPrimary;
+      color: pallet.$colorWhite;
+    }
+}
+
+.SecondaryBtn {
+    background: pallet.$colorSecondary;
+    color: pallet.$colorWhite;
+    &:hover {
+      background: pallet.$colorDarkSecondary;
+    }
+}
+
+.LightSecondaryBtn {
+    background: pallet.$colorLightSecondary;
+    color: pallet.$colorSecondary;
+    &:hover {
+      background: pallet.$colorSecondary;
+      color: pallet.$colorWhite;
+    }
+}
+
+.TertiaryBtn {
+    background: pallet.$colorTertiary;
+    color: pallet.$colorWhite;
+    &:hover {
+      background: pallet.$colorDarkTertiary;
+    }
+}
+
+.LightTertiaryBtn {
+    background: pallet.$colorLightTertiary;
+    color: pallet.$colorTertiary;
+    &:hover {
+      background: pallet.$colorTertiary;
+      color: pallet.$colorWhite;
+    }
+}
+
+.GreenBtn {
+    background: pallet.$colorGreen;
+    color: pallet.$colorWhite;
+    &:hover {
+      background: pallet.$colorDarkGreen;
+    }
+}
+
+.LightGreenBtn {
+    background: pallet.$colorLightGreen;
+    color: pallet.$colorGreen;
+    &:hover {
+      background: pallet.$colorGreen;
+      color: pallet.$colorWhite;
+    }
+}
+
+.RedBtn {
+    background: pallet.$colorRed;
+    color: pallet.$colorWhite;
+    &:hover {
+      background: pallet.$colorDarkRed;
+    }
+}
+
+.LightRedBtn {
+    background: pallet.$colorLightRed;
+    color: pallet.$colorRed;
+    &:hover {
+      background: pallet.$colorRed;
+      color: pallet.$colorWhite;
+    }
+}
+
+.GrayBtn {
+    background: pallet.$colorGrayBackground;
+    color: pallet.$colorDarkGrayText;
+    &:hover {
+      background: pallet.$colorDarkGrayText;
+      color: pallet.$colorWhite
+    }
+}
+
+.BtnDisable {
+    background: pallet.$colorGrayText;
+    color: pallet.$colorWhite;
+    cursor: not-allowed;
+}
+
+//   // selectables
+//   @mixin pointerClick {
+//     cursor: pointer;
+//   }
+//   // border
+//   @mixin border {
+//     border: 2px solid $colorBorderMain;
+//   }
+//   // border-radius
+//   @mixin border-radius-sm {
+//     border-radius: 3px;
+//   }
+//   @mixin border-radius-m {
+//     border-radius: 10px;
+//   }
+//   @mixin shadow-it {
+//     box-shadow: 0 2px 10px #00000030;
+//   }
+  
+//   @mixin createcontainer() {
+//     @include flex-row();
+//     flex-flow: column;
+//     align-items: center;
+//     background-color: white;
+//     @include shadow-it();
+//     @include border-radius-sm();
+//     min-height: 100px;
+//     min-width: 46rem;
+//     height: fit-content;
+//     text-align: center;
+//     .head {
+//       padding: 10px;
+//       @include flex-row();
+//       justify-content: flex-start;
+//     }
+//   }
+  
+//   .cardsContainer {
+//     display: flex;
+//     flex-flow: row;
+//     width: 100%;
+//     height: max-content;
+//     // flex-direction: row;
+//   }
+  
+//   .cardContainer {
+//     @include createcontainer();
+//     margin: 1em 0 0 0;
+//     padding: 0;
+//     flex-grow: 1;
+//     flex-shrink: 1;
+//     flex-basis: 0;
+//   }
