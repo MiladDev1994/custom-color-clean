@@ -8,6 +8,7 @@ import Range from '../../Components/Common/Range/Range'
 import Select from '../../Components/Common/Select/Select'
 import Input from '../../Components/Common/Input/Input'
 import ProgressBtn from '../../Components/Common/ProgressBtn/ProgressBtn'
+import { UseOnDataFromIpcMain } from '../../hooks/UseOnDataFromIpcMain'
 
 function CreateApp() {
 
@@ -97,6 +98,9 @@ function CreateApp() {
         })
     }
 
+    UseOnDataFromIpcMain("getChartData_call", (event: any, data: any) => {
+        console.log(data)
+    })
 
     const submitHandler = () => {
         if (progress < 100) return
@@ -119,7 +123,6 @@ function CreateApp() {
         setError(CreateAppFormValidation(value))
     }, [value])
 
-    console.log(value)
 
     return (
         <div className={`w-screen h-screen flex items-center justify-center overflow-hidden`}>

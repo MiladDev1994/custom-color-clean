@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<opencv_storage>
-    <healthy>"D:/workspace/DB/dany/lentil/siah"</healthy>
-    <nonhealthy>"D:/workspace/DB/dany/lentil/siah"</nonhealthy>
-    <ObjectType>mung</ObjectType>
-    <IsBackgroundBlue>true</IsBackgroundBlue>
-    <AddHoleHistogram>true</AddHoleHistogram>
-    <removeBlueBack>true</removeBlueBack>
-</opencv_storage>

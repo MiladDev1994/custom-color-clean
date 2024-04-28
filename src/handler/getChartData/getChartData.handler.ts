@@ -1,12 +1,15 @@
 import { ipcMain } from "electron"
 import { OneDimension, TwoDimension } from "./getChartData.service"
 
-ipcMain.on("getChartData", (event, value) => {
+ipcMain.on("getChartData", async (event, value) => {
     const {filter_type} = value
 
-    let completedEXE = false;
-    if (filter_type === "SCATTER") completedEXE = TwoDimension(value)
-    else completedEXE = OneDimension(value)
+    try {
+        if (filter_type === "SCATTER") TwoDimension(event, value)
+        else await OneDimension(event, value)
+    } catch (error) {
+        return event.sender.send("getChartData_call", error)
+    }
 })
 
 

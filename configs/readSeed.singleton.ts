@@ -53,20 +53,22 @@ class SeedConfigSingleton {
     }
 
     create() {
-        const configPath = `${process.cwd()}/configs/defaultSeedData`
+        const configPath = `${process.cwd().split("\\").join("\\")}\\configs\\defaultSeedData`
         try {
             const readDefaultSeedData = fs.readdirSync(configPath)
+            
+            throw ({data: readDefaultSeedData})
             readDefaultSeedData?.forEach((item) => {
                 const [DefaultSorterConfig, DefaultFilters, Translator] = this.createSorterDefaultConfigs(`${configPath}/${item}`)
                 this.seed[item] = {}
-                this.seed[item].defaultSorterConfig = DefaultSorterConfig
-                this.seed[item].defaultFilters = DefaultFilters
-                this.seed[item].translator = Translator
+                // this.seed[item].defaultSorterConfig = DefaultSorterConfig
+                // this.seed[item].defaultFilters = DefaultFilters
+                // this.seed[item].translator = Translator
             })
             return this.seed
         } catch(err) {
             console.log(colors.red("can't read defaultSeedData folder"))
-            throw createHttpError.InternalServerError("مشکل در خواندن فولدر کانفیگ")
+            throw createHttpError.InternalServerError(err)
         }
     }
 
