@@ -4,6 +4,7 @@ declare namespace api_electron {
   function selectedPath(): any;
   function minimize(): void;
   function quit(): void;
+  function getChartData(value: any): void;
   function onDataFromIpcMain(channel:string, func: ()=>void): () => Electron.IpcRenderer;
 }
 

@@ -1,16 +1,18 @@
 import { ipcMain, dialog } from "electron"
-import WINDOW from "../createWindows.singleton"
 
 
-ipcMain.handle("dialog:selectedPath", async () => {
-  const { canceled, filePaths } = await dialog.showOpenDialog(WINDOW.get(), {
-      properties: ['openDirectory'],
-    })
-  if (canceled) {
-    return
-  } else {
-    return filePaths?.[0]
-  }
-})
+function selectedPath(WINDOW: any) {
+  ipcMain.handle("dialog:selectedPath", async () => {
+    // console.log(WINDOW.get())
+    const { canceled, filePaths } = await dialog.showOpenDialog(WINDOW, {
+        properties: ['openDirectory'],
+      })
+    if (canceled) {
+      return
+    } else {
+      return filePaths?.[0]
+    }
+  })
+}
 
-export default ipcMain
+export default selectedPath

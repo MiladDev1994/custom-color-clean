@@ -1,11 +1,13 @@
-const { ipcMain } = require("electron")
-const { MainWindow } = require("../singleton")
+import { ipcMain } from "electron";
 
 
-ipcMain.on('minimize', async (event) => {
-    MainWindow.getWindows()?.[0]?.minimize();
-});
+function minimizeApp(WINDOW: any) {
+    ipcMain.handle('minimize', async (event) => {
+        WINDOW.minimize();
+    });
+
+}
 
 
 
-module.exports = ipcMain
+export default minimizeApp

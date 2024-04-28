@@ -1,15 +1,20 @@
 import toast from "react-hot-toast";
 
-export function Toast(type: any, message: any) {
+type TostType = "success" | "error"
+export function Toast(type: TostType, message: any) {
+
+    const publicStyle = {
+        padding: '8px',
+        color: 'white',
+        fontSize: "0.8rem",
+        backgroundColor: "#00aa44"
+    }
 
     if (type === "success") {
         toast.success(message, {
             style: {
-            //   border: '1px solid #713200',
-              padding: '8px',
-              color: 'white',
-              fontSize: "0.8rem",
-              backgroundColor: "#00aa44"
+                ...publicStyle,
+                backgroundColor: "#00aa44"
             },
             iconTheme: {
               primary: 'white',
@@ -19,10 +24,7 @@ export function Toast(type: any, message: any) {
     } else if (type === "error") {
         toast.error(message, {
             style: {
-            //   border: '1px solid #713200',
-                padding: '8px',
-                color: 'white',
-                fontSize: "0.8rem",
+                ...publicStyle,
                 backgroundColor: "#eb3b3b"
             },
             iconTheme: {

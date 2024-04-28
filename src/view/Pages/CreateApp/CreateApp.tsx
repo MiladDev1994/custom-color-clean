@@ -47,13 +47,13 @@ function CreateApp() {
         },
         {
           id: 2, 
-          name: "نوع محصول", 
+          name: "استاندارد تصویر برداری", 
           value: "product_type",
           option: [
-            {id: 1, name: "ماش", value: "MUNG"},
-            {id: 2, name: "بادام زمینی", value: "PEANUTS"},
-            {id: 3, name: "پسته", value: "PISTACHIO"},
-            {id: 4, name: "تخمه آفتابگردان", value: "SUNFLOWERSEED"}
+            {id: 1, name: "MNG-01", value: "MUNG"},
+            {id: 2, name: "PNT-01", value: "PEANUTS"},
+            {id: 3, name: "PST-01", value: "PISTACHIO"},
+            {id: 4, name: "SEED-01", value: "SUNFLOWERSEED"}
           ]
         }
     ]
@@ -68,6 +68,7 @@ function CreateApp() {
         product_type: "",
         influenceTop: 0,
         influenceDown: 0,
+        removeBlueBack: false
     })
     const [error, setError] = useState<any>({
         app_name: "",
@@ -89,9 +90,10 @@ function CreateApp() {
     })
 
     const changeHandler = (e: any) => {
+        console.log()
         setValue({
             ...value,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value
         })
     }
 
@@ -110,15 +112,14 @@ function CreateApp() {
             })
             return Toast("error" , "تمام فیلد هار را پر کنید")
         } 
-
-        
-
+        window.api_electron.getChartData(value)
     }
 
     useEffect(() => {
         setError(CreateAppFormValidation(value))
     }, [value])
 
+    console.log(value)
 
     return (
         <div className={`w-screen h-screen flex items-center justify-center overflow-hidden`}>
@@ -236,7 +237,13 @@ function CreateApp() {
                             }
                             <div className={`flex items-center justify-start`}>
                                 <label className='w-full p-1 flex items-center'>
-                                    <input type='checkbox' className='w-5 h-5 mx-3'/>
+                                    <input 
+                                        type='checkbox' 
+                                        name='removeBlueBack'
+                                        value={value.removeBlueBack}
+                                        onChange={changeHandler}
+                                        className='w-5 h-5 mx-3' 
+                                    />
                                     حذف بک گراند آبی
                                 </label>
                             </div>

@@ -1,11 +1,11 @@
-import { BrowserWindow, app } from "electron";
+import { BrowserWindow, app, ipcMain } from "electron";
 let WindowInstance: any
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 
 class WindowSingleton {
-    windows: any;
+    // windows: any = {};
     constructor() {
         if (WindowInstance) {
           throw new Error("You can only create one instance!");
@@ -13,37 +13,40 @@ class WindowSingleton {
         WindowInstance = this;
     }
 
-    private createWindow(){
-        const mainWindow = new BrowserWindow({
-          height: 600,
-          width: 800,
-          webPreferences: {
-            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-          },
-        });
+    private createWindow(action?: any){
+      const mainWindow = new BrowserWindow({
+        height: 600,
+        width: 800,
+        frame: false,
+        webPreferences: {
+          preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+        },
+      });
+
       
-        mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-        this.windows = mainWindow
-        mainWindow.webContents.openDevTools();
+      mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+      mainWindow.maximize()
+      mainWindow.webContents.openDevTools();
+
+      Object.keys(action).forEach(act => {
+        action[act as any](mainWindow)
+      })
     };
     
-    initialize() {
-        app.on('ready', this.createWindow);
-        app.on('window-all-closed', () => {
-            if (process.platform !== 'darwin') {
-              app.quit();
-            }
-        });
-        app.on('activate', () => {
-          if (BrowserWindow.getAllWindows().length === 0) {
-            this.createWindow();
-          }
-        });
+    initialize(action: any) {
+      app.on('ready', () => this.createWindow(action));
+      app.on('window-all-closed', () => {
+        if (process.platform !== 'darwin') {
+          app.quit();
+        }
+      });
+      app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) {
+          this.createWindow();
+        }
+      });
     }
-
-    get() {
-        return this.windows
-    }
+    
 }
 
 const WINDOW = new WindowSingleton()

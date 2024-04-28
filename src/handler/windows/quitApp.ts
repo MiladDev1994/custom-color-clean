@@ -1,9 +1,11 @@
-import { app, ipcMain } from "electron";
+import { ipcMain } from "electron";
 
 
-ipcMain.on('quit', async (event) => {
-    app.quit();
-});
+function quitApp(WINDOW: any) {
+    ipcMain.handle('quit', async (event) => {
+        WINDOW.close();
+    });
+}
 
 
-module.exports = {ipcMain}
+export default quitApp

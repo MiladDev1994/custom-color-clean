@@ -5,8 +5,9 @@ import { ipcRenderer, contextBridge } from "electron";
 
 contextBridge.exposeInMainWorld("api_electron", {
     selectedPath: () => ipcRenderer.invoke('dialog:selectedPath'),
-    minimize: () => ipcRenderer.send('minimize'),
-    quit: () => ipcRenderer.send('quit'),
+    minimize: () => ipcRenderer.invoke('minimize'),
+    quit: () => ipcRenderer.invoke('quit'),
+    getChartData: (value: any) => {ipcRenderer.send("getChartData", value)},
     // walk: (data: {directory: string}) => {ipcRenderer.send('walk', data)},
     // getData: (data: {id: number, type: "first" | "next" | "previous"}) => {ipcRenderer.send('getData', data)},
     // first: (id?: any) => {ipcRenderer.send('first', id)},

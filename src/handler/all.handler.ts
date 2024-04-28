@@ -1,14 +1,7 @@
 
-import SelectDirectory from "./windows/selectPath";
-// const MinimizeApp = require("./windows/minimizeApp")
-// const QuitApp = require("./windows/quitApp")
+import GetChartData from "./getChartData/getChartData.handler"
 
-// module.exports = {
-//     SelectDirectory,
-//     // MinimizeApp,
-//     // QuitApp
-// }
 
 export {
-    SelectDirectory
+    GetChartData,
 }
