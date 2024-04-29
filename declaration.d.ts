@@ -5,6 +5,11 @@ declare namespace api_electron {
   function minimize(): void;
   function quit(): void;
   function getChartData(value: any): void;
+  function progress(type: string): void;
+  function readConfusion(): void;
+  function moveMash2DHVFile(): void;
+  function redHists(): void;
+  function existAppDataChecker(): void;
   function onDataFromIpcMain(channel:string, func: ()=>void): () => Electron.IpcRenderer;
 }
 

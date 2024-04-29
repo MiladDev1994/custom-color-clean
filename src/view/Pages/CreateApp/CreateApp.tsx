@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CreateAppFormValidation } from './Validation'
 import { Toast } from '../../utils/Toast'
-import { ProgressState } from '../../recoils/GlobalRecoil'
-import { useRecoilState } from 'recoil'
+import { AllRecordState, AppDataState, ChartDataState, ChartLengthState, DirectoryValueState, ProgressState } from '../../recoils/GlobalRecoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import Button from '../../Components/Common/Button/Button'
 import Range from '../../Components/Common/Range/Range'
 import Select from '../../Components/Common/Select/Select'
@@ -58,7 +59,14 @@ function CreateApp() {
           ]
         }
     ]
+    const navigate = useNavigate()
+    const interval = useRef(null)
     const [progress, setProgress] = useRecoilState(ProgressState)
+    const [appData, setAppData] = useRecoilState(AppDataState)
+    const setAllRecord = useSetRecoilState(AllRecordState)
+    const setChartData = useSetRecoilState(ChartDataState)
+    const setChartLength = useSetRecoilState(ChartLengthState)
+    const setDirectoryValue = useSetRecoilState(DirectoryValueState)
     const [value, setValue] = useState<any>({
         app_name: "",
         healthy: "",
@@ -91,15 +99,47 @@ function CreateApp() {
     })
 
     const changeHandler = (e: any) => {
-        console.log()
         setValue({
             ...value,
             [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value
         })
     }
 
-    UseOnDataFromIpcMain("getChartData_call", (event: any, data: any) => {
+    UseOnDataFromIpcMain("getChartData_chanel", (event: any, data: any) => {
         console.log(data)
+    })
+
+    UseOnDataFromIpcMain("readConfusion_chanel", (event: any, data: any) => {
+        console.log(data)
+        if (data.status) {
+            Toast("success", data.message)
+            setAllRecord(data.data.allRecord)
+            setChartLength(data.data.chartLength)
+            setChartData(data.data.chartData)
+            setDirectoryValue(data.data.directory)
+            navigate("/inform")
+        } else {
+            Toast("error", data.message)
+        }
+    })
+
+    UseOnDataFromIpcMain("redHists_chanel", (event: any, data: any) => {
+        console.log(data)
+        navigate("/inform")
+    })
+    
+    UseOnDataFromIpcMain("progress_chanel", (event: any, data: any) => {
+        setProgress(data)
+        if (data >= 100) {
+            clearInterval(interval.current)
+            setAppData(value)
+            if (value.filter_type === "SCATTER") {
+                window.api_electron.readConfusion()
+                api_electron.moveMash2DHVFile()
+            } else {
+                api_electron.redHists()
+            }
+        }
     })
 
     const submitHandler = () => {
@@ -117,12 +157,14 @@ function CreateApp() {
             return Toast("error" , "تمام فیلد هار را پر کنید")
         } 
         window.api_electron.getChartData(value)
+        interval.current = setInterval(() => {
+          api_electron.progress(value.filter_type)
+        } , 500)
     }
 
     useEffect(() => {
         setError(CreateAppFormValidation(value))
     }, [value])
-
 
     return (
         <div className={`w-screen h-screen flex items-center justify-center overflow-hidden`}>
@@ -289,7 +331,7 @@ const DirectoryInput = ({type, label, value, setValue, error, focus}: any) => {
                     type='text'
                     placeholder='انتخاب فهرست...'
                     value={value[type]}
-                    className="flex-auto p-2 border-0 outline-none font-bold text-md placeholder:text-gray-400 placeholder:text-sm placeholder:font-thin bg-gray-100"
+                    className="flex-auto p-2 border-0 outline-none font-bold text-sm placeholder:text-gray-400 placeholder:text-sm placeholder:font-thin bg-gray-100"
                     disabled
                 />
             </div>

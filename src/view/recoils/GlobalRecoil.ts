@@ -195,3 +195,28 @@ export const WorksState: RecoilState<any> = atom({
   key: 'WorksState',
   default: {},
 });
+
+export const AppDataState: RecoilState<any> = atom({
+  key: 'AppDataState',
+  default: {},
+});
+
+export const AllRecordState = atom({
+  key: 'AllRecordState',
+  default: [],
+});
+
+export const ChartDataState = atom({
+    key: 'ChartDataState',
+    default: {},
+});
+
+export const ChartLengthState = atom({
+    key: 'ChartLengthState',
+    default: 0,
+});
+
+export const DirectoryValueState = atom({
+    key: 'DirectoryValueState',
+    default: "",
+});

@@ -53,21 +53,19 @@ class SeedConfigSingleton {
     }
 
     create() {
-        const configPath = `${process.cwd().split("\\").join("\\")}\\configs\\defaultSeedData`
+        const configPath = process.env.ELECTRON_APP_DEFAULT_DATA_SEED_PATH;
         try {
             const readDefaultSeedData = fs.readdirSync(configPath)
-            
-            throw ({data: readDefaultSeedData})
             readDefaultSeedData?.forEach((item) => {
                 const [DefaultSorterConfig, DefaultFilters, Translator] = this.createSorterDefaultConfigs(`${configPath}/${item}`)
                 this.seed[item] = {}
-                // this.seed[item].defaultSorterConfig = DefaultSorterConfig
-                // this.seed[item].defaultFilters = DefaultFilters
-                // this.seed[item].translator = Translator
+                this.seed[item].defaultSorterConfig = DefaultSorterConfig
+                this.seed[item].defaultFilters = DefaultFilters
+                this.seed[item].translator = Translator
             })
             return this.seed
         } catch(err) {
-            console.log(colors.red("can't read defaultSeedData folder"))
+            console.log(colors.red("can't read defaultDataSeed folder"))
             throw createHttpError.InternalServerError(err)
         }
     }
