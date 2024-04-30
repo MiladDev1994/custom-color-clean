@@ -11,6 +11,7 @@ const Range = (props: any) => {
         label = "",
         value,
         onChange,
+        Percent
     } = props;
 
     const container = useRef(null)
@@ -81,7 +82,7 @@ const Range = (props: any) => {
                             <div className={styles.bigLine}>
                                 <div className={styles.inValue}>
                                     <span>
-                                        %{value * 100}
+                                        {Percent ? `%${value * 100}` : value }
                                     </span>
                                 </div>
                             </div> : ""
@@ -106,7 +107,7 @@ const Range = (props: any) => {
                             <>
                                 <div className={styles.bigLine}/>
                                 <div className={styles.values}>
-                                    %{item.toFixed(stepLength) * 100}
+                                    {Percent ? `%${item.toFixed(stepLength) * 100}` : item.toFixed(stepLength) }
                                 </div>
                             </> :
                             <div className={styles.smallLine}/>

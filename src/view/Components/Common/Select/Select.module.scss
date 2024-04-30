@@ -7,10 +7,6 @@
     flex-direction: column;
     // margin-bottom: 20px;
     > label {
-        &::after {
-            content: " * ";
-            color: red;
-        }
         display: block;
         padding: 5px;
         font-size: 0.9rem;
@@ -104,5 +100,12 @@
                 }
             }
         }
+    }
+}
+
+.required {
+    &::after {
+        content: " * ";
+        color: red;
     }
 }

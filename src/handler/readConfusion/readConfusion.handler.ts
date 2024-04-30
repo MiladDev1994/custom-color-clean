@@ -1,7 +1,8 @@
 import path from "path"
 import { ipcMain } from "electron"
 import { scanConfusion } from "./readConfusion.service"
-const featurePath = process.env.ELECTRON_APP__FEATURE_ANALYZER_PATH
+import ENV from "../../singleton/env"
+const featurePath = ENV.FEATURE_ANALYZER_PATH
 
 ipcMain.on("readConfusion", async (event) => {
   const confusionPath = path.join(featurePath, "BehIabi", "confusions")

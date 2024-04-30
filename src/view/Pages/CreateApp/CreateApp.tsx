@@ -167,7 +167,7 @@ function CreateApp() {
     }, [value])
 
     return (
-        <div className={`w-screen h-screen flex items-center justify-center overflow-hidden`}>
+        <div className={`w-screen h-screen flex items-center justify-center overflow-hidden bg-white`}>
             <div className={`absolute right-0 top-0 p-2 flex gap-2`}>
                 <Button
                     icon='x'
@@ -261,6 +261,7 @@ function CreateApp() {
                               min={0}
                               max={1}
                               step={0.1}
+                              Percent
                               value={value[item.type]}
                               onChange={(e: any) => setValue({...value, [item.type]: e.target.value})}
                             />

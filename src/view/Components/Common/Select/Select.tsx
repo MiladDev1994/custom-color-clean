@@ -8,7 +8,7 @@ import { useRecoilState } from "recoil";
 import { WorksState } from "../../../recoils/GlobalRecoil";
 // import { WORK_FA } from "../../../config/work.Config";
 
-const Select = ({data, label, setValue, value, slug, icon, iconRotate, button, classNames, drop, theme, error, focus}: any) => {
+const Select = ({data, label, setValue, value, slug, icon, iconRotate, button, classNames, drop, theme, error, focus, required}: any) => {
 
     const [allRecordDrop, setAllRecordDrop] = useState(false)
     const [worksData, setWorksData] = useRecoilState(WorksState)
@@ -27,17 +27,14 @@ const Select = ({data, label, setValue, value, slug, icon, iconRotate, button, c
         if (data?.length === 1) setValue({...value, type: data[0]})
     }, [data])
 
-    // console.log(data.option.find((ele: any) => ele.value === value[data.value])?.name)
-
-    // console.log(value[data.value])
-    // console.log(data.option)
+    
     return (
         <div 
             tabIndex={0} 
             className={`${styles.selectRecord}${classNames?.container ? " " + classNames.container : ""}`} 
             onBlur={() => !dropAct && setAllRecordDrop(false)}
         >
-            <label>{label}</label>
+            {label && <label className={required ? styles.required : ""}>{label}</label>}
             <Button
                 title={data.option.find((ele: any) => ele.value === value[data.value])?.name || "انتخاب..."}
                 color='gray'

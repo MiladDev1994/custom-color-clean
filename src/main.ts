@@ -1,3 +1,4 @@
+import path from "path"
 import { app, BrowserWindow, ipcMain } from 'electron';
 import dotenv from "dotenv"
 import SEED from './singleton/readSeed.singleton';
@@ -5,7 +6,8 @@ import WINDOW from './handler/createWindows.singleton';
 import selectedPath from './handler/windows/selectPath';
 import quitApp from './handler/windows/quitApp';
 import minimizeApp from './handler/windows/minimizeApp';
-dotenv.config()
+import SaveAs from './handler/saveAsFile/saveAsFile.handler';
+dotenv.config({ path: path.join(__dirname, '.env') })
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -14,7 +16,8 @@ if (require('electron-squirrel-startup')) {
 const windowAction = {
   selectedPath,
   quitApp,
-  minimizeApp
+  minimizeApp,
+  SaveAs
 }
 
 SEED.create()

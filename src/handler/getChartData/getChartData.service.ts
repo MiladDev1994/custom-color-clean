@@ -4,8 +4,9 @@ import { WriteXmlFile } from "../utils/WriteXmlFile";
 import { RemoveFile } from "../utils/RemoveFile";
 import PROGRAM_DATA from "../../singleton/programData.singleton";
 import { Json2Xml } from "../utils/Json2Xml";
+import ENV from "../../singleton/env";
 const { execFile } = require('child_process');
-const featurePath = process.env.ELECTRON_APP__FEATURE_ANALYZER_PATH
+const featurePath = ENV.FEATURE_ANALYZER_PATH
 
 
 export async function ONE(event: any, value: any) {

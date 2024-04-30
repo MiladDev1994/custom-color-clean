@@ -16,6 +16,22 @@
 
 
 
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  background-color: transparent;
+  position: absolute;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #bebebe;
+  border-radius: 2rem;
+}
+
+body{
+  box-sizing: border-box;
+}
+
 * {
   padding: 0;
   margin: 0;

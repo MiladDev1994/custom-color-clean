@@ -201,22 +201,90 @@ export const AppDataState: RecoilState<any> = atom({
   default: {},
 });
 
-export const AllRecordState = atom({
+export const AllRecordState: RecoilState<any> = atom({
   key: 'AllRecordState',
   default: [],
 });
 
-export const ChartDataState = atom({
+export const ChartDataState: RecoilState<any> = atom({
     key: 'ChartDataState',
     default: {},
 });
 
-export const ChartLengthState = atom({
+export const ChartLengthState: RecoilState<any> = atom({
     key: 'ChartLengthState',
     default: 0,
 });
 
-export const DirectoryValueState = atom({
+export const DirectoryValueState: RecoilState<any> = atom({
     key: 'DirectoryValueState',
     default: "",
+});
+
+
+export const directoryPathSaveStateAtom: RecoilState<any> = atom({
+  key: "directoryPathSaveStateAtom",
+  default: "",
+});
+
+export const isLoadingSaveFileStateAtom: RecoilState<any> = atom({
+  key: "isLoadingSaveFileStateAtom",
+  default: false,
+});
+
+export const filtersListStateAtom: RecoilState<any> = atom({
+  key: "filtersListStateAtom",
+  default: [],
+});
+
+
+export const generalFilterConfigsListCopyAtom: RecoilState<any> = atom({
+  key: "generalFilterConfigsListCopyAtom",
+  default: {},
+});
+
+export const programNameStateAtom: RecoilState<any> = atom({
+  key: "programNameStateAtom",
+  // default: "test",
+  default: "",
+});
+
+export const generalFilterConfigsListAtom = atom({
+  key: "generalFilterParamsListAtom",
+  default: {},
+});
+
+
+export const defaultFiltersListAtom = atom({
+  key: "defaultFiltersListAtom",
+  default: {
+  },
+});
+
+export const generalFilterConfigsTranslateAtom = atom({
+  key: "generalFilterConfigsTranslateAtom",
+  default: {},
+});
+
+export const defaultObjectTypeStateAtom = atom({
+  key: "defaultObjectTypeStateAtom",
+  default: -1,
+  // default: 0,
+});
+
+export const productTypeStateAtom = atom({
+  key: "productTypeStateAtom",
+  default: -1,
+  // default: 1,
+});
+
+export const productTypesListStateAtom = atom({
+  key: "productTypesListStateAtom",
+  default: [
+    // {id: -1,label: "نوع محصول", value:"choose"},
+    {id: 0,label: "PST-01", value:"pistachio"},
+    {id: 1,label: "PNT-01", value:"peanut"},
+    {id: 2,label: "SEED-01", value:"sfs"},
+    {id: 3,label: "MNG-01", value:"mung"},
+  ],
 });

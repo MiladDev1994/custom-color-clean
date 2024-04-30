@@ -1,7 +1,8 @@
 import path from "path"
 import fs from "fs"
 import { ipcMain } from "electron"
-const featurePath = process.env.ELECTRON_APP__FEATURE_ANALYZER_PATH
+import ENV from "../../singleton/env"
+const featurePath = ENV.FEATURE_ANALYZER_PATH
 
 ipcMain.on("moveMash2DHVFile", async (event) => {
     const oldPath = path.join(featurePath, "BehIabi", "Mash2DH_V.xml");

@@ -2,7 +2,8 @@ import path from "path"
 import fs from "fs"
 import { ipcMain } from "electron"
 import HISTS from "../../singleton/hists.singleton"
-const featurePath = process.env.ELECTRON_APP__FEATURE_ANALYZER_PATH
+import ENV from "../../singleton/env"
+const featurePath = ENV.FEATURE_ANALYZER_PATH
 
 ipcMain.on("redHists", async (event) => {
     if(fs.existsSync(path.join(featurePath, "hists.json"))) {

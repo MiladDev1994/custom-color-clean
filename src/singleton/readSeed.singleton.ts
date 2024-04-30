@@ -1,6 +1,7 @@
 import fs from "fs"
 import colors from "colors"
 import createHttpError from "http-errors";
+import ENV from "./env";
 const { xml2js } = require('xml-js');
 
 let SeedInstance: any
@@ -53,7 +54,7 @@ class SeedConfigSingleton {
     }
 
     create() {
-        const configPath = process.env.ELECTRON_APP_DEFAULT_DATA_SEED_PATH;
+        const configPath = ENV.DEFAULT_DATA_SEED_PATH
         try {
             const readDefaultSeedData = fs.readdirSync(configPath)
             readDefaultSeedData?.forEach((item) => {

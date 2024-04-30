@@ -10,6 +10,10 @@ declare namespace api_electron {
   function moveMash2DHVFile(): void;
   function redHists(): void;
   function existAppDataChecker(): void;
+  function saveAsFile(): Promise<any>;
+  function selectFolder(): Promise<any>;
+  function saveFile(directoryPath: any, filters: any, configs: any): Promise<any>;
+  function completeSorterConfigData(value: any): Promise<any>;
   function onDataFromIpcMain(channel:string, func: ()=>void): () => Electron.IpcRenderer;
 }
 

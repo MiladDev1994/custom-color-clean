@@ -112,6 +112,7 @@ const svgsNames = [
  'arrow-down',
  'arrow-down-short',
  'dash',
+ 'plus-circle',
 ] as const
 
 export type SvgsNames = typeof svgsNames[number];

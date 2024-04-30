@@ -5,6 +5,7 @@ import ReadConfusion from "./readConfusion/readConfusion.handler"
 import MoveMash2DHVFile from "./moveMash2DHVFile/moveMash2DHVFile.handler"
 import Hists from "./readHists/readHists"
 import ExistAppDataChecker from "./existAppDataChecker/existAppDataChecker"
+import SaveFilter from "./saveFilter/saveFilter.handler"
 
 
 export {
@@ -13,5 +14,6 @@ export {
     ReadConfusion,
     MoveMash2DHVFile,
     Hists,
-    ExistAppDataChecker
+    ExistAppDataChecker,
+    SaveFilter
 }
