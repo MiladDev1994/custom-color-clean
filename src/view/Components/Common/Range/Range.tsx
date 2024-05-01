@@ -14,6 +14,7 @@ const Range = (props: any) => {
         Percent
     } = props;
 
+    
     const container = useRef(null)
     const [range, setRange] = useState([])
     const [divisible, setDivisible] = useState([])
@@ -21,7 +22,8 @@ const Range = (props: any) => {
     const [rangeLengthShow, setRangeLengthShow] = useState(0)
     const [gap, setGap] = useState(1)
     const stepLength = String(step).includes(".") ? Number(String(step).split(".").pop().length) : 0;
-
+    // console.log(range)
+    
     const rangeGenerator = () => {
         let index = 0;
         let value = min
@@ -56,13 +58,14 @@ const Range = (props: any) => {
     } , [props])
 
     useEffect(() => {
-        setDivisible(divisibleChecker())
-        const findSmallDivisible = divisible.filter(item => item <= rangeLengthShow)
+        const newDivisible = divisibleChecker()
+        setDivisible(newDivisible)
+        const findSmallDivisible = newDivisible.filter(item => item <= rangeLengthShow)
         const findGap = findSmallDivisible.length && Math.max(...findSmallDivisible)
         
         setGap((range.length - 1) / findGap)
     } , [range])
-
+    
     // useEffect(() => {
     //     const findSmallDivisible = divisible.filter(item => item <= rangeLengthShow)
     //     const findGap = findSmallDivisible.length && Math.max(...findSmallDivisible)
@@ -107,7 +110,7 @@ const Range = (props: any) => {
                             <>
                                 <div className={styles.bigLine}/>
                                 <div className={styles.values}>
-                                    {Percent ? `%${item.toFixed(stepLength) * 100}` : item.toFixed(stepLength) }
+                                    {Percent ? `%${item.toFixed(stepLength) * 100}` : item.toFixed(stepLength)}
                                 </div>
                             </> :
                             <div className={styles.smallLine}/>

@@ -55,7 +55,7 @@ export async function ONE(event: any, value: any) {
 
 
 export async function TWO(event: any, value: any) {
-  const {app_name, filter_name, healthy, not_healthy, influenceTop, influenceDown} = value
+  const {healthy, not_healthy, influenceTop, influenceDown} = value
 
   let config = {
     "_instruction": { "xml": { "_attributes": { "version": "1.0" } } },

@@ -10,6 +10,7 @@ import Select from '../../Components/Common/Select/Select'
 import Input from '../../Components/Common/Input/Input'
 import ProgressBtn from '../../Components/Common/ProgressBtn/ProgressBtn'
 import { UseOnDataFromIpcMain } from '../../hooks/UseOnDataFromIpcMain'
+import { FIlterType } from '../../Components/Common/FilterTypeForm/FilterTypeForm'
 
 function CreateApp() {
 
@@ -19,7 +20,7 @@ function CreateApp() {
     ]
     const NamesInput = [
         {label: "نام برنامه", name: "app_name"},
-        {label: "نام فیلتر",  name: "filter_name"}
+        // {label: "نام فیلتر",  name: "filter_name"}
     ]
     // const ProductType = [
     //     {id: 1, name: "ماش", value: "MUNG"},
@@ -31,7 +32,7 @@ function CreateApp() {
         {label: "حداقل سهم خرابی در دوربین بالا", type: "influenceTop"},
         {label: "حداقل سهم خرابی در دوربین پایین", type: "influenceDown"}
     ]
-    const filterType = [
+    const filterTypeItem = [
         {id: 1, name: "دیپ لرنینگ", value: "DEEP"},
         {id: 2, name: "سایز", value: "SIZE"},
         {id: 3, name: "تک بعدی", value: "LINE"},
@@ -219,6 +220,9 @@ function CreateApp() {
                             error={error[ele.name]} 
                             focus={focus[ele.name]}
                             onChange={changeHandler}
+                            classNames={{
+                                container: "col-span-full"
+                            }}
                         />
                     )}
 
@@ -234,24 +238,15 @@ function CreateApp() {
                         />
                     )}
 
-                    <div className={`relative py-1 col-span-full`}>
-                        <label className='after:content-["*"] after:text-red-400 block p-1 text-sm'>نوع فیلتر</label>
-                        <div className={`flex items-center justify-center gap-3`}>
-                            {filterType.map(filter => 
-                                <div key={filter.value} className={`w-full h-12 relative border border-gray-300 rounded-md flex items-center justify-center transition-all duration-200 shadow-md shadow-gray-200  ${value.filter_type === filter.value ? "bg-sky-500" : "hover:bg-zinc-100"}`}>
-                                    <input 
-                                        type='radio' 
-                                        name='filter_type' 
-                                        value={filter.value}
-                                        onChange={changeHandler}
-                                        className='w-full h-full absolute left-0 top-0 opacity-0 cursor-pointer'
-                                    />
-                                    <span className='text-lg'>{filter.name}</span>
-                                </div>
-                            )}
-                        </div>
-                        {(error.filter_type && focus.filter_type) && <span className='absolute text-red-400 text-xs left-1 -bottom-4'>{error.filter_type}</span>}
-                    </div>
+                    <FIlterType
+                        value={value}
+                        error={error}
+                        focus={focus}
+                        name="filter_type"
+                        title="نوع فیلتر"
+                        changeHandler={changeHandler}
+                        filterTypeItem={filterTypeItem}
+                    />
 
                     {value.filter_type && (value.filter_type === "SCATTER" ?
                         rangeInput.map(item => 

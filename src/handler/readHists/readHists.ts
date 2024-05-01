@@ -12,7 +12,7 @@ ipcMain.on("redHists", async (event) => {
           return event.sender.send('redHists_chanel', {status: false,  err: err.message });
         }
         const chartData = JSON.parse(data);
-        HISTS.set(data)
+        HISTS.set(chartData)
         return event.sender.send('redHists_chanel', {status: true, chartData});
       });
     }

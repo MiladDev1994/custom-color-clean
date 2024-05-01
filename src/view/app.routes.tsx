@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Route, Routes } from "react-router-dom";
 import CreateApp from "./Pages/CreateApp/CreateApp";
 import Inform from "./Pages/Inform/Inform";
-import { AllRecordState, AppDataState, ChartDataState, ChartLengthState, DirectoryValueState } from "./recoils/GlobalRecoil";
+import { AllRecordState, AppDataState, ChartDataState, ChartLengthState, DirectoryValueState, HistsDataState } from "./recoils/GlobalRecoil";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { UseOnDataFromIpcMain } from "./hooks/UseOnDataFromIpcMain";
 
@@ -15,6 +15,7 @@ const AppRoutes = () => {
     const setAllRecord = useSetRecoilState(AllRecordState)
     const setChartData = useSetRecoilState(ChartDataState)
     const setChartLength = useSetRecoilState(ChartLengthState)
+    const setHistsData = useSetRecoilState(HistsDataState)
     // const setDirectoryValue = useSetRecoilState(DirectoryValueState)
     
     UseOnDataFromIpcMain("existAppDataChecker_chanel", (event: any, data: any) => {
@@ -32,6 +33,7 @@ const AppRoutes = () => {
                 }
             } else {
                 if (Object.keys(hists).length) {
+                    setHistsData(hists)
                     navigate("/inform")
                 }
             }

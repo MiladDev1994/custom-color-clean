@@ -13,7 +13,6 @@ export default function Inform() {
       
     const [appData, setAppData] = useRecoilState(AppDataState)
 
-    console.log(appData)
     return (
         <div className="w-full">
             <Header />
@@ -27,15 +26,15 @@ export default function Inform() {
 }
 
 
-const OneDimension = () => {
+const TwoDimension = () => {
 
     return (
-        <div className="w-full p-2 bg-gray-100 h-[2000px]">ONE</div>
+        <div className="w-full p-2 bg-gray-100 h-[2000px]">TWO</div>
     )
 }
 
 
-const TwoDimension = () => {
+const OneDimension = () => {
 
     const [showFilter, setShowFilter] = useState(false)
 
@@ -59,7 +58,6 @@ const TwoDimension = () => {
         all_filter_effect: true
     })
 
-    console.log(value)
 
     return (
         <div className="w-full flex items-stretch p-3 gap-2">

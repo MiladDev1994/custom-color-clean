@@ -221,6 +221,11 @@ export const DirectoryValueState: RecoilState<any> = atom({
     default: "",
 });
 
+export const HistsDataState: RecoilState<any> = atom({
+  key: 'HistsDataState',
+  default: "",
+});
+
 
 export const directoryPathSaveStateAtom: RecoilState<any> = atom({
   key: "directoryPathSaveStateAtom",

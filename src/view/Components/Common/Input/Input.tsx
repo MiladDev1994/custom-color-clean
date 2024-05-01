@@ -1,7 +1,7 @@
-const Input = ({name, label, value, onBlur, error, focus, onChange}: any) => {
+const Input = ({name, label, value, onBlur, error, focus, onChange, classNames}: any) => {
 
     return (
-        <div className={`w-full relative`}>
+        <div className={`${classNames ? classNames.container : ""} w-full relative`}>
             <label className='after:content-["*"] after:text-red-400 block p-1 text-sm'>{label}</label>
             <input 
                 name={name}
