@@ -179,26 +179,63 @@ import { RecoilState, atom, selector } from "recoil";
 // });
 
 
+
+// filters
+export const Filter1DState: RecoilState<any> = atom({
+  key: "Filter1DState",
+  default: [],
+});
+
+export const Filter2DState: RecoilState<any> = atom({
+  key: "Filter2DState",
+  default: [],
+});
+
+
+
 export const ProgressState: RecoilState<any> = atom({
   key: "ProgressState",
   default: 100,
 });
 
+export const IsModalOpenState: RecoilState<any> = atom({
+  key: "IsModalOpenState",
+  default: false,
+});
+
+export const ModalTypeState: RecoilState<undefined | "NewOrOpen" | "AddFilter"> = atom({
+  key: "ModalTypeState",
+  default: undefined,
+});
+
+
 export const FilterState: RecoilState<any> = atom({
   key: 'FilterState',
-  default: {
-      status: "",
-    }
+  default: []
 });
+
+export const AppDataState: RecoilState<any> = atom({
+  key: 'AppDataState',
+  default: {}
+});
+
+
+
+
+
+
+
+
+
 
 export const WorksState: RecoilState<any> = atom({
   key: 'WorksState',
   default: {},
 });
 
-export const AppDataState: RecoilState<any> = atom({
-  key: 'AppDataState',
-  default: {},
+export const FilterActiveIdState: RecoilState<any> = atom({
+  key: 'FilterActiveIdState',
+  default: 0,
 });
 
 export const AllRecordState: RecoilState<any> = atom({

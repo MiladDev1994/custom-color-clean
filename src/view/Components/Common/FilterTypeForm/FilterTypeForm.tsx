@@ -1,30 +1,54 @@
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Range from "../Range/Range"
-import LineChartPreview from "../Charts/LineChartPreview"
 import SingleScatterChart from "../Charts/SingleScatterChart"
+import Icon from "../Icon/Icon"
+import FAKE_HISTS from "./fakeHists"
 
 
-export function FIlterType(props: any){
+export function Radio(props: any){
     const {value, error, focus, changeHandler, filterTypeItem, name, title} = props
 
     return (
         <div className={`relative py-1 col-span-full`}>
-            <label className='after:content-["*"] after:text-red-400 block p-1 text-sm'>{ title }</label>
+            <div className="flex items-center justify-start">
+                <label className='after:content-["*"] after:text-red-400 block p-1 text-sm'>{ title }</label>
+                {(error && focus) && <span className='text-red-400 text-xs'>{error}</span>}
+            </div>
             <div className={`flex items-center justify-center gap-3`}>
                 {filterTypeItem?.map((filter: any) => 
-                    <div key={filter.value} className={`w-full h-12 relative border border-gray-300 rounded-md flex items-center justify-center transition-all duration-200 shadow-md shadow-gray-200  ${value[name] === filter.value ? "bg-sky-500" : "hover:bg-zinc-100"}`}>
+                    <div 
+                        key={filter.value} 
+                        className={`w-full h-12 relative border  rounded-md 
+                        flex items-center justify-center transition-all
+                        duration-200 
+                        ${filter.disable ? 
+                            "text-gray-300 bg-gray-200" : 
+                            value[name] === filter.value ? 
+                                "bg-sky-500 text-white shadow-sky-300 border-sky-500 shadow-lg" : 
+                                "hover:bg-zinc-100 shadow-gray-200 border-gray-300 shadow-md"
+                        }`}
+                    >
                         <input 
                             type='radio' 
                             name={name} 
                             value={filter.value}
+                            disabled={filter.disable}
                             onChange={changeHandler}
-                            className='w-full h-full absolute left-0 top-0 opacity-0 cursor-pointer'
+                            className={`w-full h-full absolute left-0 top-0 opacity-0 z-10 ${!filter.disable ? "cursor-pointer" : ""}`}
                         />
-                        <span className='text-lg'>{filter.name}</span>
+                        <span className='text-lg mx-5'>{filter.name}</span>
+                        {filter.icon && 
+                            <Icon
+                                name={filter.icon}
+                                color={value[name] === filter.value ? "white" : "#00A2E8"}
+                                width="3rem"
+                                height="3rem"
+                            />
+                        }
+                        
                     </div>
                 )}
             </div>
-            {(error[name] && focus[name]) && <span className='absolute text-red-400 text-xs left-1 -bottom-4'>{error[name]}</span>}
         </div>
     )
 }
@@ -38,7 +62,7 @@ export function SCATTER(props: any) {
 
     return (
         <>
-            {/* <FIlterType {...props}/> */}
+            {/* <Radio {...props}/> */}
             {rangeInput?.map(item => 
                 <Range
                     key={item.type}
@@ -55,38 +79,33 @@ export function SCATTER(props: any) {
     )
 }
 
-
-export function DEEP(props: any) { return <FIlterType {...props}/> }
+export function DEEP(props: any) { return <Radio {...props}/> }
 
 
 export function SIZE(props: any) {
 
     const filterTypeItem = [
-        {id: 1, name: "رد شدن طول", value: "SizeLength"},
-        {id: 2, name: "رد شدن قطر", value: "SizeWidth"},
-        {id: 3, name: "نسبت طول و عرض", value: "SizeAspectRatio"}
+        {id: 1, name: "رد شدن طول", value: "SizeLength", icon: "Reject By Width", disable: false},
+        {id: 2, name: "رد شدن قطر", value: "SizeWidth", icon: "Reject By Length", disable: false},
+        {id: 3, name: "نسبت طول و عرض", value: "SizeAspectRatio", icon: "Aspect Ratio", disable: false}
     ]
 
     const propsChartType = {
         ...props, 
         filterTypeItem, 
-        name: "size_type",
-        title: "نوع نمودار"
     }
 
     return (
         <>
-            <FIlterType {...props}/>
-            <FIlterType {...propsChartType}/>
+            {/* <Radio {...props}/> */}
+            <Radio {...propsChartType}/>
         </>
     ) 
 }
 
-
 export function LINE(props: any) {
-    const {value, setValue, error, focus, histsData, changeHandler} = props
+    const {value, changeHandler, title, error, focus} = props
     const [chartInforms, setChartInforms] = useState<any>({})
-    const [activeTabFilterChartKey, setActiveTabFilterChartKey] = useState<any>();
     const [chartSize, steChartSize] = useState<any>({})
 
     const convertDatasetToChartData = (informs: any) => {
@@ -183,55 +202,61 @@ export function LINE(props: any) {
 
     useEffect(() => {
         let informs: any = {};
-        Object.keys(histsData)?.map((key) => {
+        Object.keys(FAKE_HISTS)?.map((key) => {
           if (key) {
-            informs[key] = (convertDatasetToChartData(histsData[key]));
+            informs[key] = (convertDatasetToChartData(FAKE_HISTS[key]));
           }
         });
-
         setChartInforms(informs)
-    }, [histsData])
+    }, [])
+    
 
-    // console.log(chartInforms)
+    const ChartType = useMemo(() => {
+        return (
+            <>
+                {
+                    Object.keys(chartInforms).length > 0 &&
+                    Object.keys(chartInforms).filter(key => !key.toLowerCase().startsWith("size")).map((key) => (
+                        <div 
+                            key={key}
+                            className={`border border-gray-200 shadow-lg shadow-gray-200 rounded-md relative p-1  transition-all duration-300 ${value.chart_type === key ? "bg-sky-200" : "hover:bg-gray-100"}`}
+                        >
+                            <input 
+                                type="radio" 
+                                name="chart_type"
+                                className="absolute w-full h-full opacity-0 cursor-pointer"
+                                value={key}
+                                onChange={changeHandler}
+                            />
+                            <SingleScatterChart
+                                // chartKey={"filters[activeIndex].chartKey"}
+                                labels={[...Array(5).keys()]}
+                                datas={chartInforms[key] ?? []}
+                                steChartSize={steChartSize}
+                                title={key}
+                            />
+                        </div>
+                ))}
+            </>
+        )
+    }, [chartInforms, value.chart_type])
 
     return (
         <>
-            <FIlterType {...props}/> 
+            {/* <Radio {...props}/>  */}
 
-            <div className=" col-span-full ">
-                <label className='after:content-["*"] after:text-red-400 block p-1 text-sm'>نوع نمودار</label>
-                <div className="grid grid-cols-4 gap-3">
-                    {
-                        Object.keys(chartInforms).length > 0 &&
-                        Object.keys(chartInforms).filter(key => !key.toLowerCase().startsWith("size")).map((key) => (
-                            <div 
-                                key={key}
-                                className={`border border-gray-200 shadow-lg shadow-gray-200 rounded-md relative p-1  transition-all duration-300 ${value.chart_type === key ? "bg-sky-200" : "hover:bg-gray-100"}`}
-                            >
-                                <input 
-                                    type="radio" 
-                                    name="chart_type"
-                                    className="absolute w-full h-full opacity-0 cursor-pointer"
-                                    value={key}
-                                    onChange={changeHandler}
-                                />
-                                <SingleScatterChart
-                                    // chartKey={"filters[activeIndex].chartKey"}
-                                    labels={[...Array(5).keys()]}
-                                    datas={chartInforms[key] ?? []}
-                                    steChartSize={steChartSize}
-                                    title={key}
-                                />
-                            </div>
-
-                            // <span key={key}>{key}</span>
-                    ))}
+            <div className="col-span-full py-1 relative">
+                <div className="flex items-center justify-start">
+                    <label className='after:content-["*"] after:text-red-400 block p-1 text-sm'>{title}</label>
+                    {(error && focus) && <span className='text-red-400 text-xs'>{error}</span>}
                 </div>
-
+                <div className="grid grid-cols-4 gap-3">
+                    {ChartType}
+                </div>
+                
             </div>
-            
-            
         </>
     ) 
 }
+
 

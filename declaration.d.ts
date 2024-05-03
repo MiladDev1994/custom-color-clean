@@ -14,6 +14,8 @@ declare namespace api_electron {
   function selectFolder(): Promise<any>;
   function saveFile(directoryPath: any, filters: any, configs: any): Promise<any>;
   function completeSorterConfigData(value: any): Promise<any>;
+  function addFilter(value: any): void;
+  function deleteFilter(id: any): void;
   function onDataFromIpcMain(channel:string, func: ()=>void): () => Electron.IpcRenderer;
 }
 

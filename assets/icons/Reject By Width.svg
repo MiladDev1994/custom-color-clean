@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="42" height="42" viewBox="0 0 42 42">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_377" data-name="Rectangle 377" width="38" height="38" transform="translate(105 1006)" fill="#3b5eb1" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="Reject_by_Diameter" data-name="Reject by Diameter" transform="translate(8882 -8201)">
+    <rect id="Rectangle_5727" data-name="Rectangle 5727" width="42" height="42" transform="translate(-8882 8201)" fill="none"/>
+    <g id="Group_8328" data-name="Group 8328" transform="translate(-8987.5 7197)">
+      <g id="Mask_Group_11" data-name="Mask Group 11" transform="translate(-898.5 1148) rotate(-90)" clip-path="url(#clip-path)">
+        <g id="pistachio" transform="translate(139.538 1010.096) rotate(90)">
+          <path id="Path_3680" data-name="Path 3680" d="M21.114,1.837A4.825,4.825,0,0,0,17.564,0,4.832,4.832,0,0,0,14,1.848c1.412,2.151,2.63,5.788,3.551,9.193.917-3.411,2.135-7.055,3.559-9.2Z" transform="translate(-2.66)" fill="#3b5eb1"/>
+          <path id="Path_3681" data-name="Path 3681" d="M20.818,2.375C17.755,4.3,14.9,19.3,14.9,19.3S12,4.355,8.972,2.375C6.933,3.333,4.8,8.142,4.751,14.031c-.057,6.276,2.863,13.663,10.03,13.728S25,20.49,25.057,14.214C25.1,9.37,22.84,3.37,20.818,2.375Z" transform="translate(0 -0.683)" fill="#3b5eb1"/>
+        </g>
+      </g>
+      <line id="Line_101" data-name="Line 101" x2="28" transform="translate(112.5 1040.5)" fill="none" stroke="#3b5eb1" stroke-linecap="round" stroke-width="1.2"/>
+      <path id="Polygon_3" data-name="Polygon 3" d="M4,0,8,7H0Z" transform="translate(110.5 1044.5) rotate(-90)" fill="#3b5eb1"/>
+      <path id="Polygon_4" data-name="Polygon 4" d="M4,0,8,7H0Z" transform="translate(142.5 1036.5) rotate(90)" fill="#3b5eb1"/>
+    </g>
+  </g>
+</svg>

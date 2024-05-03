@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42">
+  <g id="Group_4315" data-name="Group 4315" transform="translate(-9619 -11412)">
+    <rect id="Rectangle_3180" data-name="Rectangle 3180" width="42" height="42" transform="translate(9619 11412)" fill="none"/>
+    <g id="Group_4314" data-name="Group 4314" transform="translate(2 -3.407)">
+      <g id="Group_4311" data-name="Group 4311" transform="translate(9451 9840)">
+        <g id="Group_4107" data-name="Group 4107" transform="translate(-33.586 1095.407)">
+          <g id="pistachio" transform="translate(173.946 430.838) rotate(45)">
+            <path id="Path_3661" data-name="Path 3661" d="M213.71,2.257a5.346,5.346,0,0,0-8.736.014c1.735,2.643,3.232,7.111,4.363,11.295,1.126-4.191,2.622-8.668,4.373-11.308Z" transform="translate(-127.348)" fill="#3b5eb1"/>
+            <path id="Path_3662" data-name="Path 3662" d="M89.267,34.765C85.5,37.13,81.99,55.556,81.99,55.556S78.433,37.2,74.713,34.765c-2.506,1.177-5.121,7.085-5.186,14.321-.07,7.71,3.518,16.786,12.323,16.865S94.4,57.021,94.474,49.31C94.528,43.358,91.751,35.987,89.267,34.765Z" transform="translate(0 -32.686)" fill="#3b5eb1"/>
+          </g>
+        </g>
+        <g id="Group_4109" data-name="Group 4109" transform="translate(-33.586 1095.407)">
+          <g id="pistachio-2" data-name="pistachio" transform="translate(173.946 430.838) rotate(45)">
+            <path id="Path_3662-2" data-name="Path 3662" d="M89.267,34.765c-1.946,1.223-7.359,18.011-6.057,21.647.294.821,1.42,3.543,3.491,4.25s3.771-.335,5.714-3.173,2.041-6.13,2.059-8.179C94.528,43.358,91.751,35.987,89.267,34.765Z" transform="translate(0 -32.686)" fill="#20386f"/>
+          </g>
+        </g>
+        <g id="Group_4108" data-name="Group 4108" transform="translate(-33.586 1095.407)">
+          <g id="pistachio-3" data-name="pistachio" transform="translate(173.946 430.838) rotate(45)">
+            <path id="Path_3662-3" data-name="Path 3662" d="M76.421,42.691c.925-6.932-6.829-.841-6.894,6.395-.07,7.71,3.518,16.786,12.323,16.865S75.5,49.623,76.421,42.691Z" transform="translate(0 -32.686)" fill="#20386f"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

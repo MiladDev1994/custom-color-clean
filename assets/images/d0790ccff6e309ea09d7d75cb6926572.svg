@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="42" height="42" viewBox="0 0 42 42">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_377" data-name="Rectangle 377" width="32.967" height="32.967" transform="translate(0 0)" fill="#3b5eb1" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="Group_8352" data-name="Group 8352" transform="translate(8883 -8762)">
+    <rect id="Rectangle_5733" data-name="Rectangle 5733" width="42" height="42" transform="translate(-8883 8762)" fill="none"/>
+    <g id="Group_8351" data-name="Group 8351" transform="translate(-8985.135 7761.131)">
+      <g id="Mask_Group_11" data-name="Mask Group 11" transform="translate(107.301 1035.967) rotate(-90)" clip-path="url(#clip-path)">
+        <g id="pistachio" transform="translate(28.932 9.71) rotate(90)">
+          <path id="Path_3680" data-name="Path 3680" d="M6.353,1.641A4.311,4.311,0,0,0,3.181,0,4.318,4.318,0,0,0,0,1.651,31.757,31.757,0,0,1,3.173,9.866a31.213,31.213,0,0,1,3.18-8.224Z" transform="translate(5.891)" fill="#3b5eb1"/>
+          <path id="Path_3681" data-name="Path 3681" d="M14.357,0C11.62,1.72,9.065,15.121,9.065,15.121S6.479,1.769,3.773,0C1.95.856.048,5.153,0,10.415-.05,16.023,2.559,22.623,8.963,22.681s9.131-6.495,9.182-12.1C18.184,6.25,16.164.889,14.357,0Z" transform="translate(0 1.512)" fill="#3b5eb1"/>
+        </g>
+      </g>
+      <path id="Path_14120" data-name="Path 14120" d="M0,0H24.291" transform="translate(111.639 1037.268)" fill="#3b5eb1" stroke="#3b5eb1" stroke-linecap="round" stroke-width="1.2"/>
+      <path id="Path_14119" data-name="Path 14119" d="M0,0H24.291" transform="translate(109.47 1009.507) rotate(90)" fill="#3b5eb1" stroke="#3b5eb1" stroke-linecap="round" stroke-width="1.2"/>
+      <path id="Polygon_3" data-name="Polygon 3" d="M3.47,0,6.94,6.073H0Z" transform="translate(109.904 1040.738) rotate(-90)" fill="#3b5eb1"/>
+      <path id="Polygon_5" data-name="Polygon 5" d="M3.47,0,6.94,6.073H0Z" transform="translate(106 1007.771)" fill="#3b5eb1"/>
+      <path id="Polygon_4" data-name="Polygon 4" d="M3.47,0,6.94,6.073H0Z" transform="translate(137.665 1033.798) rotate(90)" fill="#3b5eb1"/>
+      <path id="Polygon_6" data-name="Polygon 6" d="M3.47,0,6.94,6.073H0Z" transform="translate(112.94 1035.533) rotate(180)" fill="#3b5eb1"/>
+    </g>
+  </g>
+</svg>

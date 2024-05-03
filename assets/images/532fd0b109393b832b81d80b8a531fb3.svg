@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42">
+  <g id="Half_split_shell" data-name="Half split shell" transform="translate(8883 -8296)">
+    <rect id="Rectangle_5728" data-name="Rectangle 5728" width="42" height="42" transform="translate(-8883 8296)" fill="none"/>
+    <g id="pistachio" transform="translate(-8909.097 8248.648) rotate(45)">
+      <path id="Path_3661" data-name="Path 3661" d="M208.208.835a1.979,1.979,0,0,0-3.234.005,16.165,16.165,0,0,1,1.615,4.181A15.888,15.888,0,0,1,208.208.835Z" transform="translate(-125.649 -2.168)" fill="#3b5eb1"/>
+      <path id="Path_3662" data-name="Path 3662" d="M83.44,31.993c-3.654,2.3-1.368,18.018-1.89,22.99s.082-20.506-2.906-22.924c-2.432,1.142-9.055,9.5-9.118,16.525-.068,7.484,3.415,16.294,11.962,16.371S93.676,56.287,93.743,48.8C93.8,43.025,85.712,32.693,83.44,31.993Z" transform="translate(0 -32.729)" fill="#3b5eb1"/>
+    </g>
+  </g>
+</svg>

@@ -16,6 +16,8 @@ contextBridge.exposeInMainWorld("api_electron", {
     saveAsFile: () => ipcRenderer.invoke('dialog:saveAsFile'),
     selectFolder: () => ipcRenderer.invoke('dialog:openDirectory'),
     saveFile: (directoryPath: any, filters: any, configs: any) => ipcRenderer.invoke('dialog:saveFile', directoryPath, filters, configs),
+    addFilter: (value: any) => ipcRenderer.send('addFilter', value),
+    deleteFilter: (id: any) => ipcRenderer.send('deleteFilter', id),
     completeSorterConfigData(productType: any) {ipcRenderer.send('completeSorterConfigData', productType);},
     // walk: (data: {directory: string}) => {ipcRenderer.send('walk', data)},
     // getData: (data: {id: number, type: "first" | "next" | "previous"}) => {ipcRenderer.send('getData', data)},

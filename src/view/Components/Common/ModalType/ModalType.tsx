@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { AppDataState, HistsDataState } from "../../../recoils/GlobalRecoil";
+import { AppDataState, FilterActiveIdState, FilterState, HistsDataState, IsModalOpenState, ProgressState } from "../../../recoils/GlobalRecoil";
 import * as FilterTypeForm from "../FilterTypeForm/FilterTypeForm"
+import ProgressBtn from "../ProgressBtn/ProgressBtn"
+import { AddFilterFormValidation } from "../FilterTypeForm/validation";
+import { Toast } from "../../../utils/Toast";
+import { UseOnDataFromIpcMain } from "../../../hooks/UseOnDataFromIpcMain";
+import { useNavigate } from "react-router-dom";
 
 
 export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileType}: any) {
@@ -13,7 +18,7 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
             <div className={`w-full text-lg before:content-["اخطار:"] before:text-red-400 before:mx-1`}>
                 قبل از باز کردن برنامه جدید، وضعیت برنامه فعلی را مشخص کنید 
             </div>
-            <div className={"flex items-center justify-around mt-10 gap-2"}>
+            <div className={"flex items-center justify-around mt-10 gap-4"}>
                 
                 <Button
                     title="ذخیره کردن"
@@ -26,7 +31,7 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
                     iconHeight="1.6rem"
                     outlineColor="lightgray"
                     classNames={{
-                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200",
+                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200 ring-1 ring-gray-400 shadow-md shadow-gray-300",
                         section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                     }}
                     onClick={() => !disableSave && handleSaveFile("save")}
@@ -41,7 +46,7 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
                     iconHeight="1.6rem"
                     outlineColor="lightgray"
                     classNames={{
-                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200",
+                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200 ring-1 ring-gray-400 shadow-md shadow-gray-300",
                         section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                     }}
                     onClick={() => !disableSave && handleSaveFile("saveAs")}
@@ -56,7 +61,7 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
                     iconHeight="1.6rem"
                     outlineColor="lightgray"
                     classNames={{
-                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200",
+                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200 ring-1 ring-gray-400 shadow-md shadow-gray-300",
                         section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                     }}
                     onClick={() => handleSaveFile()}
@@ -71,7 +76,7 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
                     iconHeight="1.6rem"
                     outlineColor="lightgray"
                     classNames={{
-                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200",
+                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200 ring-1 ring-gray-400 shadow-md shadow-gray-300",
                         section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                     }}
                     onClick={() => {
@@ -90,112 +95,178 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
 export function AddFilter() {
 
     const filterTypeItem = [
-        {id: 1, name: "دیپ لرنینگ", value: "DEEP"},
-        {id: 2, name: "سایز", value: "SIZE"},
-        {id: 3, name: "تک بعدی", value: "LINE"},
-        // {id: 4, name: "دو بعدی", value: "SCATTER"},
+        {id: 1, name: "دیپ لرنینگ", value: "DEEP", disable: true},
+        {id: 2, name: "سایز", value: "SIZE", disable: false},
+        {id: 3, name: "تک بعدی", value: "LINE", disable: false},
+        {id: 4, name: "دو بعدی", value: "SCATTER", disable: false},
     ]
 
-    const [appData, setAppData] = useRecoilState(AppDataState)
+    const navigate = useNavigate()
+    const interval = useRef(null)
+    const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
     const [histsData, setHistsData] = useRecoilState(HistsDataState)
+    const [chartType, setChartType] = useState("")
+    const [progress, setProgress] = useRecoilState(ProgressState)
+    const [filters, setFilters] = useRecoilState(FilterState)
+    const [appData, setAppData] = useRecoilState(AppDataState)
+    const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
     const [value, setValue] = useState({
         filter_name: "",
         influenceTop: "0",
         influenceDown: "0",
-        filter_type: "FIlterType",
+        filter_type: "",
         size_type: "",
-        chart_type: ""
-    }) 
-    
+        chart_type: "",
+    })
     const [focus, setFocus] = useState({
         filter_name: false,
         filter_type: false,
+        size_type: false,
+        chart_type: false,
     })
-
     const [error, setError] = useState({
         filter_name: "",
         filter_type: "",
+        size_type: "",
+        chart_type: "",
     })
-
-
     const changeHandler = (e: any) => {
+        const inputName = e.target.name
+        if (inputName === "chart_type") {
+            setChartType(e.target.value)
+        } else {
+            setValue({
+                ...value,
+                [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value
+            })
+        }
+    }
+    
+    useEffect(() => {
         setValue({
             ...value,
-            [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value
+            chart_type: chartType
         })
-    }
+    }, [chartType])
 
-    const FilterTypeComponent = appData.filter_type === "SCATTER" ? 
-        FilterTypeForm[appData.filter_type as "SCATTER"] : 
-        FilterTypeForm[value.filter_type as "FIlterType"]
+    const FilterTypeComponent = FilterTypeForm[value.filter_type as "SCATTER"]
+
+    // const FilterTypeComponent = appData.filter_type === "SCATTER" ? 
+    //     FilterTypeForm[appData.filter_type as "SCATTER"] : 
+    //     FilterTypeForm[value.filter_type as "Radio"]
 
     const filterTypeComponentProps = {
         SCATTER: {
-            value,
-            setValue,
-            name: "filter_type",
-            title: "نوع فیلتر",
-            changeHandler,
-            error: error.filter_type,
-            focus: focus.filter_type,
-            filterTypeItem
-        },
-        DEEP: {
-            value,
-            setValue,
-            name: "filter_type",
-            title: "نوع فیلتر",
-            changeHandler,
-            error: error.filter_type,
-            focus: focus.filter_type,
-            filterTypeItem
+            value, 
+            setValue
         },
         SIZE: {
-            value,
-            setValue,
-            name: "filter_type",
-            title: "نوع فیلتر",
-            changeHandler,
-            error: error.filter_type,
-            focus: focus.filter_type,
-            filterTypeItem
+            name: "size_type", 
+            title: "نوع نمودار",
+            value, 
+            changeHandler, 
+            error: error.size_type,
+            focus: focus.size_type,
         },
         LINE: {
+            title: "نوع نمودار",
             value,
-            setValue,
-            name: "filter_type",
-            title: "نوع فیلتر",
             changeHandler,
-            error: error.filter_type,
-            focus: focus.filter_type,
-            filterTypeItem,
-            histsData
-        },
-        FIlterType: {
-            value,
-            setValue,
-            name: "filter_type",
-            title: "نوع فیلتر",
-            changeHandler,
-            error: error.filter_type,
-            focus: focus.filter_type,
-            filterTypeItem
+            error: error.chart_type,
+            focus: focus.chart_type,
+        }
+    }
+
+    UseOnDataFromIpcMain("addFilter_chanel", (event: any, data: any) => {
+        if (data.status) {
+            const {filters} = data
+            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
+            setFilterActiveId(findLastFilter)
+            setFilters(filters)
+            setIsModalOpen(false)
+        }
+    })
+
+    UseOnDataFromIpcMain("readConfusion_chanel", async (event: any, data: any) => {
+        if (data.status) {
+            const {filters, appData} = data.data
+            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
+            setFilterActiveId(findLastFilter)
+            setFilters(filters)
+            setAppData(appData)
+            Toast("success", data.message)
+            setIsModalOpen(false)
+        } else {
+            Toast("error", data.message)
+        }
+    })
+
+    UseOnDataFromIpcMain("redHists_chanel", async (event: any, data: any) => {
+        if (data.status) {
+            const {hists, filters, appData} = data.data
+            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
+            setFilterActiveId(findLastFilter)
+            setFilters(filters)
+            setAppData(appData)
+            setHistsData(hists)
+            Toast("success", data.message)
+            setIsModalOpen(false)
+        } else {
+            Toast("error", data.message)
+        }
+    })
+
+    UseOnDataFromIpcMain("progress_chanel", (event: any, data: any) => {
+        const {progress, filter_type} = data
+        setProgress(progress)
+        if (progress >= 100) {
+            clearInterval(interval.current)
+            // setAppData(value)
+            if (filter_type === "SCATTER") {
+                window.api_electron.readConfusion()
+                api_electron.moveMash2DHVFile()
+            } else {
+                api_electron.redHists()
+            }
+        }
+    })
+
+    const submitHandler = () => {
+        if (progress < 100) return
+        if (Object.values(error).join("")) {
+            setFocus({
+                filter_name: true,
+                filter_type: true,
+                size_type: true,
+                chart_type: true,
+            })
+            return Toast("error" , "تمام فیلد هار را پر کنید")
+        } 
+        if (histsData && value.filter_type !== "SCATTER") {
+            window.api_electron.addFilter(value)
+        } else {
+            setProgress(0)
+            window.api_electron.getChartData(value)
+            interval.current = setInterval(() => {
+              api_electron.progress(value.filter_type)
+            } , 500)
         }
     }
 
     useEffect(() => {
-        // for validation
+        setError(AddFilterFormValidation(value))
     }, [value])
 
-    console.log(value)
 
-    const propsCondition = appData.filter_type === "SCATTER" ? 
-        filterTypeComponentProps[appData.filter_type as "SCATTER"] : 
-        filterTypeComponentProps[value.filter_type as "SCATTER"]
+    // console.log(value)
+
+    // const propsCondition = appData.filter_type === "SCATTER" ? 
+    //     filterTypeComponentProps[appData.filter_type as "SCATTER"] : 
+    //     filterTypeComponentProps[value.filter_type as "SCATTER"]
 
     return (
         <div className="w-[1000px]">
-            <h5 className="p-1 border-b border-gray-200">افزودن فیلتر</h5>
+            <h5 className="p-1 border-b border-gray-200 text-xl">افزودن فیلتر</h5>
             <div className="p-2 grid grid-cols-2 gap-10">
                 
                 <Input
@@ -211,23 +282,22 @@ export function AddFilter() {
                     }}
                 />
 
-                <FilterTypeComponent {...propsCondition}/>
+                <FilterTypeForm.Radio
+                    value={value}
+                    error={error.filter_type}
+                    focus={focus.filter_type}
+                    name="filter_type"
+                    title="نوع فیلتر"
+                    changeHandler={changeHandler}
+                    filterTypeItem={filterTypeItem}
+                />
 
-                <Button
-                    title="ایجاد فیلتر جدید"
-                    expand='block'
-                    fill='basic'
-                    shape="round"
-                    color='primary'
-                    iconWidth="2rem"
-                    iconHeight="2rem"
-                    onClick={() => {
-                        // window.api_electron.quit()
-                    }}
-                    classNames={{
-                        container: "!h-12 !flex !items-center !justify-center flex-none px-2 transition-all duration-300 !rounded-md col-span-full",
-                        section: "!text-lg !flex !items-center !justify-center !overflow-hidden"
-                    }}
+                {value.filter_type && <FilterTypeComponent {...filterTypeComponentProps[value.filter_type as "SCATTER"]}/>}
+
+                <ProgressBtn
+                    title="ایجاد فیلتر"
+                    progress={progress}
+                    onSubmit={submitHandler}
                 />
 
             </div>

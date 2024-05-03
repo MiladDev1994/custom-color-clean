@@ -25,7 +25,7 @@ export interface IconColorType extends BasicIconType {
 }
 
 export const IconDefaultProps: IconType | IconColorType = {
-  name: "close",
+  name: "x",
   width: "1.2em",
   height: "1.2em",
   color: "black",

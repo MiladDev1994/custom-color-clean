@@ -308,7 +308,7 @@ const SingleScatterChart = ({
         // onClick={chartClicked}
         title="sdasda"
         data={data}
-        height="220px"
+        height="210px"
         options={{
           plugins: {
             legend: {

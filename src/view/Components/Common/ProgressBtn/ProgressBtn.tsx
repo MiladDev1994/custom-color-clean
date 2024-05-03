@@ -1,7 +1,7 @@
 
 import styles from "./ProgressBtn.module.scss"
 
-const ProgressBar = ({onSubmit, progress}: any) => {
+const ProgressBar = ({onSubmit, progress, title}: any) => {
 
     return (
         <div 
@@ -12,7 +12,7 @@ const ProgressBar = ({onSubmit, progress}: any) => {
                 className={`h-full relative overflow-hidden transition-all duration-300 bg-sky-500 ${progress < 100 ? styles.progress : ""}`} 
                 style={{width: `${progress}%`}} 
             />
-            <span className={`w-full h-full flex items-center justify-center absolute text-xl text-white drop-shadow-md shadow-gray-500`}>{progress < 100 ? `%${progress}` : " ایجاد برنامه"}</span>
+            <span className={`w-full h-full flex items-center justify-center absolute text-xl text-white drop-shadow-md shadow-gray-500`}>{progress < 100 ? `%${progress}` : title}</span>
         </div>
     )
 }

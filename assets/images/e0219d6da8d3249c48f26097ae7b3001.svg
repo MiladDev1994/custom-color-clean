@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42">
+  <g id="Yellow_Stain_-_disable" data-name="Yellow Stain - disable" transform="translate(8883 -8018)">
+    <rect id="Rectangle_5725" data-name="Rectangle 5725" width="42" height="42" transform="translate(-8883 8018)" fill="none"/>
+    <g id="Group_8326" data-name="Group 8326" transform="translate(-8989.5 6912.707)">
+      <g id="Group_4090" data-name="Group 4090" transform="translate(-93.086 625.294)">
+        <g id="pistachio" transform="translate(173.946 430.838) rotate(45)">
+          <path id="Path_3661" data-name="Path 3661" d="M213.71,2.257a5.346,5.346,0,0,0-8.736.014c1.735,2.643,3.232,7.111,4.363,11.295,1.126-4.191,2.622-8.668,4.373-11.308Z" transform="translate(-127.348)" fill="#acacac"/>
+          <path id="Path_3662" data-name="Path 3662" d="M89.267,34.765C85.5,37.13,81.99,55.556,81.99,55.556S78.433,37.2,74.713,34.765c-2.506,1.177-5.121,7.085-5.186,14.321-.07,7.71,3.518,16.786,12.323,16.865S94.4,57.021,94.474,49.31C94.528,43.358,91.751,35.987,89.267,34.765Z" transform="translate(0 -32.686)" fill="#acacac"/>
+        </g>
+        <path id="Path_3678" data-name="Path 3678" d="M213.406,505.442a4.918,4.918,0,0,0,3.431-3.557c.095-1.1-.984-1.223,0-2.541s-1.937-2.271-2.811-.9.586,2.906-.144,3.557S211.532,505.855,213.406,505.442Z" transform="translate(-5 1)" fill="#fff388"/>
+      </g>
+      <path id="Path_3679" data-name="Path 3679" d="M9576.289,5924.133s2.2-3.529,3.445-6.048a17.778,17.778,0,0,0,1.542-4.071,6.953,6.953,0,0,0,.137-.73c.033-.308-2.705-.139-2.514,1.45s-.868,2.878-2.79,4.582S9576.289,5924.133,9576.289,5924.133Z" transform="matrix(1, 0.017, -0.017, 1, -9344.993, -4966.088)" fill="#fff388"/>
+      <path id="Path_3685" data-name="Path 3685" d="M.99,0s2.223,3.714,3.52,6.012S5.65,8.395,5.65,8.395a22.11,22.11,0,0,1,.961,2.254c.033.308-3.2.338-3.01-1.25S2.733,6.521.81,4.817.99,0,.99,0Z" transform="matrix(-0.017, -1, 1, -0.017, 126.177, 1129.03)" fill="#fff388"/>
+    </g>
+  </g>
+</svg>

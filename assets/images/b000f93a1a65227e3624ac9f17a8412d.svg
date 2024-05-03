@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42">
+  <g id="Non_split_shell" data-name="Non split shell" transform="translate(8883 -8393)">
+    <rect id="Rectangle_5729" data-name="Rectangle 5729" width="42" height="42" transform="translate(-8883 8393)" fill="none"/>
+    <g id="Group_8329" data-name="Group 8329" transform="translate(-9309.586 7913.709)">
+      <g id="pistachio" transform="translate(400.946 430.838) rotate(45)">
+        <path id="Path_3662" data-name="Path 3662" d="M83.86,31.993c-4.368-.779-1.409,18.562-1.947,23.684S95.38,27.814,78.92,32.061c-2.506,1.177-9.328,9.789-9.393,17.024-.07,7.71,3.518,16.786,12.323,16.865S94.4,57.021,94.474,49.31C94.528,43.358,86.2,32.714,83.86,31.993Z" transform="translate(0 -32.686)" fill="#3b5eb1"/>
+      </g>
+      <path id="Path_3668" data-name="Path 3668" d="M8558.872,5289.363a28.82,28.82,0,0,1-9.562,13.923c-7.239,5.43-5.431,4.316-5.431,4.316" transform="translate(-8100 -4802)" fill="none" stroke="#fff" stroke-width="0.5"/>
+    </g>
+  </g>
+</svg>

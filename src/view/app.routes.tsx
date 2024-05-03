@@ -3,40 +3,29 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Route, Routes } from "react-router-dom";
 import CreateApp from "./Pages/CreateApp/CreateApp";
-import Inform from "./Pages/Inform/Inform";
-import { AllRecordState, AppDataState, ChartDataState, ChartLengthState, DirectoryValueState, HistsDataState } from "./recoils/GlobalRecoil";
+import Report from "./Pages/Report/Report";
+import { AllRecordState, AppDataState, ChartDataState, ChartLengthState, DirectoryValueState, FilterActiveIdState, FilterState, HistsDataState } from "./recoils/GlobalRecoil";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { UseOnDataFromIpcMain } from "./hooks/UseOnDataFromIpcMain";
 
 const AppRoutes = () => {
 
     const navigate = useNavigate()
-    const [appData, setAppData] = useRecoilState(AppDataState)
-    const setAllRecord = useSetRecoilState(AllRecordState)
-    const setChartData = useSetRecoilState(ChartDataState)
-    const setChartLength = useSetRecoilState(ChartLengthState)
+    const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
     const setHistsData = useSetRecoilState(HistsDataState)
-    // const setDirectoryValue = useSetRecoilState(DirectoryValueState)
+    const [filters, setFilters] = useRecoilState(FilterState)
+    const [appData, setAppData] = useRecoilState(AppDataState)
     
     UseOnDataFromIpcMain("existAppDataChecker_chanel", (event: any, data: any) => {
-        const {appData, confusion, hists} = data
+        const {appData, hists, filters} = data
 
         if (Object.keys(appData).length) {
+            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
+            setFilterActiveId(findLastFilter)
+            setFilters(filters)
             setAppData(appData)
-            if (appData?.filter_type === "SCATTER") {
-                if (Object.keys(confusion).length) {
-                    setAllRecord(confusion.allRecord)
-                    setChartLength(confusion.chartLength)
-                    setChartData(confusion.chartData)
-                    // setDirectoryValue(confusion.directory)
-                    navigate("/inform")
-                }
-            } else {
-                if (Object.keys(hists).length) {
-                    setHistsData(hists)
-                    navigate("/inform")
-                }
-            }
+            setHistsData(hists)
+            navigate("/report")
         } else navigate("/")
     })
 
@@ -48,7 +37,7 @@ const AppRoutes = () => {
     return (
         <Routes>
             <Route path="/" element={<CreateApp />} />
-            <Route path="/inform" element={<Inform />} />
+            <Route path="/report" element={<Report />} />
         </Routes>
     )
 }

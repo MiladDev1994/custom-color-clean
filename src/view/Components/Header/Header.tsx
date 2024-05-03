@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState 
 import Button from "../Common/Button/Button";
 import Modal from "../Common/Modal/Modal";
 import { useState } from "react";
-import { directoryPathSaveStateAtom } from "../../recoils/GlobalRecoil";
+import { FilterActiveIdState, FilterState, IsModalOpenState, ModalTypeState, directoryPathSaveStateAtom } from "../../recoils/GlobalRecoil";
 import { isLoadingSaveFileStateAtom } from "../../recoils/GlobalRecoil";
 import { filtersListStateAtom } from "../../recoils/GlobalRecoil";
 import { generalFilterConfigsListCopyAtom } from "../../recoils/GlobalRecoil";
@@ -17,18 +17,21 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../../../assets/logo.png"
 import { prepareConfigsAndFilters } from "../../../handler/utils/preparersAndConverters";
 import * as ModalType from "../Common/ModalType/ModalType"
+import { UseOnDataFromIpcMain } from "../../hooks/UseOnDataFromIpcMain";
 
-export default function Header() {
+
+
+export default function Header({
+    children,
+    hasSaveAs = true,
+    hasSave = true,
+    hasNew = true,
+    hasOpen = true,
+
+}: any) {
     
     const typeOfSave = { save: "save", saveAs: "saveAS" };
     const typeOfFile = { new: "new", open: "open" };
-    const FILTERS = [
-        {id: 1, name: "فیلتر 1"},
-        {id: 2, name: "فیلتر 2"},
-        {id: 3, name: "فیلتر 3"},
-        {id: 4, name: "فیلتر 4"},
-        {id: 5, name: "فیلتر 5"},
-    ]
         
     const navigate = useNavigate()
 
@@ -38,9 +41,9 @@ export default function Header() {
     const [filters, setFilters] = useRecoilState(filtersListStateAtom);
     const generalFilterConfigsListCopy = useRecoilValue(generalFilterConfigsListCopyAtom);
     const directoryPathSaveReset = useResetRecoilState(directoryPathSaveStateAtom);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
+    const [modalType, setModalType] = useRecoilState(ModalTypeState);
     const [isLoading, setIsLoading] = useState(false);
-    const [modalType, setModalType] = useState<undefined | "NewOrOpen" | "AddFilter">(undefined);
     const [disableSave, setDisableSave] = useState(false);
     const [fileType, setFileType] = useState("");
     const resetFilters = useResetRecoilState(filtersListStateAtom)
@@ -52,13 +55,8 @@ export default function Header() {
     const setDefaultObjectType = useSetRecoilState(defaultObjectTypeStateAtom);
     const setProductType = useSetRecoilState(productTypeStateAtom);
     const productTypes = useRecoilValue(productTypesListStateAtom);
+    const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
 
-
-    
-    const onNewClick = (type: "NewOrOpen" | "AddFilter") => {
-        setModalType(type);
-        setIsModalOpen(true);
-    };
 
     // const renderModalContent = () => {
     //     switch (modalType) {
@@ -310,7 +308,7 @@ export default function Header() {
 
     return (
         <>
-            <div className="w-full flex-none p-2 fixed z-50 m-auto flex flex-col gap-2">
+            <div className="w-full flex-none p-2 fixed z-50 m-auto flex flex-col gap-2 top-0">
                 <div 
                     className="w-full h-12 shadow-xl 
                     shadow-gray-300 max-w-[1900px] flex 
@@ -355,170 +353,207 @@ export default function Header() {
                     </div>
 
                     <div className="flex items-center justify-between gap-2">
-                        <Button
-                            title="Save As"
-                            // icon='box-arrow-in-down'
-                            expand='block'
-                            fill='info'
-                            color='gray'
-                            shape="round"
-                            iconWidth="1.6rem"
-                            iconHeight="1.6rem"
-                            outlineColor="lightgray"
-                            classNames={{
-                                container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
-                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
-                            }}
-                            onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.saveAs)}
-                            // classNames={{container: styles.submitBtn}}
-                        />
-                        <Button
-                            title="Save"
-                            // icon='box-arrow-in-down'
-                            expand='block'
-                            fill='info'
-                            color='gray'
-                            shape="round"
-                            iconWidth="1.6rem"
-                            iconHeight="1.6rem"
-                            outlineColor="lightgray"
-                            classNames={{
-                                container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
-                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
-                            }}
-                            onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.save)}
-                            // classNames={{container: styles.submitBtn}}
-                        />
-                        <Button
-                            title="Open"
-                            // icon='box-arrow-in-down'
-                            expand='block'
-                            fill='info'
-                            color='gray'
-                            shape="round"
-                            iconWidth="1.6rem"
-                            iconHeight="1.6rem"
-                            outlineColor="lightgray"
-                            classNames={{
-                                container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
-                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
-                            }}
-                            onClick={() => {
-                                onNewClick("NewOrOpen");
-                                setFileType(typeOfFile.open);
-                            }}
-                            // classNames={{container: styles.submitBtn}}
-                        />
-                        <Button
-                            title="New"
-                            // icon='box-arrow-in-down'
-                            expand='block'
-                            fill='info'
-                            color='gray'
-                            shape="round"
-                            iconWidth="1.6rem"
-                            iconHeight="1.6rem"
-                            outlineColor="lightgray"
-                            classNames={{
-                                container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
-                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
-                            }}
-                            onClick={() => {
-                                onNewClick("NewOrOpen");
-                                setFileType(typeOfFile.new);
-                            }}
-                            // classNames={{container: styles.submitBtn}}
-                        />
+                        {hasSaveAs && 
+                            <Button
+                                title="Save As"
+                                // icon='box-arrow-in-down'
+                                expand='block'
+                                fill='transparent'
+                                color='gray'
+                                shape="round"
+                                iconWidth="1.6rem"
+                                iconHeight="1.6rem"
+                                outlineColor="lightgray"
+                                disabled={!filterActiveId}
+                                classNames={{
+                                    container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
+                                    section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                                }}
+                                onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.saveAs)}
+                                // classNames={{container: styles.submitBtn}}
+                            />
+                        }
+                        {hasSave &&
+                            <Button
+                                title="Save"
+                                // icon='box-arrow-in-down'
+                                expand='block'
+                                fill='transparent'
+                                color='gray'
+                                shape="round"
+                                iconWidth="1.6rem"
+                                iconHeight="1.6rem"
+                                outlineColor="lightgray"
+                                disabled={!filterActiveId}
+                                classNames={{
+                                    container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
+                                    section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                                }}
+                                onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.save)}
+                                // classNames={{container: styles.submitBtn}}
+                            />
+                        }
+                        {hasOpen &&
+                            <Button
+                                title="Open"
+                                // icon='box-arrow-in-down'
+                                expand='block'
+                                fill='transparent'
+                                color='gray'
+                                shape="round"
+                                iconWidth="1.6rem"
+                                iconHeight="1.6rem"
+                                outlineColor="lightgray"
+                                classNames={{
+                                    container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
+                                    section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                                }}
+                                onClick={() => {
+                                    setModalType("NewOrOpen");
+                                    setIsModalOpen(true);
+                                    setFileType(typeOfFile.open);
+                                }}
+                                // classNames={{container: styles.submitBtn}}
+                            />
+                        }
+                        {hasNew &&
+                            <Button
+                                title="New"
+                                // icon='box-arrow-in-down'
+                                expand='block'
+                                fill='transparent'
+                                color='gray'
+                                shape="round"
+                                iconWidth="1.6rem"
+                                iconHeight="1.6rem"
+                                outlineColor="lightgray"
+                                classNames={{
+                                    container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
+                                    section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                                }}
+                                onClick={() => {
+                                    setModalType("NewOrOpen");
+                                    setIsModalOpen(true);
+                                    setFileType(typeOfFile.new);
+                                }}
+                                // classNames={{container: styles.submitBtn}}
+                            />
+                        }
                         <img src={logo} className="h-full aspect-auto"/>
                     </div>
                 </div>
 
-                <div 
-                    className="w-full h-12 shadow-lg 
-                    shadow-gray-300 max-w-[1900px] flex 
-                    items-center justify-between m-auto px-2 border border-gray-300 
-                    backdrop-blur-lg bg-white bg-opacity-70 rounded-md p-1 gap-2"
-                >
-                    <Button
-                        title="جمع بندی فیلترها"
-                        // icon='box-arrow-in-down'
-                        expand='block'
-                        fill='info'
-                        color='gray'
-                        shape="round"
-                        iconWidth="1.6rem"
-                        iconHeight="1.6rem"
-                        outlineColor="lightgray"
-                        classNames={{
-                            container: "w-36 !h-8 !flex !items-center !justify-center !rounded-md duration-200 !flex-none",
-                            section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
-                        }}
-                        onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.saveAs)}
-                        // classNames={{container: styles.submitBtn}}
-                    />
-                    <div className="h-full flex-auto flex items-center justify-start gap-2 border-l border-r border-gray-300 px-2">
-                        {FILTERS.map(ele => 
-                            <div key={ele.id} className="bg-sky-400 rounded-md flex items-center justify-center h-8 gap-2 px-2 shadow-md cursor-pointer">
-                                <Button
-                                    icon='x'
-                                    expand='block'
-                                    fill='transparent'
-                                    color='gray'
-                                    shape="pill"
-                                    iconWidth="1.6rem"
-                                    iconHeight="1.6rem"
-                                    outlineColor="lightgray"
-                                    classNames={{
-                                        container: "w-5 h-5 !flex !items-center !justify-center duration-200 !flex-none",
-                                        section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
-                                    }}
-                                    onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.saveAs)}
-                                    // classNames={{container: styles.submitBtn}}
-                                />
-                                <span className="text-sm pe-3">{ele.name}</span>
-                            </div>
-                        )}
-                    </div>
-                    <Button
-                        title="افزودن فیلتر"
-                        icon='plus-circle'
-                        expand='block'
-                        fill='transparent'
-                        color='primary'
-                        shape="round"
-                        iconWidth="1.4rem"
-                        iconHeight="1.4rem"
-                        outlineColor="lightgray"
-                        direction="row_reverse"
-                        classNames={{
-                            container: "w-30 !h-8 !flex !items-center !justify-center !rounded-md duration-200 !flex-none",
-                            section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
-                        }}
-                        onClick={() => {
-                            onNewClick("AddFilter");
-                        }}
-                    />
-                </div>
+                <section>{children}</section>
 
                 {isModalOpen && (
                     <Modal
                         isOpen={isModalOpen} 
                         setIsOpen={setIsModalOpen}
-                        // onOverlayClick={() => setFileType("")}
                     >
-                        {/* {renderModalContent()} */}
-                        {/* <ModalType modalType={modalType}/> */}
                         <Component  {...componentProps[modalType]}/>
                     </Modal>
                 )}
             </div>
-            <div className="w-full h-28"/>
+            {/* <div className="w-full h-28"/> */}
         </>
 
     )
 } 
 
 
+export function FiltersHandler() {
+
+    const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
+    const [modalType, setModalType] = useRecoilState(ModalTypeState);
+    const [filters, setFilters] = useRecoilState(FilterState)
+    const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
+
+    UseOnDataFromIpcMain("deleteFilter_chanel", (event: any, data: any) => {
+        if (data.deleted === filterActiveId) {
+            const findLastFilter = data.filters.length ? data.filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
+            setFilterActiveId(findLastFilter)
+        }
+        setFilters(data.filters)
+    })
+    
+    return (
+        <div 
+            className="w-full h-12 shadow-lg 
+            shadow-gray-300 max-w-[1900px] flex 
+            items-center justify-between m-auto px-2 border border-gray-300 
+            backdrop-blur-lg bg-white bg-opacity-70 rounded-md p-1 gap-2"
+        >
+            <Button
+                title="جمع بندی فیلترها"
+                // icon='box-arrow-in-down'
+                expand='block'
+                fill='info'
+                color='gray'
+                shape="round"
+                iconWidth="1.6rem"
+                iconHeight="1.6rem"
+                outlineColor="lightgray"
+                disabled={!filterActiveId}
+                classNames={{
+                    container: "w-36 !h-8 !flex !items-center !justify-center !rounded-md duration-200 !flex-none",
+                    section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                }}
+                // onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.saveAs)}
+                // classNames={{container: styles.submitBtn}}
+            />
+            <div className="h-full flex-auto flex items-center justify-start gap-2 border-l border-r border-gray-300 px-2">
+                {filters.map((ele: any) => 
+                    <div 
+                        key={ele.id} 
+                        className={`${ele.id === filterActiveId ? "bg-sky-400 ring-sky-500" : "bg-gray-200 ring-gray-300"}
+                        ring-1 rounded-md flex items-stretch justify-center h-8 shadow-md cursor-pointer transition-all duration-300`}
+                        
+                    >
+                        <Button
+                            icon='x'
+                            expand='block'
+                            fill='transparent'
+                            color='gray'
+                            shape="pill"
+                            iconWidth="1.6rem"
+                            iconHeight="1.6rem"
+                            outlineColor="lightgray"
+                            // iconColor={`${ele.id === filterActiveId ? "white" : ""}`}
+                            classNames={{
+                                container: "w-8 !flex !items-center !justify-center duration-200 !flex-none",
+                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                            }}
+                            onClick={() => api_electron.deleteFilter(ele.id)}
+                            // classNames={{container: styles.submitBtn}}
+                        />
+                        <span className="text-sm px-3 flex items-center justify-center " onClick={() => setFilterActiveId(ele.id)}>{ele.filter_name}</span>
+                    </div>
+                )}
+            </div>
+            <Button
+                title="افزودن فیلتر"
+                icon='plus-circle'
+                expand='block'
+                fill='transparent'
+                color='primary'
+                shape="round"
+                iconWidth="1.4rem"
+                iconHeight="1.4rem"
+                outlineColor="lightgray"
+                direction="row_reverse"
+                classNames={{
+                    container: "w-30 !h-8 !flex !items-center !justify-center !rounded-md duration-200 !flex-none",
+                    section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                }}
+                onClick={() => {
+                    setModalType("AddFilter");
+                    setIsModalOpen(true);
+                }}
+            />
+        </div>
+
+    )
+}
 
 // const ModalType = ({modalType}: {modalType: "New"}) => {
 

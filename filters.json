@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "filter_type": "size",
+        "chart_type": "vertical", // اگر نمودار انتخاب شده بود
+        "filter": { // اگر فیلتری سابمیت شده بود
+            "folder_number": 20,
+            "filter_effect": 50,
+            "all_effect": true,
+            "result": {}
+        }
+
+    }
+]

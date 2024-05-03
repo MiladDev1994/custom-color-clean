@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42">
+  <g id="Mold" transform="translate(8883 -8683)">
+    <rect id="Rectangle_5732" data-name="Rectangle 5732" width="42" height="42" transform="translate(-8883 8683)" fill="none"/>
+    <g id="Group_8325" data-name="Group 8325" transform="translate(-9049 7107.593)">
+      <g id="Group_4107" data-name="Group 4107" transform="translate(-33.586 1095.407)">
+        <g id="pistachio" transform="translate(173.946 430.838) rotate(45)">
+          <path id="Path_3661" data-name="Path 3661" d="M213.71,2.257a5.346,5.346,0,0,0-8.736.014c1.735,2.643,3.232,7.111,4.363,11.295,1.126-4.191,2.622-8.668,4.373-11.308Z" transform="translate(-127.348)" fill="#3b5eb1"/>
+          <path id="Path_3662" data-name="Path 3662" d="M89.267,34.765C85.5,37.13,81.99,55.556,81.99,55.556S78.433,37.2,74.713,34.765c-2.506,1.177-5.121,7.085-5.186,14.321-.07,7.71,3.518,16.786,12.323,16.865S94.4,57.021,94.474,49.31C94.528,43.358,91.751,35.987,89.267,34.765Z" transform="translate(0 -32.686)" fill="#3b5eb1"/>
+        </g>
+      </g>
+      <g id="Group_4109" data-name="Group 4109" transform="translate(-33.586 1095.407)">
+        <g id="pistachio-2" data-name="pistachio" transform="translate(173.946 430.838) rotate(45)">
+          <path id="Path_3662-2" data-name="Path 3662" d="M89.267,34.765C85.5,37.13,94.4,57.021,94.474,49.31,94.528,43.358,91.751,35.987,89.267,34.765Z" transform="translate(0 -32.686)" fill="#20386f"/>
+        </g>
+      </g>
+      <g id="Group_4108" data-name="Group 4108" transform="translate(-33.586 1095.407)">
+        <g id="pistachio-3" data-name="pistachio" transform="translate(173.946 430.838) rotate(45)">
+          <path id="Path_3662-3" data-name="Path 3662" d="M77.995,57.554c-3.081-4.216-8.4-15.7-8.469-8.469-.07,7.71,3.518,16.786,12.323,16.865S81.076,61.77,77.995,57.554Z" transform="translate(0 -32.686)" fill="#20386f"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
