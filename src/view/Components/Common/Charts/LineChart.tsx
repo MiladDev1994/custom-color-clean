@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Chart as ChartJS, Legend } from "chart.js/auto";
+import { Chart as ChartJS, registerables } from 'chart.js';
 import { Chart, Line } from "react-chartjs-2";
 import { useRef } from "react";
+
+ChartJS.register(...registerables);
+
 
 const LineChart = ({
   chartKey = "",
@@ -18,7 +21,7 @@ const LineChart = ({
   horizontalLineCanvasPos,
   extendedLines = [],
   extendedLinesCanvasPos = [],
-}) => {
+}: any) => {
   const [data, setData] = useState({
     labels: [1, 2, 3],
     datasets: [],
@@ -28,7 +31,7 @@ const LineChart = ({
   const [yMax, setYMax] = useState(Number.MIN_SAFE_INTEGER);
   const [yMin, setYMin] = useState(Number.MAX_SAFE_INTEGER);
 
-  const chartClicked = (event) => {
+  const chartClicked = (event: any) => {
     // chart area
     let chart = chartRef.current;
     let yTop = chart.chartArea.top;
@@ -76,16 +79,16 @@ const LineChart = ({
   };
 
   useEffect(() => {
-    let yValues = datas.map((item) => item.data.map((value) => value.y.toPrecision(6))).flat();
+    let yValues = datas.map((item: any) => item.data.map((value: any) => value.y.toPrecision(6))).flat();
     // console.log("yValues", yValues);
     
     let yMaxValue = yValues?.reduce(
-      (a, b) => Math.max(a, b),
+      (a: any, b: any) => Math.max(a, b),
       Number.MIN_SAFE_INTEGER
     );
     // yMaxValue = yValues[1]?.reduce((a, b) => Math.max(a, b), yMaxValue);
     let yMinValue = yValues?.reduce(
-      (a, b) => Math.min(a, b),
+      (a: any, b: any) => Math.min(a, b),
       Number.MAX_SAFE_INTEGER
     );
     // yMinValue = yValues?.reduce((a, b) => Math.min(a, b), yMinValue);
@@ -98,7 +101,7 @@ const LineChart = ({
     });
   }, [labels, datas]);
 
-  const setVertAndExtLinesIntersects = (extLines, extLinesCanvas, vLines, vLinesCanvas) => {
+  const setVertAndExtLinesIntersects = (extLines: any, extLinesCanvas: any, vLines: any, vLinesCanvas: any) => {
     let intersect1 = intersectPoint(
       [extLines[0],extLines[1]],vLines[0]);
     let intersect2 = intersectPoint(
@@ -121,7 +124,7 @@ const LineChart = ({
     ctx.save();
     ctx.setLineDash([]);
     
-    verticalLinesCanvasPos.forEach((l) => {
+    verticalLinesCanvasPos.forEach((l: any) => {
       ctx.beginPath();
       ctx.moveTo(l, yTop);
       ctx.lineTo(l, yBottom);
@@ -154,16 +157,16 @@ const LineChart = ({
 
   useEffect(() => {
     let chart = chartRef.current;
-    let vlcp = [];
+    let vlcp: any = [];
     let hlcp;
-    let elcp = [];
+    let elcp: any = [];
     const setTimeoutId = setTimeout(() => {
       if(verticalLinesCanvasPos.length === 0 && verticalLines.length > 0) {
         if(!chart?.scales.x || !datas[0]) return;
   
-        let index = datas[0].data.findIndex(item => item.x === Math.floor(verticalLines[0]));
+        let index = datas[0].data.findIndex((item: any) => item.x === Math.floor(verticalLines[0]));
         let x1 = chart.scales.x.getPixelForValue(datas[0].data[index].x);
-        index = datas[0].data.findIndex(item => item.x === Math.floor(verticalLines[1]));
+        index = datas[0].data.findIndex((item: any) => item.x === Math.floor(verticalLines[1]));
         let x2 = chart.scales.x.getPixelForValue(datas[0].data[index].x);
         vlcp.push(x1)
         vlcp.push(x2)
@@ -177,9 +180,9 @@ const LineChart = ({
       }
       if(extendedLinesCanvasPos.length === 0 && extendedLines.length > 0) {
         if(!chart.scales.x) return;
-        let index = datas[0].data.findIndex(item => item.x === Math.floor(extendedLines[0].x));
+        let index = datas[0].data.findIndex((item: any) => item.x === Math.floor(extendedLines[0].x));
         let x1 = chart.scales.x.getPixelForValue(datas[0].data[index].x);
-        index = datas[0].data.findIndex(item => item.x === Math.floor(extendedLines[1].x));
+        index = datas[0].data.findIndex((item: any) => item.x === Math.floor(extendedLines[1].x));
         let x2 = chart.scales.x.getPixelForValue(datas[0].data[index].x);
         let  y1 = chart.scales.y.getPixelForValue(extendedLines[0].y);
         let  y2 = chart.scales.y.getPixelForValue(extendedLines[1].y);
@@ -216,7 +219,7 @@ const LineChart = ({
     drawLines();
   }, [updateCount]);
 
-  const redrawLines = (chart, vLines, hlines, eLines, goodDirection, isGoodSelected) => {
+  const redrawLines = (chart: any, vLines: any, hlines: any, eLines: any, goodDirection: any, isGoodSelected: any) => {
     const ctx = chart.ctx;
     let top = chart.chartArea.top;
     let bottom = chart.chartArea.bottom;
@@ -224,7 +227,7 @@ const LineChart = ({
     let right = chart.chartArea.right;
     ctx.save();
     
-    vLines.forEach((l) => {
+    vLines.forEach((l: any) => {
       ctx.beginPath();
       ctx.setLineDash([]);
       ctx.moveTo(l, top);
@@ -284,8 +287,8 @@ const LineChart = ({
     (eLines.length === 2 && vLines.length === 2)) { 
       let endPointY = 0;
       let goodY2 = 0;
-      let intersect1 = {x:0,y:0};
-      let intersect2 = {x:0,y:0};
+      let intersect1: any = {x:0,y:0};
+      let intersect2: any = {x:0,y:0};
       endPointY = goodDirection ? bottom : top;
       // if (goodDirection) {
       //   endPointY = bottom;
@@ -314,7 +317,7 @@ const LineChart = ({
       ctx.lineTo(right, hlines);
     }
   };
-  const test = (chart) => {
+  const test = (chart: any) => {
     const ctx = chart.ctx;
     let xAxis = chart.scales.x;
     if(xAxis) {
@@ -368,6 +371,8 @@ const LineChart = ({
         type="line"
         onClick={chartClicked}
         data={data}
+        width="1250px"
+        height="800px"
         options={{
           plugins: {
             legend: {
@@ -375,7 +380,7 @@ const LineChart = ({
               position: "bottom",
               align: "center",
             },
-            tooltip: false,
+            // tooltip: false,
           },
           scales: {
             y: {
@@ -397,8 +402,8 @@ const LineChart = ({
           let bottom = chart.chartArea.bottom;
           let right = chart.chartArea.right;
           let left = chart.chartArea.left;
-          let x = event.nativeEvent.offsetX;
-          let y = event.nativeEvent.offsetY;
+          let x: any = event.nativeEvent.offsetX;
+          let y: any = event.nativeEvent.offsetY;
           if (x >= left && x <= right && y >= top && y <= bottom) {
             chart.update("none");
             ctx.strokeStyle = "#CCCCCC";
@@ -463,7 +468,7 @@ const LineChart = ({
 
 export default LineChart;
 
-const toBorder = (x1, y1, x2, y2, left, top, right, bottom) => {
+const toBorder = (x1: any, y1: any, x2: any, y2: any, left: any, top: any, right: any, bottom: any) => {
   var dx, dy, py, vx, vy;
   vx = x2 - x1;
   vy = y2 - y1;
@@ -485,13 +490,13 @@ const toBorder = (x1, y1, x2, y2, left, top, right, bottom) => {
 
 
 const intersectPoint = (line=[{x:0,y:0},{x:5,y:5}], intersectX=1) => {
-  let intersect = {};
+  let intersect: any = {};
   intersect.x = intersectX;
   intersect.y = ((line[1].y - line[0].y) / (line[1].x - line[0].x)) * ((intersectX - line[0].x)) + line[0].y;
   return intersect;
 }
 
-const grdCreator = (chartKey, ctx, x1, x2) => {
+const grdCreator = (chartKey: any, ctx: any, x1: any, x2: any) => {
   let grd = ctx.createLinearGradient(x1, 0, x2, 0);
   switch(chartKey) {
     case "Hue":

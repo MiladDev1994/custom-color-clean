@@ -20,7 +20,7 @@ const AppRoutes = () => {
         const {appData, hists, filters} = data
 
         if (Object.keys(appData).length) {
-            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
+            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : {}
             setFilterActiveId(findLastFilter)
             setFilters(filters)
             setAppData(appData)

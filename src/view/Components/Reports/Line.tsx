@@ -1,16 +1,25 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRecoilState } from "recoil"
-import { Filter1DState } from "../../recoils/GlobalRecoil"
+import { Filter1DState, FilterActiveIdState, FilterState, HistsDataState, activeIndexStateAtom } from "../../recoils/GlobalRecoil"
 import Range from "../Common/Range/Range"
 import Button from "../Common/Button/Button"
 import Select from "../Common/Select/Select"
+import LineChart from "../Common/Charts/LineChart"
 
 
 
 const LINE = () => {
 
     const [showFilter, setShowFilter] = useState(false)
-    const [filter1D, setFilter1D] = useRecoilState(Filter1DState)
+    const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
+    const [filters, setFilters] = useRecoilState(FilterState)
+    const [histsData, setHistsData] = useRecoilState(HistsDataState)
+    const [chartUpdateCount, setChartUpdateCount] = useState(0);
+    const [lineTypeToDraw, setLineTypeToDraw] = useState(0);
+    const [goodDirection, setGoodDirection] = useState(0);
+    const [isGoodSelected, setIsGoodSelected] = useState(0);
+    const [activeIndex, setActiveIndex] = useRecoilState(activeIndexStateAtom);
+    const [datasets, setDatasets] = useState<any>({});
 
     const numberOfFolder = {
       id: 2, 
@@ -32,6 +41,119 @@ const LINE = () => {
         all_filter_effect: true
     })
 
+    
+  const convertDatasetToChartData = (datas: any) => {
+    //chart data for line plot
+    return [
+        {
+        label: "توزیع پایین بار خوب",
+        backgroundColor: "rgba(0, 199, 129,0.2)",
+        borderColor: "rgb(0, 199, 129)",
+        borderDash: [1,2],
+        borderDashOffset: 2,
+        borderWidth: 2,
+        pointStyle: false,
+        hoverRadius: 0,
+        pointHoverRadius: 0,
+        hitRadius: 0,
+        pointHitRadius: 0,
+        pointRadius: 0,
+        data: datas?.HealthyM.map((item: any, index: any) => ({ x: index, y: (item - (datas?.HealthyStd?.[index]??0)) })) ?? [],
+        },
+        {
+        label: "نمودار بار خوب",
+        backgroundColor: "rgba(0, 199, 129,0.2)",
+        borderColor: "rgb(0, 199, 129)",
+        borderWidth: 2,
+        pointStyle: false,
+        hoverRadius: 0,
+        pointHoverRadius: 0,
+        hitRadius: 0,
+        pointHitRadius: 0,
+        pointRadius: 0,
+        data: datas?.HealthyM.map((item: any, index: any) => ({ x: index, y: (item) })) ?? [],
+        },
+        {
+        label: "توزیع بالا بار خوب",
+        backgroundColor: "rgba(0, 199, 129,0.2)",
+        borderColor: "rgb(0, 199, 129)",
+        borderDash: [1,2],
+        borderDashOffset: 2,
+        borderWidth: 2,
+        pointStyle: false,
+        hoverRadius: 0,
+        pointHoverRadius: 0,
+        hitRadius: 0,
+        pointHitRadius: 0,
+        pointRadius: 0,
+        data: datas?.HealthyM.map((item: any, index: any) => ({ x: index, y: (item + (datas?.HealthyStd?.[index]??0))})) ?? [],
+        },
+        {
+        label: "توزیع پایین بار بد",
+        backgroundColor: "rgba(255, 64, 64, 0.2)",
+        borderColor: "rgb(255, 64, 64)",
+        borderDash: [1,2],
+        borderDashOffset: 2,
+        borderWidth: 2,
+        pointStyle: false,
+        hoverRadius: 0,
+        pointHoverRadius: 0,
+        hitRadius: 0,
+        pointHitRadius: 0,
+        pointRadius: 0,
+        data: datas?.NonHealthyM.map((item: any, index: any) => ({ x: index, y: (item - (datas?.NonHealthyStd?.[index]??0)) })) ?? [],
+        },
+        {
+        label: "نمودار بار بد",
+        backgroundColor: "rgba(255, 64, 64, 0.2)",
+        borderColor: "rgb(255, 64, 64)",
+        borderWidth: 2,
+        pointStyle: false,
+        hoverRadius: 0,
+        pointHoverRadius: 0,
+        hitRadius: 0,
+        pointHitRadius: 0,
+        pointRadius: 0,
+        data: datas?.NonHealthyM.map((item: any, index: any) => ({ x: index, y: (item) })) ?? [],
+        },
+        {
+        label: "توزیع بالا بار بد",
+        backgroundColor: "rgba(255, 64, 64, 0.2)",
+        borderColor: "rgb(255, 64, 64)",
+        borderDash: [1,2],
+        borderDashOffset: 2,
+        borderWidth: 2,
+        pointStyle: false,
+        hoverRadius: 0,
+        pointHoverRadius: 0,
+        hitRadius: 0,
+        pointHitRadius: 0,
+        pointRadius: 0,
+        data: datas?.NonHealthyM.map((item: any, index: any) => ({ x: index, y: (item + (datas?.NonHealthyStd?.[index]??0)) })) ?? [],
+        },
+    ];
+};
+
+
+
+useEffect(() => {
+    // console.log(allDatasets)
+    let datas: any = {};
+    // if (!Object.keys(allDatasets).includes("error")) {
+      Object.keys(histsData)?.map((key) => {
+        if (key) {
+          datas[key] = convertDatasetToChartData(histsData[key]);
+        }
+      });
+    // } else {
+    //   navigate("/");
+    //   console.log(allDatasets)
+    // }
+    setDatasets(datas);
+  }, [histsData]);
+  
+
+    console.log(datasets)
 
     return (
         <div className="w-full flex items-stretch p-3 gap-2">
@@ -119,29 +241,75 @@ const LINE = () => {
             </div>
 
             <div className="flex-auto p-2 bg-white border border-gray-300 rounded-md shadow-xl shadow-gray-300 flex items-center justify-center">
-                {/* {filter1D.length ?
-                    <h1>Chart</h1>:
-                    <div className="flex flex-col items-center justify-center">
-                        <img src={chartIcon} className="w-72"/>
-                        <Button
-                            title="نوع نمودار را انتخاب کنید"
-                            expand='block'
-                            fill='basic'
-                            shape="round"
-                            color='primary'
-                            iconWidth="2rem"
-                            iconHeight="2rem"
-                            onClick={() => {
-                                // window.api_electron.quit()
-                            }}
-                            classNames={{
-                                // container: styles.windowBtn
-                                container: "w-[300px] !flex !items-center !justify-center flex-none px-2 transition-all duration-300 !rounded-md m-3",
-                                section: "!text-lg flex items-center justify-center !overflow-hidden"
-                            }}
-                        />
-                    </div>
-                } */}
+                <LineChart
+                chartKey={filterActiveId.chart_type}
+                labels={[
+                    ...Array(
+                        histsData?.[filterActiveId?.chart_type]?.["HealthyM"]
+                        ?.length
+                    ).keys(),
+                ]}
+                datas={datasets[filterActiveId?.chart_type] ?? []}
+                lineTypeToDraw={lineTypeToDraw}
+                updateCount={chartUpdateCount}
+                setUpdateCount={setChartUpdateCount}
+                goodDirection={goodDirection}
+                isGoodSelected={isGoodSelected}
+                setLines={(lineType: any, canvasPos: any, lines: any) => {
+                    let tempFilter = { ...filterActiveId };
+                    tempFilter.data = { ...tempFilter.data };
+                    if (lineType === 0) {
+                    tempFilter.data.verticalLines = lines;
+                    tempFilter.data.verticalLinesCanvasPos = canvasPos;
+                    } else if (lineType === 1) {
+                    tempFilter.data.extendedLines = [];
+                    tempFilter.data.extendedLinesCanvasPos = [];
+                    tempFilter.data.horizontalLine = lines;
+                    tempFilter.data.horizontalLineCanvasPos = canvasPos;
+                    } else if (lineType === 2) {
+                    tempFilter.data.horizontalLine = undefined;
+                    tempFilter.data.horizontalLineCanvasPos = undefined;
+                    if (
+                        tempFilter?.data?.extendedLines === undefined ||
+                        tempFilter.data.extendedLines?.length >= 2
+                    ) {
+                        tempFilter.data.extendedLines = [];
+                        tempFilter.data.extendedLinesCanvasPos = [];
+                    } else {
+                        tempFilter.data.extendedLines = [
+                        ...tempFilter.data.extendedLines,
+                        ];
+                        tempFilter.data.extendedLinesCanvasPos = [
+                        ...tempFilter.data.extendedLinesCanvasPos,
+                        ];
+                    }
+                    tempFilter.data.extendedLines.push(lines);
+                    tempFilter.data.extendedLinesCanvasPos.push(canvasPos);
+                    } else if (lineType === 3) {
+                    tempFilter.data.horizontalLine = undefined;
+                    tempFilter.data.horizontalLineCanvasPos = undefined;
+                    tempFilter.data.extendedLines = lines;
+                    tempFilter.data.extendedLinesCanvasPos = canvasPos;
+                    }
+                    let tempFilters: any = [...filters];
+                    tempFilters[activeIndex] = tempFilter;
+                    setFilters(tempFilters);
+                    setChartUpdateCount(chartUpdateCount + 1);
+                }}
+                verticalLines={filterActiveId?.data?.verticalLines}
+                verticalLinesCanvasPos={
+                    filterActiveId?.data?.verticalLinesCanvasPos
+                }
+                horizontalLine={filterActiveId?.data?.horizontalLine}
+                horizontalLineCanvasPos={
+                    filterActiveId?.data?.horizontalLineCanvasPos
+                }
+                extendedLines={filterActiveId?.data?.extendedLines}
+                extendedLinesCanvasPos={
+                    filterActiveId?.data?.extendedLinesCanvasPos
+                }
+                />
+
             </div>
         </div>
     )

@@ -11,12 +11,12 @@ const featurePath = ENV.FEATURE_ANALYZER_PATH
 
 
 export async function ONE(event: any, value: any) {
-    const { app_name, filter_name, healthy, not_healthy, product_type, app_type, removeBlueBack, filter_type, size_type, chart_type, influenceTop, influenceDown } = value
-    const appData = APP_DATA.getAppData()
+  const { app_name, filter_name, healthy, not_healthy, product_type, app_type, removeBlueBack, filter_type, size_type, chart_type, influenceTop, influenceDown } = value
+  const appData = APP_DATA.getAppData()
 
 
     let isBackgroundBlue = false;
-    if (appData) {
+    if (Object.keys(appData).length) {
       switch (appData.product_type.toUpperCase()) {
         case "MUNG":
         case "SUNFLOWERSEED":
@@ -32,19 +32,18 @@ export async function ONE(event: any, value: any) {
       }
     }
 
-
     let config = {
       "_instruction": { "xml": { "_attributes": { "version": "1.0" } } },
       "opencv_storage": {
-        "healthy": appData ? `"${appData?.healthy.replace(/\\/g, "/")}"` : `"${healthy.replace(/\\/g, "/")}"`,
-        "nonhealthy": appData ? `"${appData?.not_healthy.replace(/\\/g, "/")}"` : `"${not_healthy.replace(/\\/g, "/")}"`,
-        "ObjectType": appData ? appData?.product_type.toLowerCase() : product_type.toLowerCase(),
+        "healthy": appData?.healthy ? `"${appData?.healthy.replace(/\\/g, "/")}"` : `"${healthy.replace(/\\/g, "/")}"`,
+        "nonhealthy": appData?.not_healthy ? `"${appData?.not_healthy.replace(/\\/g, "/")}"` : `"${not_healthy.replace(/\\/g, "/")}"`,
+        "ObjectType": appData?.product_type ? appData?.product_type.toLowerCase() : product_type.toLowerCase(),
         "IsBackgroundBlue" : isBackgroundBlue,
         "AddHoleHistogram": true,
-        "removeBlueBack": appData ? appData?.removeBlueBack :  removeBlueBack
+        "removeBlueBack": appData?.removeBlueBack ? appData?.removeBlueBack :  removeBlueBack
       }
     };
-
+    
     await RemoveFile(path.join(featurePath, 'config.xml'))
     await RemoveFile(path.join(featurePath, 'Progress.txt'))
     await RemoveFile(path.join(featurePath, 'hists.json'))

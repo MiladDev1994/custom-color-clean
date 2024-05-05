@@ -1,10 +1,6 @@
 import { RecoilState, atom, selector } from "recoil";
 
 
-
-
-
-
 // const { persistAtom } = recoilPersist();
 // export const programNameStateAtom = atom({
 //   key: "programNameStateAtom",
@@ -220,13 +216,74 @@ export const AppDataState: RecoilState<any> = atom({
 });
 
 
+// 2D
+
+
+
+
+export const IntensityFilterState: RecoilState<any> = atom({
+  key: 'IntensityFilterState',
+  default: [],
+});
+
+
+export const AreaFilterState: RecoilState<any> = atom({
+  key: 'َAreaFilterState',
+  default: [],
+});
+
+
+export const IntensityChartValueSelected: RecoilState<any> = atom({
+  key: 'IntensityChartValueSelected',
+  default: [],
+});
+
+export const PointSelectedData: RecoilState<any> = atom({
+    key: 'PointSelectedData',
+    default: {
+        e0: undefined, 
+        e1: undefined, 
+        e4: undefined, 
+        e2: undefined, 
+        e3: undefined, 
+        e5: undefined, 
+        e6: undefined, 
+        e7: undefined, 
+        e8: undefined,
+        numsLength: 0
+    },
+});
+
+export const FilesPathState: RecoilState<any> = atom({
+    key: 'FilesPathState',
+    default: {},
+});
 
 
 
 
 
 
+export const AreaChartValueSelected: RecoilState<any> = atom({
+  key: 'AreaChartValueSelected',
+  default: [],
+});
 
+export const IdealPointMatris: RecoilState<any> = atom({
+  key: 'IdealPointMatris',
+  default: {},
+});
+
+
+// 1D
+
+
+export const activeIndexStateAtom: RecoilState<any> = atom({
+  key: "activeIndexStateAtom",
+  default: 0,
+});
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const WorksState: RecoilState<any> = atom({
   key: 'WorksState',
@@ -235,7 +292,7 @@ export const WorksState: RecoilState<any> = atom({
 
 export const FilterActiveIdState: RecoilState<any> = atom({
   key: 'FilterActiveIdState',
-  default: 0,
+  default: {},
 });
 
 export const AllRecordState: RecoilState<any> = atom({

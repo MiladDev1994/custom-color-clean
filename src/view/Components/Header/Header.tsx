@@ -364,7 +364,7 @@ export default function Header({
                                 iconWidth="1.6rem"
                                 iconHeight="1.6rem"
                                 outlineColor="lightgray"
-                                disabled={!filterActiveId}
+                                disabled={!filterActiveId.id}
                                 classNames={{
                                     container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
                                     section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
@@ -384,7 +384,7 @@ export default function Header({
                                 iconWidth="1.6rem"
                                 iconHeight="1.6rem"
                                 outlineColor="lightgray"
-                                disabled={!filterActiveId}
+                                disabled={!filterActiveId.id}
                                 classNames={{
                                     container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
                                     section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
@@ -469,8 +469,8 @@ export function FiltersHandler() {
     const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
 
     UseOnDataFromIpcMain("deleteFilter_chanel", (event: any, data: any) => {
-        if (data.deleted === filterActiveId) {
-            const findLastFilter = data.filters.length ? data.filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
+        if (data.deleted === filterActiveId.id) {
+            const findLastFilter = data.filters.length ? data.filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
             setFilterActiveId(findLastFilter)
         }
         setFilters(data.filters)
@@ -493,7 +493,7 @@ export function FiltersHandler() {
                 iconWidth="1.6rem"
                 iconHeight="1.6rem"
                 outlineColor="lightgray"
-                disabled={!filterActiveId}
+                disabled={!filterActiveId.id}
                 classNames={{
                     container: "w-36 !h-8 !flex !items-center !justify-center !rounded-md duration-200 !flex-none",
                     section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
@@ -505,7 +505,7 @@ export function FiltersHandler() {
                 {filters.map((ele: any) => 
                     <div 
                         key={ele.id} 
-                        className={`${ele.id === filterActiveId ? "bg-sky-400 ring-sky-500" : "bg-gray-200 ring-gray-300"}
+                        className={`${ele.id === filterActiveId.id ? "bg-sky-400 ring-sky-500" : "bg-gray-200 ring-gray-300"}
                         ring-1 rounded-md flex items-stretch justify-center h-8 shadow-md cursor-pointer transition-all duration-300`}
                         
                     >
@@ -526,7 +526,7 @@ export function FiltersHandler() {
                             onClick={() => api_electron.deleteFilter(ele.id)}
                             // classNames={{container: styles.submitBtn}}
                         />
-                        <span className="text-sm px-3 flex items-center justify-center " onClick={() => setFilterActiveId(ele.id)}>{ele.filter_name}</span>
+                        <span className="text-sm px-3 flex items-center justify-center " onClick={() => setFilterActiveId(ele)}>{ele.filter_name}</span>
                     </div>
                 )}
             </div>

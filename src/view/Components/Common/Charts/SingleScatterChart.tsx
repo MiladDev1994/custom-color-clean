@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useRef } from "react";
-import { Chart as ChartJS} from 'chart.js/auto';
-import 'chart.js/auto';
-
+import { Chart as ChartJS, registerables } from 'chart.js';
 import { Chart, Line } from "react-chartjs-2";
+import { useRef } from "react";
 
-
-
+ChartJS.register(...registerables);
 
 const SingleScatterChart = ({
   chartKey = "",
@@ -15,7 +12,7 @@ const SingleScatterChart = ({
   lineTypeToDraw = 0,
   updateCount = 0,
   goodDirection,
-  setLines,
+  setLines = () => {},
   verticalLines = [],
   verticalLinesCanvasPos = [],
   horizontalLine,
@@ -23,7 +20,13 @@ const SingleScatterChart = ({
   extendedLines = [],
   extendedLinesCanvasPos = [],
   steChartSize,
-  title
+  setClicked,
+  clicked,
+  options,
+  width = "unset",
+  height = "unset",
+  title,
+  animation
 }: any) => {
   const [data, setData] = useState({
     labels: [1, 2, 3],
@@ -35,7 +38,13 @@ const SingleScatterChart = ({
   const [yMin, setYMin] = useState(Number.MAX_SAFE_INTEGER);
 
   const chartClicked = (event: any) => {
-    console.log(event)
+    setClicked((prev: any) => !prev)
+    steChartSize({
+      width: chartRef?.current?.chartArea?.width,
+      height: chartRef.current.height,
+      left: Math.ceil(chartRef?.current?.chartArea?.left),
+      right: (chartRef?.current?.width) - Math.ceil(chartRef?.current?.chartArea?.right)
+    })
     // chart area
     let chart = chartRef.current;
     let yTop = chart.chartArea.top;
@@ -77,9 +86,9 @@ const SingleScatterChart = ({
       newX = newX * Math.abs(xMax - xMin) + xMin;
     }
 
+    let vLines: any = [...verticalLines];
+    let vLinesCanvasPos: any = [...verticalLinesCanvasPos];
     if (lineTypeToDraw === 0) {
-      let vLines = [...verticalLines];
-      let vLinesCanvasPos = [...verticalLinesCanvasPos];
       if (verticalLines.length >= 2) {
         vLines = [verticalLines[1]];
         vLinesCanvasPos = [verticalLinesCanvasPos[1]];
@@ -87,14 +96,15 @@ const SingleScatterChart = ({
       }
       vLines = [newX];
       vLinesCanvasPos = [event.nativeEvent.offsetX];
-      setLines(0, vLinesCanvasPos, vLines);
+      // console.log(vLines)
+      setLines(0, [Math.round(vLinesCanvasPos[0])], [Math.round(vLines[0])]);
       setVertAndExtLinesIntersects(
         extendedLines, extendedLinesCanvasPos, vLines, vLinesCanvasPos, setLines);
     } else if (lineTypeToDraw === 1) {
-      setLines(1, event.nativeEvent.offsetY, newY);
+      setLines(1, [Math.round(event.nativeEvent.offsetY[0])], [Math.round(newY)]);
     } else if (lineTypeToDraw === 2) {
       setVertAndExtLinesIntersects(
-        extendedLines, extendedLinesCanvasPos, "vLines", "vLinesCanvasPos", setLines);
+        extendedLines, extendedLinesCanvasPos, vLines, vLinesCanvasPos, setLines);
     }
   };
 
@@ -290,48 +300,24 @@ const SingleScatterChart = ({
 
   useEffect(() => {
     steChartSize({
-      width: chartRef.current.width,
+      width: chartRef?.current?.chartArea?.width,
       height: chartRef.current.height,
+      left: Math.ceil(chartRef?.current?.chartArea?.left),
+      right: (chartRef?.current?.width) - Math.ceil(chartRef?.current?.chartArea?.right)
     })
-  } , [])
+  } , [clicked])
 
+  
   return (
-    <div>
-      <div 
-        // style={{ margin: "1em", fontSize: "1.5em", fontWeight: 600}}
-      >
-        {chartKey}
-      </div>
+    <div className="w-full h-full">
       <Line
         ref={chartRef}
         // type="scatter"
-        // onClick={chartClicked}
-        title="sdasda"
+        onClick={datas.length ? chartClicked: null}
         data={data}
-        height="210px"
-        options={{
-          plugins: {
-            legend: {
-              display: false,
-              position: "bottom"
-            },
-            // tooltip: {
-            //   callbacks: {
-            //     label: function(context, data) {
-            //       return context.dataset.label;
-            //     }
-            //   }
-            // },
-            title: {
-              display: true,
-              text: title,
-              font: {
-                size: 14,
-                family: "IranSans"
-              }
-            }
-          }
-        }}
+        width={width}
+        height={height}
+        options={options}
       />
     </div>
   );
@@ -376,7 +362,7 @@ const setVertAndExtLinesIntersects = (extLines: any, extLinesCanvas: any, vLines
 }
 
 
-const intersectPoint = (line: any=[{x:0,y:0},{x:5,y:5}], intersectX: any=1, any?: any) => {
+const intersectPoint = (line=[{x:0,y:0},{x:5,y:5}], intersectX: any=1, any?: any) => {
   let intersect: any = {};
   intersect.x = intersectX;
   intersect.y = ((line[1].y - line[0].y) / (line[1].x - line[0].x)) * ((intersectX - line[0].x)) + line[0].y;

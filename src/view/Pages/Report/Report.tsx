@@ -6,7 +6,7 @@ import Range from "../../Components/Common/Range/Range";
 import { useEffect, useState } from "react";
 import Button from "../../Components/Common/Button/Button";
 import chartIcon from "../../../../assets/images/dcf852601f6f722d7faaa0c06eb41e37.svg"
-import * as Reports from "../../Components/Reports/AllReports"
+import * as Reports from "../../Components/Reports/Reports.aggregation"
 
 
 
@@ -14,17 +14,15 @@ import * as Reports from "../../Components/Reports/AllReports"
 export default function Report() {
       
     const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
-    const [filters, setFilters] = useRecoilState(FilterState)
 
-    const ReportComponent = Reports[filters?.find((ele: any) => ele.id === filterActiveId)?.filter_type as "SCATTER"]
+    const ReportComponent = filterActiveId?.filter_type ? Reports[filterActiveId?.filter_type as "SCATTER"] : undefined
 
-    console.log(filterActiveId)
     return (
         <div className="w-full mt-28">
             <Header>
                 <FiltersHandler />
             </Header>
-            {filterActiveId ? <ReportComponent /> : 
+            {filterActiveId?.id ? <ReportComponent /> : 
                 <div className="w-full h-[calc(100vh-115px)] p-3">
                     <div className="w-full h-full bg-white border border-gray-300 rounded-md shadow-xl shadow-gray-300 flex flex-col items-center justify-center">
                         <img src={chartIcon} className="w-72"/>

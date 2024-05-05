@@ -180,7 +180,7 @@ export function AddFilter() {
     UseOnDataFromIpcMain("addFilter_chanel", (event: any, data: any) => {
         if (data.status) {
             const {filters} = data
-            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
+            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
             setFilterActiveId(findLastFilter)
             setFilters(filters)
             setIsModalOpen(false)
@@ -190,7 +190,7 @@ export function AddFilter() {
     UseOnDataFromIpcMain("readConfusion_chanel", async (event: any, data: any) => {
         if (data.status) {
             const {filters, appData} = data.data
-            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
+            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
             setFilterActiveId(findLastFilter)
             setFilters(filters)
             setAppData(appData)
@@ -204,7 +204,7 @@ export function AddFilter() {
     UseOnDataFromIpcMain("redHists_chanel", async (event: any, data: any) => {
         if (data.status) {
             const {hists, filters, appData} = data.data
-            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
+            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
             setFilterActiveId(findLastFilter)
             setFilters(filters)
             setAppData(appData)

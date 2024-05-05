@@ -219,7 +219,7 @@ export function LINE(props: any) {
                     Object.keys(chartInforms).filter(key => !key.toLowerCase().startsWith("size")).map((key) => (
                         <div 
                             key={key}
-                            className={`border border-gray-200 shadow-lg shadow-gray-200 rounded-md relative p-1  transition-all duration-300 ${value.chart_type === key ? "bg-sky-200" : "hover:bg-gray-100"}`}
+                            className={`h-44 flex items-center justify-center border border-gray-200 shadow-lg shadow-gray-200 rounded-md relative p-1  transition-all duration-300 ${value.chart_type === key ? "bg-sky-200" : "hover:bg-gray-100"}`}
                         >
                             <input 
                                 type="radio" 
@@ -230,10 +230,54 @@ export function LINE(props: any) {
                             />
                             <SingleScatterChart
                                 // chartKey={"filters[activeIndex].chartKey"}
-                                labels={[...Array(5).keys()]}
+                                labels={[...Array(260).keys()]}
                                 datas={chartInforms[key] ?? []}
                                 steChartSize={steChartSize}
-                                title={key}
+                                height="220px"
+                                // width="220px"
+                                options={{
+                                    plugins: {
+                                      legend: {
+                                        display: false,
+                                        position: "bottom"
+                                      },
+                                      // tooltip: {
+                                      //   callbacks: {
+                                      //     label: function(context, data) {
+                                      //       return context.dataset.label;
+                                      //     }
+                                      //   }
+                                      // },
+                                      title: {
+                                        display: true,
+                                        text: key,
+                                        font: {
+                                          size: 14,
+                                          family: "IranSans"
+                                        }
+                                      },
+                                    },
+                                    scales:{
+                                      y: {
+                                          ticks: {
+                                            //   display: false,
+                                                font: {
+                                                    size: 9,
+                                                    family: "IranSans",
+                                              },
+                                          },
+                                      },
+                                      x: {
+                                          ticks: {
+                                            //   display: false,
+                                                font: {
+                                                    size: 9,
+                                                    family: "IranSans",
+                                              },
+                                          },
+                                      }
+                                    }
+                                }}
                             />
                         </div>
                 ))}
