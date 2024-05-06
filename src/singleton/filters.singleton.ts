@@ -39,8 +39,16 @@ class FiltersSingleton {
         return this.filters
     }
 
-    update() {
-
+    update(id: any, newData: any) {
+        const oldFilters = [...this.filters]
+        const findIndex = oldFilters.findIndex(ele => ele.id === id)
+        const spliceFilters = oldFilters.splice(findIndex, 1)
+        const newFilter = {
+            ...spliceFilters[0],
+            ...newData,
+        }
+        oldFilters.splice(findIndex, 0, newFilter)
+        this.filters = oldFilters
     }
 
     deleteById(id: any) {

@@ -35,10 +35,12 @@ const AppRoutes = () => {
 
 
     return (
-        <Routes>
-            <Route path="/" element={<CreateApp />} />
-            <Route path="/report" element={<Report />} />
-        </Routes>
+        <div className="max-w-[1900px] m-auto">
+            <Routes>
+                <Route path="/" element={<CreateApp />} />
+                <Route path="/report" element={<Report />} />
+            </Routes>
+        </div>
     )
 }
 

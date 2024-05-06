@@ -13,17 +13,23 @@ ipcMain.on("redHists", async (event) => {
         if (err) {
           return event.sender.send('redHists_chanel', {status: false,  err: err.message });
         }
-        const tempFilter = APP_DATA.getTempValue()
-        FILTERS.push(tempFilter)
-        const filters = FILTERS.getAll()
-
-        const chartData = JSON.parse(data);
-        HISTS.set(chartData)
-        return event.sender.send('redHists_chanel', {
-          status: true,
-          data: { hists: chartData, appData: APP_DATA.getAppData(), filters},
-          message: "اطلاعات دریافت شد"
-        });
+        
+        try {
+          const chartData = JSON.parse(data);
+          const tempFilter = APP_DATA.getTempValue()
+          FILTERS.push(tempFilter)
+          const filters = FILTERS.getAll()
+  
+          HISTS.set(chartData)
+          return event.sender.send('redHists_chanel', {
+            status: true,
+            data: { hists: chartData, appData: APP_DATA.getAppData(), filters},
+            message: "اطلاعات دریافت شد"
+          });
+        } catch (error) {
+          APP_DATA.reset()
+          return event.sender.send('redHists_chanel', {status: false, message: error.message})
+        }
       });
     }
 })

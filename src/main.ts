@@ -23,6 +23,6 @@ const windowAction = {
 SEED.create()
 WINDOW.initialize(windowAction)
 
-import "./handler/all.handler"
+import "./handler/handlers.aggregation"
 
 

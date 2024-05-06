@@ -199,7 +199,7 @@ export const IsModalOpenState: RecoilState<any> = atom({
   default: false,
 });
 
-export const ModalTypeState: RecoilState<undefined | "NewOrOpen" | "AddFilter"> = atom({
+export const ModalTypeState: RecoilState<undefined | "NewOrOpen" | "AddFilter" | "AppDetails" | "FilterDetails"> = atom({
   key: "ModalTypeState",
   default: undefined,
 });
@@ -284,6 +284,9 @@ export const activeIndexStateAtom: RecoilState<any> = atom({
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 
 export const WorksState: RecoilState<any> = atom({
   key: 'WorksState',

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useRecoilState } from "recoil"
-import { Filter1DState, FilterActiveIdState, FilterState, HistsDataState, activeIndexStateAtom } from "../../recoils/GlobalRecoil"
+import { Filter1DState, FilterActiveIdState, FilterState, HistsDataState, IsModalOpenState, ModalTypeState, activeIndexStateAtom } from "../../recoils/GlobalRecoil"
 import Range from "../Common/Range/Range"
 import Button from "../Common/Button/Button"
 import Select from "../Common/Select/Select"
@@ -20,6 +20,8 @@ const LINE = () => {
     const [isGoodSelected, setIsGoodSelected] = useState(0);
     const [activeIndex, setActiveIndex] = useRecoilState(activeIndexStateAtom);
     const [datasets, setDatasets] = useState<any>({});
+    const [modalType, setModalType] = useRecoilState(ModalTypeState);
+    const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
 
     const numberOfFolder = {
       id: 2, 
@@ -153,13 +155,109 @@ useEffect(() => {
   }, [histsData]);
   
 
-    console.log(datasets)
+  const ChartMemo = useMemo(() => {
+    return (
+        <LineChart
+                chartKey={filterActiveId.chart_type}
+                labels={[
+                    ...Array(
+                        histsData?.[filterActiveId?.chart_type]?.["HealthyM"]
+                        ?.length
+                    ).keys(),
+                ]}
+                datas={datasets[filterActiveId?.chart_type] ?? []}
+                lineTypeToDraw={lineTypeToDraw}
+                updateCount={chartUpdateCount}
+                setUpdateCount={setChartUpdateCount}
+                goodDirection={goodDirection}
+                isGoodSelected={isGoodSelected}
+                setLines={(lineType: any, canvasPos: any, lines: any) => {
+                    console.log(lineType, canvasPos, lines)
+                    let tempFilter = { ...filterActiveId };
+                    tempFilter.data = { ...tempFilter.data };
+                    if (lineType === 0) {
+                    tempFilter.data.verticalLines = lines;
+                    tempFilter.data.verticalLinesCanvasPos = canvasPos;
+                    } else if (lineType === 1) {
+                    tempFilter.data.extendedLines = [];
+                    tempFilter.data.extendedLinesCanvasPos = [];
+                    tempFilter.data.horizontalLine = lines;
+                    tempFilter.data.horizontalLineCanvasPos = canvasPos;
+                    } else if (lineType === 2) {
+                    tempFilter.data.horizontalLine = undefined;
+                    tempFilter.data.horizontalLineCanvasPos = undefined;
+                    if (
+                        tempFilter?.data?.extendedLines === undefined ||
+                        tempFilter.data.extendedLines?.length >= 2
+                    ) {
+                        tempFilter.data.extendedLines = [];
+                        tempFilter.data.extendedLinesCanvasPos = [];
+                    } else {
+                        tempFilter.data.extendedLines = [
+                        ...tempFilter.data.extendedLines,
+                        ];
+                        tempFilter.data.extendedLinesCanvasPos = [
+                        ...tempFilter.data.extendedLinesCanvasPos,
+                        ];
+                    }
+                    tempFilter.data.extendedLines.push(lines);
+                    tempFilter.data.extendedLinesCanvasPos.push(canvasPos);
+                    } else if (lineType === 3) {
+                    tempFilter.data.horizontalLine = undefined;
+                    tempFilter.data.horizontalLineCanvasPos = undefined;
+                    tempFilter.data.extendedLines = lines;
+                    tempFilter.data.extendedLinesCanvasPos = canvasPos;
+                    }
+                    let tempFilters: any = {...filterActiveId};
+                    tempFilters = tempFilter;
+                    console.log(tempFilters)
+                    setFilterActiveId(tempFilters);
+                    setChartUpdateCount(chartUpdateCount + 1);
+                }}
+                verticalLines={filterActiveId?.data?.verticalLines}
+                verticalLinesCanvasPos={
+                    filterActiveId?.data?.verticalLinesCanvasPos
+                }
+                horizontalLine={filterActiveId?.data?.horizontalLine}
+                horizontalLineCanvasPos={
+                    filterActiveId?.data?.horizontalLineCanvasPos
+                }
+                extendedLines={filterActiveId?.data?.extendedLines}
+                extendedLinesCanvasPos={
+                    filterActiveId?.data?.extendedLinesCanvasPos
+                }
+                />
+    )
+  }, [datasets, filterActiveId, lineTypeToDraw])
+
 
     return (
-        <div className="w-full flex items-stretch p-3 gap-2">
+        <div className="w-full flex items-stretch py-3 px-2 gap-2">
             <div className="flex-none relative">
-                <div className="w-[350px] h-[calc(100vh-140px)] sticky top-[125px] rounded-md">
+                <div className="w-[350px] h-[calc(100vh-140px)] sticky top-[125px] rounded-md flex flex-col gap-2">
                     {/* <h5 className="text-center border-b border-gray-200 py-1 mb-3">تنظیمات</h5> */}
+                    {/* <Button
+                        title="مشخصات فیلتر"
+                        // icon='box-arrow-in-down'
+                        expand='block'
+                        fill='light'
+                        color='gray'
+                        shape="round"
+                        iconWidth="1.6rem"
+                        iconHeight="1.6rem"
+                        outlineColor="lightgray"
+                        disabled={!filterActiveId.id}
+                        classNames={{
+                            container: "!h-10 !flex !items-center !justify-center !rounded-md duration-200 shadow-sm !border !border-gray-300",
+                            section: "!text-lg !overflow-hidden !flex !items-center !justify-center"
+                        }}
+                        onClick={() => {
+                            setModalType("FilterDetails");
+                            setIsModalOpen(true);
+                            // setFileType(typeOfFile.open);
+                        }}
+                        // classNames={{container: styles.submitBtn}}
+                    /> */}
                      
                     <div className={`${showFilter ? "h-[340px]" : "h-10"} w-full rounded-md overflow-hidden bg-white border border-gray-300 transition-all duration-300 shadow-md shadow-gray-200`}>
                         <Button
@@ -240,76 +338,104 @@ useEffect(() => {
                 </div>
             </div>
 
-            <div className="flex-auto p-2 bg-white border border-gray-300 rounded-md shadow-xl shadow-gray-300 flex items-center justify-center">
-                <LineChart
-                chartKey={filterActiveId.chart_type}
-                labels={[
-                    ...Array(
-                        histsData?.[filterActiveId?.chart_type]?.["HealthyM"]
-                        ?.length
-                    ).keys(),
-                ]}
-                datas={datasets[filterActiveId?.chart_type] ?? []}
-                lineTypeToDraw={lineTypeToDraw}
-                updateCount={chartUpdateCount}
-                setUpdateCount={setChartUpdateCount}
-                goodDirection={goodDirection}
-                isGoodSelected={isGoodSelected}
-                setLines={(lineType: any, canvasPos: any, lines: any) => {
-                    let tempFilter = { ...filterActiveId };
-                    tempFilter.data = { ...tempFilter.data };
-                    if (lineType === 0) {
-                    tempFilter.data.verticalLines = lines;
-                    tempFilter.data.verticalLinesCanvasPos = canvasPos;
-                    } else if (lineType === 1) {
-                    tempFilter.data.extendedLines = [];
-                    tempFilter.data.extendedLinesCanvasPos = [];
-                    tempFilter.data.horizontalLine = lines;
-                    tempFilter.data.horizontalLineCanvasPos = canvasPos;
-                    } else if (lineType === 2) {
-                    tempFilter.data.horizontalLine = undefined;
-                    tempFilter.data.horizontalLineCanvasPos = undefined;
-                    if (
-                        tempFilter?.data?.extendedLines === undefined ||
-                        tempFilter.data.extendedLines?.length >= 2
-                    ) {
-                        tempFilter.data.extendedLines = [];
-                        tempFilter.data.extendedLinesCanvasPos = [];
-                    } else {
-                        tempFilter.data.extendedLines = [
-                        ...tempFilter.data.extendedLines,
-                        ];
-                        tempFilter.data.extendedLinesCanvasPos = [
-                        ...tempFilter.data.extendedLinesCanvasPos,
-                        ];
-                    }
-                    tempFilter.data.extendedLines.push(lines);
-                    tempFilter.data.extendedLinesCanvasPos.push(canvasPos);
-                    } else if (lineType === 3) {
-                    tempFilter.data.horizontalLine = undefined;
-                    tempFilter.data.horizontalLineCanvasPos = undefined;
-                    tempFilter.data.extendedLines = lines;
-                    tempFilter.data.extendedLinesCanvasPos = canvasPos;
-                    }
-                    let tempFilters: any = [...filters];
-                    tempFilters[activeIndex] = tempFilter;
-                    setFilters(tempFilters);
-                    setChartUpdateCount(chartUpdateCount + 1);
-                }}
-                verticalLines={filterActiveId?.data?.verticalLines}
-                verticalLinesCanvasPos={
-                    filterActiveId?.data?.verticalLinesCanvasPos
-                }
-                horizontalLine={filterActiveId?.data?.horizontalLine}
-                horizontalLineCanvasPos={
-                    filterActiveId?.data?.horizontalLineCanvasPos
-                }
-                extendedLines={filterActiveId?.data?.extendedLines}
-                extendedLinesCanvasPos={
-                    filterActiveId?.data?.extendedLinesCanvasPos
-                }
-                />
-
+            <div className="flex-auto bg-white border border-gray-300 rounded-md shadow-xl shadow-gray-300 flex flex-col items-start justify-center px-2">
+                <div className="w-full h-12 flex-none flex items-center justify-between border-b border-gray-200 py-2 ">
+                    <Button
+                        title="مشخصات فیلتر"
+                        // icon='box-arrow-in-down'
+                        expand='block'
+                        fill='info'
+                        color='gray'
+                        shape="round"
+                        iconWidth="1.6rem"
+                        iconHeight="1.6rem"
+                        outlineColor="lightgray"
+                        disabled={!filterActiveId.id}
+                        classNames={{
+                            container: "!h-full !flex !items-center !justify-center !rounded-md !border-0 duration-200",
+                            section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                        }}
+                        onClick={() => {
+                            setModalType("FilterDetails");
+                            setIsModalOpen(true);
+                            // setFileType(typeOfFile.open);
+                        }}
+                        // classNames={{container: styles.submitBtn}}
+                    />
+                    <div className="h-full flex gap-2">
+                        <Button
+                            icon="downArrow" // upArrow
+                            // title="فیلترها"
+                            expand='block'
+                            fill='light'
+                            shape="round"
+                            color='gray'
+                            iconWidth="1.5rem"
+                            iconHeight="1.5rem"
+                            direction="row_reverse"
+                            onClick={() => setLineTypeToDraw(2)}
+                            classNames={{
+                                // container: styles.windowBtn
+                                container: "!w-10 !h-full !m-0 !flex !items-center !justify-center flex-none transition-all duration-300 !rounded-md",
+                                section: "!text-lg !flex !items-center !justify-center !overflow-hidden"
+                            }}
+                        />
+                        <Button
+                            icon="extendedLine"
+                            // title="فیلترها"
+                            expand='block'
+                            fill='light'
+                            shape="round"
+                            color='gray'
+                            iconWidth="1.5rem"
+                            iconHeight="1.5rem"
+                            direction="row_reverse"
+                            onClick={() => setLineTypeToDraw(2)}
+                            classNames={{
+                                // container: styles.windowBtn
+                                container: "!w-10 !h-full !m-0 !flex !items-center !justify-center flex-none transition-all duration-300 !rounded-md",
+                                section: "!text-lg !flex !items-center !justify-center !overflow-hidden"
+                            }}
+                        />
+                        <Button
+                            icon="horizontalLine"
+                            // title="فیلترها"
+                            expand='block'
+                            fill='light'
+                            shape="round"
+                            color='gray'
+                            iconWidth="1.5rem"
+                            iconHeight="1.5rem"
+                            direction="row_reverse"
+                            onClick={() => setLineTypeToDraw(1)}
+                            classNames={{
+                                // container: styles.windowBtn
+                                container: "!w-10 !h-full !m-0 !flex !items-center !justify-center flex-none transition-all duration-300 !rounded-md",
+                                section: "!text-lg !flex !items-center !justify-center !overflow-hidden"
+                            }}
+                        />
+                        <Button
+                            icon="verticalLine"
+                            // title="فیلترها"
+                            expand='block'
+                            fill='light'
+                            shape="round"
+                            color='gray'
+                            iconWidth="1.5rem"
+                            iconHeight="1.5rem"
+                            direction="row_reverse"
+                            onClick={() => setLineTypeToDraw(0)}
+                            classNames={{
+                                // container: styles.windowBtn
+                                container: "!w-10 !h-full !m-0 !flex !items-center !justify-center flex-none transition-all duration-300 !rounded-md",
+                                section: "!text-lg !flex !items-center !justify-center !overflow-hidden"
+                            }}
+                        />
+                    </div>
+                </div>
+                <div className="w-full flex-auto p-2">
+                    {ChartMemo}
+                </div>
             </div>
         </div>
     )

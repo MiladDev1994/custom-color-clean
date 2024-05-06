@@ -7,6 +7,7 @@ import Hists from "./readHists/readHists.handler"
 import ExistAppDataChecker from "./existAppDataChecker/existAppDataChecker"
 import SaveFilter from "./saveFilter/saveFilter.handler"
 import AddFilter from "./filters/filter.handler"
+import CalculateAcc from "./calculateAcc/calculateAcc.handler"
 
 
 export {
@@ -17,5 +18,6 @@ export {
     Hists,
     ExistAppDataChecker,
     SaveFilter,
-    AddFilter
+    AddFilter,
+    CalculateAcc
 }

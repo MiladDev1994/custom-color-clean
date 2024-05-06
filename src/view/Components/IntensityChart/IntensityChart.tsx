@@ -3,7 +3,7 @@ import styles from "./IntensityChart.module.scss"
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil"
 // import { AllRecordState, AreaFilterState, ChartDataState, ChartLengthState, FilesPathState, IntensityChartValueSelected, IntensityFilterState, PointSelectedData } from "../Recoil/Atoms"
 import SingleScatterChart from "../Common/Charts/SingleScatterChart"
-import { AreaFilterState, FilesPathState, FilterActiveIdState, IntensityChartValueSelected, IntensityFilterState, PointSelectedData } from "../../recoils/GlobalRecoil"
+import { AreaFilterState, FilesPathState, FilterActiveIdState, IntensityChartValueSelected, IntensityFilterState, IsModalOpenState, ModalTypeState, PointSelectedData } from "../../recoils/GlobalRecoil"
 // import ZoomChart from "../Common/ZoomChart/ZoomChart"
 // import StepButton from "../Common/StepButton/StepButton"
 // import Matris from "../Common/Matris/Matris"
@@ -14,6 +14,7 @@ import { showHideChartUtil } from "../../utils/showHideChartUtil"
 import Matris from "../Common/Matris/Matris"
 import ZoomChart from "../Common/ZoomChart/ZoomChart"
 import StepButton from "../Common/StepButton/StepButton"
+import Button from "../Common/Button/Button"
 // import { AccuracyLineByStepUtil } from "../../Utils/Front/LineByStepUtils"
 // import { changeStepByKeyUtil } from "../../Utils/Front/changeStepByKeyUtil"
 // import { showHideChartUtil } from "../../Utils/Front/showHideChartUtil"
@@ -31,7 +32,7 @@ const IntensityChart = () => {
     const [filtersArea, setFiltersArea] = useRecoilState(AreaFilterState)
     const [chartValueSelected, setChartValueSelected] = useRecoilState(IntensityChartValueSelected)
     const [pointSelectedData, setPointSelectedData] = useRecoilState(PointSelectedData)
-    const filesPath = useResetRecoilState(FilesPathState)
+    const setFilesPath = useResetRecoilState(FilesPathState)
     
     const [chartUpdateCount, setChartUpdateCount] = useState(0);
     const [chartSize, steChartSize] = useState<any>({});
@@ -40,6 +41,8 @@ const IntensityChart = () => {
     const [lineTypeToDraw, setLineTypeToDraw] = useState(0);
     const [goodDirection, setGoodDirection] = useState(0);
     const [chartAnimation, setChartAnimation] = useState(true)
+    const [modalType, setModalType] = useRecoilState(ModalTypeState);
+    const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
     const [chartZoom, setChartZoom] = useState<any>({
       min: 1,
       max: 1,
@@ -57,8 +60,11 @@ const IntensityChart = () => {
       {type: "e7", nickname: "PredictionNegative", title: "دقت رد شده", style: "sum"},
       {type: "e6", nickname: "PredictionPositive", title: "دقت قبول شده", style: "sum"},
     ]
+
   
     const setAccuracyLinesHandler = (lineType: any, canvasPos: any, getLines: any) => {
+      setFilesPath()
+      setFiltersArea([])
       // console.log(lineType, canvasPos, getLines)
       const lines = getLines.join("") >= filterActiveId.confusion.chartData ? [filterActiveId.confusion.chartData] : getLines
       let tempFilter = { ...filtersIntensity?.[activeIndex] };
@@ -156,7 +162,7 @@ const IntensityChart = () => {
         data: filterActiveId.confusion.chartData["e8"],
       }
       Object.keys(filterActiveId.confusion.chartData).length && setChartValueSelected([createHorizontalData])
-    } , [filterActiveId.confusion.chartData])
+    } , [])
     
     
     useEffect(() => {
@@ -172,17 +178,41 @@ const IntensityChart = () => {
       if (chartValueSelected.length) {
         const newChartValueSelected = chartValueSelected.filter((item: any) => !item.label.includes("ideal"));
         // console.log(newChartValueSelected)
-        setChartValueSelected(newChartValueSelected)
-        setFiltersArea([])
-        filesPath()
+        // setChartValueSelected(newChartValueSelected)
+        // setFiltersArea([])
+        // setFilesPath()
       }
     } , [filtersIntensity])
+
     
 
     return (
       <div className={styles.chartBox} tabIndex={0} onKeyDown={(e) => changeStepByKeyUtil(e, stepData)}>
         
         <div className={styles.descriptionBox}>
+          <Button
+              title="مشخصات فیلتر"
+              // icon='box-arrow-in-down'
+              expand='block'
+              fill='info'
+              color='gray'
+              shape="round"
+              iconWidth="1.6rem"
+              iconHeight="1.6rem"
+              outlineColor="lightgray"
+              disabled={!filterActiveId.id}
+              classNames={{
+                  container: "!w-full !h-8 !flex !items-center !justify-center !rounded-md !border-0 duration-200",
+                  section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+              }}
+              onClick={() => {
+                  setModalType("FilterDetails");
+                  setIsModalOpen(true);
+                  // setFileType(typeOfFile.open);
+              }}
+              // classNames={{container: styles.submitBtn}}
+          />
+          
           <Matris
             data={e_structure}
             charts={chartValueSelected}
@@ -207,141 +237,143 @@ const IntensityChart = () => {
           </div>
         </div>
 
-        <div className={styles.chart}>
-          {chartValueSelected.length ?
-            <SingleScatterChart
-              chartKey={filtersIntensity[activeIndex]?.chartKey}
-              labels={filterActiveId?.confusion?.chartLength ? [...Array(+Math.ceil(filterActiveId?.confusion?.chartLength * 1.02)).keys()] : []}
-              datas={chartValueSelected}
-              lineTypeToDraw={lineTypeToDraw}
-              updateCount={chartUpdateCount}
-              // setUpdateCount={setChartUpdateCount}
-              goodDirection={goodDirection}
-              setLines={setAccuracyLinesHandler}
-              verticalLines={filtersIntensity?.[activeIndex]?.data?.verticalLines}
-              verticalLinesCanvasPos={
-                filtersIntensity?.[activeIndex]?.data?.verticalLinesCanvasPos
-              }
-              horizontalLine={filtersIntensity?.[activeIndex]?.data?.horizontalLine}
-              horizontalLineCanvasPos={
-                filtersIntensity?.[activeIndex]?.data?.horizontalLineCanvasPos
-              }
-              extendedLines={filtersIntensity?.[activeIndex]?.data?.extendedLines}
-              extendedLinesCanvasPos={
-                filtersIntensity?.[activeIndex]?.data?.extendedLinesCanvasPos
-              }
-              steChartSize={steChartSize}
-              setClicked={setClicked}
-              clicked={clicked}
-              animation={chartAnimation}
-              allRecord={filterActiveId.confusion.allRecord}
-              height="480px"
-              options={{
-                maintainAspectRatio : false,
-                animation: chartAnimation,
-                // animation: {
-                //   // animation
-                //   x: {
-                //     from: 0
-                //   },
-                //   y: {
-                //     from: 0
-                //   },
-                //   easing: 'easeInOutSine',
-                // },
-                scales:{
-                  y: {
-                    min: 1 * chartZoom.min.toFixed(2),
-                    max: 1 * chartZoom.max.toFixed(2),
-                    // beginAtZero: true,
-                    ticks: {
-                      // type: "logarithmic",
-                      callback: (value: any, index: any, values: any) => {
-                        return (Math.floor(value * 100) + "%")
-                      },
-                      // padding: 10,
-                      font: {
-                        family: "IranSans",
-                      },
-                      stepSize: 0.1,
-                    },
-                    title: {
-                      display: true,
-                      text: "دقت",
-                      color: "#a7a7a7",
-                      font: {
-                        family: "IranSans",
-                        size: 15
-                      }
-                    }
-                  },
-                  x: {
-                    ticks: {
-                      font: {
-                        family: "IranSans",
-                      },
-                    },
-                    title: {
-                      display: true,
-                      text: "دلتا",
-                      color: "#a7a7a7",
-                      font: {
-                        family: "IranSans",
-                        size: 15
-                      }
-                    }
-                  },
-                  // yAxes: [{
-                  //   display: true,
-                  //   backgroundColor: "red",
-                  //   stacked: true,
-                  //   ticks: {
-                  //       min: 20, // minimum value
-                  //       max: 50 // maximum value
-                  //   }
-                  // }],
-                },
-                responsive: true,
-                plugins: {
-                  legend: {
-                    display: false,
-                    position: "bottom"
-                  },
-                  // tooltip: {
-                  //   callbacks: {
-                  //     label: function(context, data) {
-                  //       return context.dataset.label;
-                  //     }
-                  //   }
+        <div className="flex-auto flex items-center justify-center bg-white border border-gray-300 rounded-lg shadow-xl ">
+          <div className={styles.chart}>
+            {chartValueSelected.length ?
+              <SingleScatterChart
+                chartKey={filtersIntensity[activeIndex]?.chartKey}
+                labels={filterActiveId?.confusion?.chartLength ? [...Array(+Math.ceil(filterActiveId?.confusion?.chartLength * 1.02)).keys()] : []}
+                datas={chartValueSelected}
+                lineTypeToDraw={lineTypeToDraw}
+                updateCount={chartUpdateCount}
+                // setUpdateCount={setChartUpdateCount}
+                goodDirection={goodDirection}
+                setLines={setAccuracyLinesHandler}
+                verticalLines={filtersIntensity?.[activeIndex]?.data?.verticalLines}
+                verticalLinesCanvasPos={
+                  filtersIntensity?.[activeIndex]?.data?.verticalLinesCanvasPos
+                }
+                horizontalLine={filtersIntensity?.[activeIndex]?.data?.horizontalLine}
+                horizontalLineCanvasPos={
+                  filtersIntensity?.[activeIndex]?.data?.horizontalLineCanvasPos
+                }
+                extendedLines={filtersIntensity?.[activeIndex]?.data?.extendedLines}
+                extendedLinesCanvasPos={
+                  filtersIntensity?.[activeIndex]?.data?.extendedLinesCanvasPos
+                }
+                steChartSize={steChartSize}
+                setClicked={setClicked}
+                clicked={clicked}
+                animation={chartAnimation}
+                allRecord={filterActiveId.confusion.allRecord}
+                height="480px"
+                options={{
+                  maintainAspectRatio : false,
+                  animation: chartAnimation,
+                  // animation: {
+                  //   // animation
+                  //   x: {
+                  //     from: 0
+                  //   },
+                  //   y: {
+                  //     from: 0
+                  //   },
+                  //   easing: 'easeInOutSine',
                   // },
-                  title: {
-                    display: true,
-                    text: "نمودار شدت خرابی",
-                    font: {
-                      size: 16,
-                      family: "IranSans"
+                  scales:{
+                    y: {
+                      min: 1 * chartZoom.min.toFixed(2),
+                      max: 1 * chartZoom.max.toFixed(2),
+                      // beginAtZero: true,
+                      ticks: {
+                        // type: "logarithmic",
+                        callback: (value: any, index: any, values: any) => {
+                          return (Math.floor(value * 100) + "%")
+                        },
+                        // padding: 10,
+                        font: {
+                          family: "IranSans",
+                        },
+                        stepSize: 0.1,
+                      },
+                      title: {
+                        display: true,
+                        text: "دقت",
+                        color: "#a7a7a7",
+                        font: {
+                          family: "IranSans",
+                          size: 15
+                        }
+                      }
+                    },
+                    x: {
+                      ticks: {
+                        font: {
+                          family: "IranSans",
+                        },
+                      },
+                      title: {
+                        display: true,
+                        text: "دلتا",
+                        color: "#a7a7a7",
+                        font: {
+                          family: "IranSans",
+                          size: 15
+                        }
+                      }
+                    },
+                    // yAxes: [{
+                    //   display: true,
+                    //   backgroundColor: "red",
+                    //   stacked: true,
+                    //   ticks: {
+                    //       min: 20, // minimum value
+                    //       max: 50 // maximum value
+                    //   }
+                    // }],
+                  },
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      display: false,
+                      position: "bottom"
+                    },
+                    // tooltip: {
+                    //   callbacks: {
+                    //     label: function(context, data) {
+                    //       return context.dataset.label;
+                    //     }
+                    //   }
+                    // },
+                    title: {
+                      display: true,
+                      text: "نمودار شدت خرابی",
+                      font: {
+                        size: 16,
+                        family: "IranSans"
+                      }
                     }
                   }
-                }
 
-              }}
-              title="نمودار شدت خرابی"
-            /> :
-            <h1> هیچ فهرستی انتخاب نشده است !!!</h1>
+                }}
+                title="نمودار شدت خرابی"
+              /> :
+              <h1> هیچ فهرستی انتخاب نشده است !!!</h1>
+            }
+          </div>
+          
+          {!!chartValueSelected.length &&
+            <div className={styles.zoomBox}>
+              <ZoomChart
+                chartHeight={chartSize.height}
+                setZoom={setChartZoom}
+                setAnimation={setChartAnimation}
+                type="Percent"
+                max={1}
+              />
+            </div>
           }
         </div>
-        
-        {!!chartValueSelected.length &&
-          <div className={styles.zoomBox}>
-            <ZoomChart
-              chartHeight={chartSize.height}
-              setZoom={setChartZoom}
-              setAnimation={setChartAnimation}
-              type="Percent"
-              max={1}
-            />
-          </div>
-        }
         
       </div>
     )

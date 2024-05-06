@@ -16,7 +16,7 @@ declare namespace api_electron {
   function completeSorterConfigData(value: any): Promise<any>;
   function addFilter(value: any): void;
   function deleteFilter(id: any): void;
-  function readIdealPoint(data: any): void;
+  function calculateAcc(data: any): void;
   function onDataFromIpcMain(channel:string, func: ()=>void): () => Electron.IpcRenderer;
 }
 

@@ -362,17 +362,14 @@ const LineChart = ({
   ]);
   
   return (
-    <div>
-      <div style={{ margin: "1em", fontSize: "1.5em", fontWeight: 600 }}>
-        {chartKey}
-      </div>
+    <div className="w-full h-full flex-auto ">
       <Chart
         ref={chartRef}
         type="line"
         onClick={chartClicked}
         data={data}
-        width="1250px"
-        height="800px"
+        // width="1250px"
+        // height="800px"
         options={{
           plugins: {
             legend: {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "../IntensityChart/IntensityChart.module.scss"
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 // import { AreaChartValueSelected, AreaFilterState, FilesPathState, IdealPointMatris, IntensityChartValueSelected, IntensityFilterState, PointSelectedData } from "../Recoil/Atoms";
-import { AreaChartValueSelected, AreaFilterState, FilesPathState, FilterActiveIdState, IdealPointMatris, IntensityChartValueSelected, IntensityFilterState, PointSelectedData } from "../../recoils/GlobalRecoil"
+import { AreaChartValueSelected, AreaFilterState, FilesPathState, FilterActiveIdState, FilterState, IdealPointMatris, IntensityChartValueSelected, IntensityFilterState, PointSelectedData } from "../../recoils/GlobalRecoil"
 // import { AccuracyLineByStepUtil } from "../../Utils/Front/LineByStepUtils";
 // import { changeStepByKeyUtil } from "../../Utils/Front/changeStepByKeyUtil";
 // import { UseOnDataFromIpcMain } from "../../hooks/UseOnDataFromIpcMain";
@@ -25,11 +25,13 @@ import StepButton from "../Common/StepButton/StepButton";
 
 const AreaChart = () => {
   
-    const pointSelectedData = useRecoilValue(PointSelectedData)
-    const filtersIntensity = useRecoilValue(IntensityFilterState);
+    const [pointSelectedData, setPointSelectedData] = useRecoilState(PointSelectedData)
+    const [filtersIntensity, setFiltersIntensity] = useRecoilState(IntensityFilterState)
     const [filtersArea, setFiltersArea] = useRecoilState(AreaFilterState)
     const [intensityChartValueSelected, setIntensityChartValueSelected] = useRecoilState(IntensityChartValueSelected)
-    const setFilesPath = useSetRecoilState(FilesPathState)
+    const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
+    const [filters, setFilters] = useRecoilState(FilterState)
+    const [filePath, setFilesPath] = useRecoilState(FilesPathState)
   
     const [chartSize, steChartSize] = useState<any>({});
     const [chartUpdateCount, setChartUpdateCount] = useState(0);
@@ -38,7 +40,6 @@ const AreaChart = () => {
     const [clicked, setClicked] = useState(false)
     const [loading, setLoading] = useState(false);
     const [idealPointMatris, setIdealPointMatris] = useRecoilState(IdealPointMatris)
-    const filesPath = useResetRecoilState(FilesPathState)
     const [chartAnimation, setChartAnimation] = useState(true)
     const [max, setMax] = useState(1)
     const [activeIndex, setActiveIndex] = useState(0);
@@ -46,8 +47,8 @@ const AreaChart = () => {
       min: 1,
       max: 1,
     })
-    const verticalLinesValueIntensity = Number(filtersIntensity[activeIndex]?.data?.verticalLines?.join("")).toFixed(0);
-    const verticalLinesValue = Number(filtersArea[activeIndex]?.data?.verticalLines?.join("")).toFixed(0);
+    let verticalLinesValueIntensity = Number(filtersIntensity[activeIndex]?.data?.verticalLines?.join("")).toFixed(0);
+    let verticalLinesValue = Number(filtersArea[activeIndex]?.data?.verticalLines?.join("")).toFixed(0);
   
   
     const nums_structure = [
@@ -68,6 +69,7 @@ const AreaChart = () => {
     ]
   
     const setAccuracyLinesHandler = (lineType: any, canvasPos: any, getLines: any) => {
+      setFilesPath({})
       const lines = getLines.join("") >= pointSelectedData.numsLength ? [pointSelectedData.numsLength] : getLines
       let tempFilter = { ...filtersArea?.[activeIndex] };
       tempFilter.data = { ...tempFilter.data };
@@ -124,33 +126,43 @@ const AreaChart = () => {
       chartData: H_NH
     }
   
-    UseOnDataFromIpcMain("readIdealPoint_chanel", (event: any, data: any) => {
+    UseOnDataFromIpcMain("calculateAcc_chanel", (event: any, data: any) => {
       if (data.status) {
         // window.api_electron.readIdealConfusion()
-        setFilesPath(data.data.filesPath)
-        setIdealPointMatris(data.data.idealConfusion.record)
-        const newChartValueSelected = [...intensityChartValueSelected];
-        Object.entries(data.data.idealConfusion.pointData).map(([keys, value]) => {
-          const createHorizontalData = {
-              ...chartTheme.public, 
-              ...chartTheme[`${keys}_ideal`],
-              data: value,
-          }
-          newChartValueSelected.push(createHorizontalData)
-        })
-        setIntensityChartValueSelected(newChartValueSelected)
+        const newFilters = data.data.filters
+        setFilters(newFilters)
+        const activeFilter = newFilters.find((ele: any) => ele.id === filterActiveId.id)
+        // console.log(activeFilter)
+        setFilterActiveId(activeFilter)
+        // setFilesPath(activeFilter.filesPath)
+        // setIdealPointMatris(activeFilter.idealConfusion.record)
+        // const newChartValueSelected = [...intensityChartValueSelected];
+        // Object.entries(activeFilter.idealConfusion.pointData).map(([keys, value]) => {
+        //   const createHorizontalData = {
+        //       ...chartTheme.public, 
+        //       ...chartTheme[`${keys}_ideal`],
+        //       data: value,
+        //   }
+        //   newChartValueSelected.push(createHorizontalData)
+        // })
+        // setIntensityChartValueSelected(newChartValueSelected)
         setLoading(false)
-      }
+      } else Toast("error", data.message)
     })
+    
+    
+    console.log(intensityChartValueSelected)
+
+
   
-    // UseOnDataFromIpcMain("readIdealConfusion_chanel", (event, data) => {
+    // UseOnDataFromIpcMain("calculateAcc_chanel", (event: any, data: any) => {
+    //   console.log(data)
     //   if (data.status) {
-    //     // console.log(data)
     //     setIdealPointMatris(data.data.record)
   
     //     const newChartValueSelected = [...intensityChartValueSelected];
     //     Object.entries(data.data.pointData).map(([keys, value]) => {
-    //       const createHorizontalData = {
+    //       const createHorizontalData: any = {
     //           ...chartTheme.public, 
     //           ...chartTheme[`${keys}_ideal`],
     //           data: value,
@@ -166,7 +178,16 @@ const AreaChart = () => {
     const getIdealPoint = () => {
       if (!filtersArea.length) return Toast("error", "ابتدا یک نقطه در نمودار مساحت خرابی انتخاب کنید");
       setLoading(true)
-      window.api_electron.readIdealPoint({verticalLinesValueIntensity, verticalLinesValue})
+      window.api_electron.calculateAcc({
+        verticalLinesValueIntensity, 
+        verticalLinesValue, 
+        id: filterActiveId.id,
+        filtersArea,
+        filtersIntensity,
+        pointSelectedData,
+        chartValueSelected,
+        intensityChartValueSelected
+      })
     }
   
   
@@ -205,11 +226,30 @@ const AreaChart = () => {
       }
     }, [clicked])
   
+
     useEffect(() => {
-      filesPath()
-    } , [filtersArea])
+      console.log(filterActiveId)
+      filterActiveId.filtersArea && setFiltersArea(filterActiveId.filtersArea)
+      filterActiveId.filtersIntensity && setFiltersIntensity(filterActiveId.filtersIntensity)
+      filterActiveId.filesPath && setFilesPath(filterActiveId.filesPath)
+      filterActiveId.idealConfusion && setIdealPointMatris(filterActiveId.idealConfusion.record)
+      filterActiveId.pointSelectedData && setPointSelectedData(filterActiveId.pointSelectedData)
+      filterActiveId.chartValueSelected && setChartValueSelected(filterActiveId.chartValueSelected)
+      if (filterActiveId.intensityChartValueSelected) {
+        const newChartValueSelected = [...filterActiveId.intensityChartValueSelected];
+        Object.entries(filterActiveId.idealConfusion.pointData).map(([keys, value]) => {
+          const createHorizontalData = {
+              ...chartTheme.public, 
+              ...chartTheme[`${keys}_ideal`],
+              data: value,
+          }
+          newChartValueSelected.push(createHorizontalData)
+        })
+        setIntensityChartValueSelected(newChartValueSelected)
+      }
+    }, [filterActiveId])
   
-  
+
     return (
       <div className={styles.chartBox} tabIndex={0} onKeyDown={(e) => changeStepByKeyUtil(e, stepData)}>
         <div className={styles.descriptionBox}>
@@ -256,7 +296,13 @@ const AreaChart = () => {
               )}
             </div>
             
-            <div className={styles.action}>
+            {/* <div className={styles.action}> */}
+              <StepButton
+                onClick={(types: any) => {
+                  AccuracyLineByStepUtil({...stepData, type: types})
+                }}
+                title={isNaN(+verticalLinesValue) ? "---" : `%${verticalLinesValue}`}
+              />
               <Button
                 color='gray'
                 title="دریافت نقاط مطلوب"
@@ -270,153 +316,150 @@ const AreaChart = () => {
                 onClick={getIdealPoint}
                 loading={loading}
                 classNames={{
-                  container: styles.idealBtn
+                  container: "!h-12 rounded-md transition-all duration-300",
+                  section: "!text-lg !flex !items-center !justify-center !overflow-hidden"
                 }}
               />
-              <StepButton
-                onClick={(types: any) => {
-                  AccuracyLineByStepUtil({...stepData, type: types})
-                }}
-                title={isNaN(+verticalLinesValue) ? "---" : `%${verticalLinesValue}`}
-              />
-            </div>
+            {/* </div> */}
             
           </div>
         </div>
   
-        <div className={styles.chart}>
-          {chartValueSelected.length ?
-            <SingleScatterChart 
-              chartKey={filtersArea[activeIndex]?.chartKey}
-              labels={pointSelectedData ? [...Array(Math.ceil(+pointSelectedData?.numsLength * 1.02)).keys()] : []}
-              datas={chartValueSelected}
-              lineTypeToDraw={0}
-              updateCount={chartUpdateCount}
-              // setUpdateCount={setChartUpdateCount}
-              goodDirection={0}
-              setLines={setAccuracyLinesHandler}
-              verticalLines={filtersArea?.[activeIndex]?.data?.verticalLines}
-              verticalLinesCanvasPos={
-                filtersArea?.[activeIndex]?.data?.verticalLinesCanvasPos
-              }
-              horizontalLine={filtersArea?.[activeIndex]?.data?.horizontalLine}
-              horizontalLineCanvasPos={
-                filtersArea?.[activeIndex]?.data?.horizontalLineCanvasPos
-              }
-              extendedLines={filtersArea?.[activeIndex]?.data?.extendedLines}
-              extendedLinesCanvasPos={
-                filtersArea?.[activeIndex]?.data?.extendedLinesCanvasPos
-              }
-              steChartSize={steChartSize}
-              setClicked={setClicked}
-              animation={chartAnimation}
-              clicked={clicked}
-              height="480px"
-              options={{
-                maintainAspectRatio : false,
-                animation: chartAnimation,
-                // animation: {
-                //   // animation
-                //   x: {
-                //     from: 0
-                //   },
-                //   y: {
-                //     from: 0
-                //   },
-                //   easing: 'easeInOutSine',
-                // },
-                scales:{
-                  y: {
-                    min: max * chartZoom.min.toFixed(2),
-                    max: max * chartZoom.max.toFixed(2),
-                    ticks: {
-                      stepSize: 0.1,
-                      callback: (value: any) => {
-                        return (value.toFixed(2))
-                      },
-                      font: {
-                        family: "IranSans",
-                      },
-                    },
-                    title: {
-                      display: true,
-                      text: "فراوانی",
-                      color: "#a7a7a7",
-                      font: {
-                        family: "IranSans",
-                        size: 15
-                      }
-                    }
-                  },
-                  x: {
-                    ticks: {
-                      callback: (value: any) => {
-                        return (value + "%")
-                      },
-                      font: {
-                        family: "IranSans",
-                      },
-                    },
-                    title: {
-                      display: true,
-                      text: "درصد مساحت",
-                      color: "#a7a7a7",
-                      font: {
-                        family: "IranSans",
-                        size: 15
-                      }
-                    }
-                  },
-                  // yAxes: [{
-                  //   display: true,
-                  //   backgroundColor: "red",
-                  //   stacked: true,
-                  //   ticks: {
-                  //       min: 20, // minimum value
-                  //       max: 50 // maximum value
-                  //   }
-                  // }],
-                },
-                responsive: true,
-                plugins: {
-                  legend: {
-                    display: false,
-                    position: "bottom"
-                  },
-                  // tooltip: {
-                  //   callbacks: {
-                  //     label: function(context, data) {
-                  //       return context.dataset.label;
-                  //     }
-                  //   }
+        <div className="flex-auto flex items-center justify-center bg-white border border-gray-300 rounded-lg shadow-xl ">
+          <div className={styles.chart}>
+            {chartValueSelected.length ?
+              <SingleScatterChart 
+                chartKey={filtersArea[activeIndex]?.chartKey}
+                labels={pointSelectedData ? [...Array(Math.ceil(+pointSelectedData?.numsLength * 1.02)).keys()] : []}
+                datas={chartValueSelected}
+                lineTypeToDraw={0}
+                updateCount={chartUpdateCount}
+                // setUpdateCount={setChartUpdateCount}
+                goodDirection={0}
+                setLines={setAccuracyLinesHandler}
+                verticalLines={filtersArea?.[activeIndex]?.data?.verticalLines}
+                verticalLinesCanvasPos={
+                  filtersArea?.[activeIndex]?.data?.verticalLinesCanvasPos
+                }
+                horizontalLine={filtersArea?.[activeIndex]?.data?.horizontalLine}
+                horizontalLineCanvasPos={
+                  filtersArea?.[activeIndex]?.data?.horizontalLineCanvasPos
+                }
+                extendedLines={filtersArea?.[activeIndex]?.data?.extendedLines}
+                extendedLinesCanvasPos={
+                  filtersArea?.[activeIndex]?.data?.extendedLinesCanvasPos
+                }
+                steChartSize={steChartSize}
+                setClicked={setClicked}
+                animation={chartAnimation}
+                clicked={clicked}
+                height="480px"
+                options={{
+                  maintainAspectRatio : false,
+                  animation: chartAnimation,
+                  // animation: {
+                  //   // animation
+                  //   x: {
+                  //     from: 0
+                  //   },
+                  //   y: {
+                  //     from: 0
+                  //   },
+                  //   easing: 'easeInOutSine',
                   // },
-                  title: {
-                    display: true,
-                    text: "نمودار مساحت خرابی",
-                    font: {
-                      size: 16,
-                      family: "IranSans"
+                  scales:{
+                    y: {
+                      min: max * chartZoom.min.toFixed(2),
+                      max: max * chartZoom.max.toFixed(2),
+                      ticks: {
+                        stepSize: 0.1,
+                        callback: (value: any) => {
+                          return (value.toFixed(2))
+                        },
+                        font: {
+                          family: "IranSans",
+                        },
+                      },
+                      title: {
+                        display: true,
+                        text: "فراوانی",
+                        color: "#a7a7a7",
+                        font: {
+                          family: "IranSans",
+                          size: 15
+                        }
+                      }
+                    },
+                    x: {
+                      ticks: {
+                        callback: (value: any) => {
+                          return (value + "%")
+                        },
+                        font: {
+                          family: "IranSans",
+                        },
+                      },
+                      title: {
+                        display: true,
+                        text: "درصد مساحت",
+                        color: "#a7a7a7",
+                        font: {
+                          family: "IranSans",
+                          size: 15
+                        }
+                      }
+                    },
+                    // yAxes: [{
+                    //   display: true,
+                    //   backgroundColor: "red",
+                    //   stacked: true,
+                    //   ticks: {
+                    //       min: 20, // minimum value
+                    //       max: 50 // maximum value
+                    //   }
+                    // }],
+                  },
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      display: false,
+                      position: "bottom"
+                    },
+                    // tooltip: {
+                    //   callbacks: {
+                    //     label: function(context, data) {
+                    //       return context.dataset.label;
+                    //     }
+                    //   }
+                    // },
+                    title: {
+                      display: true,
+                      text: "نمودار مساحت خرابی",
+                      font: {
+                        size: 16,
+                        family: "IranSans"
+                      }
                     }
                   }
-                }
 
-              }}
-              title="نمودار مساحت خرابی"
-            /> :
-            <h1> هیچ نقطه‌ای در نمودار شدت خرابی انتخاب نشده است !!!</h1>
+                }}
+                title="نمودار مساحت خرابی"
+              /> :
+              <h1> هیچ نقطه‌ای در نمودار شدت خرابی انتخاب نشده است !!!</h1>
+            }
+          </div>
+          {!!chartValueSelected.length &&
+            <div className={styles.zoomBox}>
+              <ZoomChart
+                chartHeight={chartSize.height}
+                setZoom={setChartZoom}
+                setAnimation={setChartAnimation}
+                max={max}
+                type="number"
+              />
+            </div>
           }
         </div>
-        {!!chartValueSelected.length &&
-          <div className={styles.zoomBox}>
-            <ZoomChart
-              chartHeight={chartSize.height}
-              setZoom={setChartZoom}
-              setAnimation={setChartAnimation}
-              max={max}
-              type="number"
-            />
-          </div>
-        }
   
         {loading && 
           <div className={styles.loading}>

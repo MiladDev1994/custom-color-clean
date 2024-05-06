@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState 
 import Button from "../Common/Button/Button";
 import Modal from "../Common/Modal/Modal";
 import { useState } from "react";
-import { FilterActiveIdState, FilterState, IsModalOpenState, ModalTypeState, directoryPathSaveStateAtom } from "../../recoils/GlobalRecoil";
+import { AppDataState, FilterActiveIdState, FilterState, IsModalOpenState, ModalTypeState, directoryPathSaveStateAtom } from "../../recoils/GlobalRecoil";
 import { isLoadingSaveFileStateAtom } from "../../recoils/GlobalRecoil";
 import { filtersListStateAtom } from "../../recoils/GlobalRecoil";
 import { generalFilterConfigsListCopyAtom } from "../../recoils/GlobalRecoil";
@@ -34,6 +34,7 @@ export default function Header({
     const typeOfFile = { new: "new", open: "open" };
         
     const navigate = useNavigate()
+    const [appData, setAppData] = useRecoilState(AppDataState)
 
     // چک نشده
     const [directoryPath, setDirectoryPath] = useRecoilState(directoryPathSaveStateAtom);
@@ -303,159 +304,186 @@ export default function Header({
             setFileType,
         },
         AddFilter: {
+        },
+        AppDetails: {
+        },
+        FilterDetails: {
         }
     }
 
     return (
-        <>
-            <div className="w-full flex-none p-2 fixed z-50 m-auto flex flex-col gap-2 top-0">
-                <div 
-                    className="w-full h-12 shadow-xl 
-                    shadow-gray-300 max-w-[1900px] flex 
-                    items-stretch justify-between m-auto px-2 border border-gray-300 
-                    backdrop-blur-lg bg-white bg-opacity-70 rounded-md p-1"
-                >
-                    <div className="h-full flex items-center justify-center gap-2 ">
-                        <Button
-                            icon='x'
-                            expand='block'
-                            fill='info'
-                            shape="round"
-                            color='danger'
-                            iconWidth="2rem"
-                            iconHeight="2rem"
-                            onClick={() => {
-                                window.api_electron.quit()
-                            }}
-                            classNames={{
-                                // container: styles.windowBtn
-                                container: "w-[30px] h-[30px] !flex !items-center !justify-center flex-none px-2 transition-all duration-300 !rounded-md",
-                                section: "text-md"
-                            }}
-                        />
-                        <Button
-                            icon='dash'
-                            expand='block'
-                            fill='info'
-                            shape="round"
-                            color='primary'
-                            iconWidth="2rem"
-                            iconHeight="2rem"
-                            onClick={() => {
-                                window.api_electron.minimize()
-                            }}
-                            classNames={{
-                                // container: styles.windowBtn
-                                container: "w-[30px] h-[30px] !flex !items-center !justify-center flex-none px-2 transition-all duration-300 !rounded-md",
-                                section: "text-md"
-                            }}
-                        />
-                    </div>
-
-                    <div className="flex items-center justify-between gap-2">
-                        {hasSaveAs && 
-                            <Button
-                                title="Save As"
-                                // icon='box-arrow-in-down'
-                                expand='block'
-                                fill='transparent'
-                                color='gray'
-                                shape="round"
-                                iconWidth="1.6rem"
-                                iconHeight="1.6rem"
-                                outlineColor="lightgray"
-                                disabled={!filterActiveId.id}
-                                classNames={{
-                                    container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
-                                    section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
-                                }}
-                                onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.saveAs)}
-                                // classNames={{container: styles.submitBtn}}
-                            />
-                        }
-                        {hasSave &&
-                            <Button
-                                title="Save"
-                                // icon='box-arrow-in-down'
-                                expand='block'
-                                fill='transparent'
-                                color='gray'
-                                shape="round"
-                                iconWidth="1.6rem"
-                                iconHeight="1.6rem"
-                                outlineColor="lightgray"
-                                disabled={!filterActiveId.id}
-                                classNames={{
-                                    container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
-                                    section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
-                                }}
-                                onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.save)}
-                                // classNames={{container: styles.submitBtn}}
-                            />
-                        }
-                        {hasOpen &&
-                            <Button
-                                title="Open"
-                                // icon='box-arrow-in-down'
-                                expand='block'
-                                fill='transparent'
-                                color='gray'
-                                shape="round"
-                                iconWidth="1.6rem"
-                                iconHeight="1.6rem"
-                                outlineColor="lightgray"
-                                classNames={{
-                                    container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
-                                    section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
-                                }}
-                                onClick={() => {
-                                    setModalType("NewOrOpen");
-                                    setIsModalOpen(true);
-                                    setFileType(typeOfFile.open);
-                                }}
-                                // classNames={{container: styles.submitBtn}}
-                            />
-                        }
-                        {hasNew &&
-                            <Button
-                                title="New"
-                                // icon='box-arrow-in-down'
-                                expand='block'
-                                fill='transparent'
-                                color='gray'
-                                shape="round"
-                                iconWidth="1.6rem"
-                                iconHeight="1.6rem"
-                                outlineColor="lightgray"
-                                classNames={{
-                                    container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
-                                    section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
-                                }}
-                                onClick={() => {
-                                    setModalType("NewOrOpen");
-                                    setIsModalOpen(true);
-                                    setFileType(typeOfFile.new);
-                                }}
-                                // classNames={{container: styles.submitBtn}}
-                            />
-                        }
-                        <img src={logo} className="h-full aspect-auto"/>
-                    </div>
+        <div className="w-full flex-none p-2 fixed z-50 m-auto flex flex-col gap-2 top-0 right-0">
+            <div 
+                className="w-full h-12 shadow-xl 
+                shadow-gray-300 max-w-[1900px] flex 
+                items-stretch justify-between m-auto px-2 border border-gray-300 
+                backdrop-blur-lg bg-white bg-opacity-70 rounded-md p-1"
+            >
+                <div className="h-full flex items-center justify-center gap-2 ">
+                    <Button
+                        icon='x'
+                        expand='block'
+                        fill='info'
+                        shape="round"
+                        color='danger'
+                        iconWidth="2rem"
+                        iconHeight="2rem"
+                        onClick={() => {
+                            window.api_electron.quit()
+                        }}
+                        classNames={{
+                            // container: styles.windowBtn
+                            container: "w-[30px] h-[30px] !flex !items-center !justify-center flex-none px-2 transition-all duration-300 !rounded-md",
+                            section: "text-md"
+                        }}
+                    />
+                    <Button
+                        icon='dash'
+                        expand='block'
+                        fill='info'
+                        shape="round"
+                        color='primary'
+                        iconWidth="2rem"
+                        iconHeight="2rem"
+                        onClick={() => {
+                            window.api_electron.minimize()
+                        }}
+                        classNames={{
+                            // container: styles.windowBtn
+                            container: "w-[30px] h-[30px] !flex !items-center !justify-center flex-none px-2 transition-all duration-300 !rounded-md",
+                            section: "text-md"
+                        }}
+                    />
                 </div>
 
-                <section>{children}</section>
+                <h3 className="flex items-center justify-center px-2 text-xl text-gray-600 font-bold">{appData.app_name}</h3>
 
-                {isModalOpen && (
-                    <Modal
-                        isOpen={isModalOpen} 
-                        setIsOpen={setIsModalOpen}
-                    >
-                        <Component  {...componentProps[modalType]}/>
-                    </Modal>
-                )}
+                <div className="flex items-center justify-between gap-2">
+                    {hasSaveAs && 
+                        <Button
+                            title="ذخیره جدید"
+                            // icon='box-arrow-in-down'
+                            expand='block'
+                            fill='transparent'
+                            color='gray'
+                            shape="round"
+                            iconWidth="1.6rem"
+                            iconHeight="1.6rem"
+                            outlineColor="lightgray"
+                            disabled={!filterActiveId.id}
+                            classNames={{
+                                container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
+                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                            }}
+                            onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.saveAs)}
+                            // classNames={{container: styles.submitBtn}}
+                        />
+                    }
+                    {hasSave &&
+                        <Button
+                            title="ذخیره"
+                            // icon='box-arrow-in-down'
+                            expand='block'
+                            fill='transparent'
+                            color='gray'
+                            shape="round"
+                            iconWidth="1.6rem"
+                            iconHeight="1.6rem"
+                            outlineColor="lightgray"
+                            disabled={!filterActiveId.id}
+                            classNames={{
+                                container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
+                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                            }}
+                            onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.save)}
+                            // classNames={{container: styles.submitBtn}}
+                        />
+                    }
+                    {hasOpen &&
+                        <Button
+                            title="انتخاب فیلتر"
+                            // icon='box-arrow-in-down'
+                            expand='block'
+                            fill='transparent'
+                            color='gray'
+                            shape="round"
+                            iconWidth="1.6rem"
+                            iconHeight="1.6rem"
+                            outlineColor="lightgray"
+                            classNames={{
+                                container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
+                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                            }}
+                            onClick={() => {
+                                setModalType("NewOrOpen");
+                                setIsModalOpen(true);
+                                setFileType(typeOfFile.open);
+                            }}
+                            // classNames={{container: styles.submitBtn}}
+                        />
+                    }
+                    {hasNew &&
+                        <Button
+                            title="برنامه جدید"
+                            // icon='box-arrow-in-down'
+                            expand='block'
+                            fill='transparent'
+                            color='gray'
+                            shape="round"
+                            iconWidth="1.6rem"
+                            iconHeight="1.6rem"
+                            outlineColor="lightgray"
+                            classNames={{
+                                container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
+                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                            }}
+                            onClick={() => {
+                                setModalType("NewOrOpen");
+                                setIsModalOpen(true);
+                                setFileType(typeOfFile.new);
+                            }}
+                            // classNames={{container: styles.submitBtn}}
+                        />
+                    }
+                    {hasSaveAs && 
+                        <Button
+                            title="مشخصات برنامه"
+                            // icon='box-arrow-in-down'
+                            expand='block'
+                            fill='transparent'
+                            color='gray'
+                            shape="round"
+                            iconWidth="1.6rem"
+                            iconHeight="1.6rem"
+                            outlineColor="lightgray"
+                            disabled={!filterActiveId.id}
+                            classNames={{
+                                container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
+                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                            }}
+                            onClick={() => {
+                                setModalType("AppDetails");
+                                setIsModalOpen(true);
+                                setFileType(typeOfFile.open);
+                            }}
+                            // classNames={{container: styles.submitBtn}}
+                        />
+                    }
+                    <img src={logo} className="h-full aspect-auto"/>
+                </div>
             </div>
-            {/* <div className="w-full h-28"/> */}
-        </>
+
+            <section>{children}</section>
+
+            {isModalOpen && (
+                <Modal
+                    isOpen={isModalOpen} 
+                    setIsOpen={setIsModalOpen}
+                >
+                    <Component  {...componentProps[modalType]}/>
+                </Modal>
+            )}
+        </div>
 
     )
 } 

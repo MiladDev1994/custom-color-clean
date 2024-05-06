@@ -91,7 +91,6 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
 }
 
 
-
 export function AddFilter() {
 
     const filterTypeItem = [
@@ -188,6 +187,7 @@ export function AddFilter() {
     })
 
     UseOnDataFromIpcMain("readConfusion_chanel", async (event: any, data: any) => {
+        console.log(data)
         if (data.status) {
             const {filters, appData} = data.data
             const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
@@ -202,6 +202,7 @@ export function AddFilter() {
     })
 
     UseOnDataFromIpcMain("redHists_chanel", async (event: any, data: any) => {
+        console.log(data, "11111111111111111111111111111111111111111")
         if (data.status) {
             const {hists, filters, appData} = data.data
             const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
@@ -217,6 +218,7 @@ export function AddFilter() {
     })
 
     UseOnDataFromIpcMain("progress_chanel", (event: any, data: any) => {
+        console.log(data)
         const {progress, filter_type} = data
         setProgress(progress)
         if (progress >= 100) {
@@ -242,9 +244,11 @@ export function AddFilter() {
             })
             return Toast("error" , "تمام فیلد هار را پر کنید")
         } 
-        if (histsData && value.filter_type !== "SCATTER") {
+        if (Object.keys(histsData).length && value.filter_type !== "SCATTER") {
+            // console.log("OK")
             window.api_electron.addFilter(value)
         } else {
+            // console.log("NO")
             setProgress(0)
             window.api_electron.getChartData(value)
             interval.current = setInterval(() => {
@@ -303,5 +307,87 @@ export function AddFilter() {
             </div>
         </div>
         
+    )
+}
+
+
+export function AppDetails() {
+    const [appData, setAppData] = useRecoilState(AppDataState)
+
+    const keysFA: any = {
+        app_name: "نام برنامه",
+        healthy: "آدرس سالم‌ها",
+        not_healthy: "آدرس خراب‌ها",
+        product_type: "نوع محصول",
+        app_type: "نوع برنامه",
+        removeBlueBack: "حذف بک گراند آبی",
+    }
+
+    const booleanTypes: any = {
+        app_type: appData?.program_type ? "بار خوب حذف بار بد" : "بار بد استخراج بار خوب",
+        removeBlueBack: appData?.removeBlueBack ? "فعال" : "غیرفعال"
+    }
+    
+    return (
+        <div className="w-[600px]">
+            <h4 className="w-full text-center p-1 border-b border-gray-200">مشخصات برنامه</h4>
+            <ul>
+                {Object.entries(appData).map(([keys, value], index) =>
+                    <li key={keys} className={`p-2 text-sm flex ${index !== 5 ? "border-b border-gray-100" : ""} `}>
+                        <span className="text-gray-400 flex-none">{`${keysFA[keys]} :`}</span>
+                        <span className="ps-2 flex-auto">{typeof value === "string" ? value : booleanTypes[keys]}</span>
+                    </li>
+                )}
+            </ul>
+        </div>
+    )
+}
+
+
+export function FilterDetails() {
+    const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
+
+    const chartInfo: any = {
+        LINE: {
+            filter_name: filterActiveId.filter_name,
+            filter_type: filterActiveId.filter_type,
+            chart_type: filterActiveId.chart_type
+        },
+        SCATTER: {
+            filter_name: filterActiveId.filter_name,
+            filter_type: filterActiveId.filter_type,
+            influenceTop: filterActiveId.influenceTop,
+            influenceDown: filterActiveId.influenceDown
+        },
+        SIZE: {
+            filter_name: filterActiveId.filter_name,
+            filter_type: filterActiveId.filter_type,
+            chart_type: filterActiveId.size_type
+        },
+    }
+
+    const keysFA: any = {
+        filter_name: "نام فیلتر",
+        filter_type: "نوع فیلتر",
+        chart_type: "نوع نمودار",
+        influenceTop: "سهم خرابی دوربین بالا",
+        influenceDown: "سهم خرابی دوربین پایین",
+        
+    }
+
+    const chartInfoItems = Object.entries(chartInfo[filterActiveId.filter_type])
+
+    return (
+        <div className="w-[600px]">
+            <h4 className="w-full text-center p-1 border-b border-gray-200">مشخصات فیلتر</h4>
+            <ul>
+                {chartInfoItems.map(([keys, value]: any, index) =>
+                    <li key={keys} className={`p-2 text-sm flex ${index !== chartInfoItems.length-1 ? "border-b border-gray-100" : ""} `}>
+                        <span className="text-gray-400 flex-none">{`${keysFA[keys]} :`}</span>
+                        <span className="ps-2 flex-auto">{value}</span>
+                    </li>
+                )}
+            </ul>
+        </div>
     )
 }

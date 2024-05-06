@@ -27,6 +27,11 @@ class AppDataSingleton {
         return this.value 
     }
 
+    reset() {
+        this.value = {}
+        this.tempFilterValue = {}
+    }
+
     getAppData() {
         return this.value
     }

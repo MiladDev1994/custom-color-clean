@@ -14,7 +14,6 @@ export async function ONE(event: any, value: any) {
   const { app_name, filter_name, healthy, not_healthy, product_type, app_type, removeBlueBack, filter_type, size_type, chart_type, influenceTop, influenceDown } = value
   const appData = APP_DATA.getAppData()
 
-
     let isBackgroundBlue = false;
     if (Object.keys(appData).length) {
       switch (appData.product_type.toUpperCase()) {
@@ -44,6 +43,7 @@ export async function ONE(event: any, value: any) {
       }
     };
     
+    APP_DATA.set(value)
     await RemoveFile(path.join(featurePath, 'config.xml'))
     await RemoveFile(path.join(featurePath, 'Progress.txt'))
     await RemoveFile(path.join(featurePath, 'hists.json'))
@@ -52,14 +52,15 @@ export async function ONE(event: any, value: any) {
     
     execFile(`HistogramGenerator.exe`, { cwd: featurePath }, (error: any, stdout: any, stderr: any) => {
       if (error) {
+        APP_DATA.reset()
         return event.sender.send("getChartData_chanel", {status: false, message: error.message})
       }
       if(stdout) {
-        APP_DATA.set(value)
         return event.sender.send("getChartData_chanel", {status: true, data: stdout})
       }
       if (stderr) {
-          return event.sender.send("getChartData_chanel", {status: false, message: error?.message})
+        APP_DATA.reset()
+        return event.sender.send("getChartData_chanel", {status: false, message: error?.message})
       }
     });
 
@@ -69,7 +70,7 @@ export async function ONE(event: any, value: any) {
 export async function TWO(event: any, value: any) {
   const { app_name, filter_name, healthy, not_healthy, product_type, app_type, removeBlueBack, filter_type, size_type, chart_type, influenceTop, influenceDown } = value
   const appData = APP_DATA.getAppData()
-
+  
   let config = {
     "_instruction": { "xml": { "_attributes": { "version": "1.0" } } },
     "opencv_storage": {
@@ -79,24 +80,26 @@ export async function TWO(event: any, value: any) {
       "influenceDown" : Number(influenceDown),
     }
   };
-
+  
+  APP_DATA.set(value)
   await RemoveFile(path.join(path.join(featurePath, "BehIabi", "config.xml")))
   await RemoveFile(path.join(path.join(featurePath, "BehIabi", "confusions")))
   await RemoveFile(path.join(path.join(featurePath, "BehIabi", "Progress.txt")))
   const objToXml = await Json2Xml(config)
   await WriteXmlFile(objToXml, path.join(featurePath, "BehIabi", "config.xml"))
   
-  APP_DATA.set(value)
 
   execFile(`HistogramSearch.exe`, { cwd: path.join(featurePath, "BehIabi") }, (error: any, stdout: any, stderr: any) => {
     if (error) {
+      APP_DATA.reset()
       return event.sender.send("getChartData_chanel", {status: false, message: error.message})
     }
     if(stdout) {
       return event.sender.send("getChartData_chanel", {status: true, data: stdout})
     }
     if (stderr) {
-        return event.sender.send("getChartData_chanel", {status: false, message: error?.message})
+      APP_DATA.reset()
+      return event.sender.send("getChartData_chanel", {status: false, message: error?.message})
     }
   });
 }
