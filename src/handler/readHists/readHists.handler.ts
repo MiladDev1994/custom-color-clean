@@ -27,8 +27,8 @@ ipcMain.on("redHists", async (event) => {
             message: "اطلاعات دریافت شد"
           });
         } catch (error) {
-          APP_DATA.reset()
-          return event.sender.send('redHists_chanel', {status: false, message: error.message})
+          HISTS.reset()
+          return event.sender.send('redHists_chanel', {status: false, message: "ساختار فایل hisit.json اشتباه است"})
         }
       });
     }

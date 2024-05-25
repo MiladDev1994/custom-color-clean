@@ -5,8 +5,8 @@ export const AccuracyLineByStepUtil = (data: any) => {
     allRecord,
     chartLength,
     chartSize,
-    chartValueSelected, // نموداری که نمایش میده
-    filters, // مقطه ای که انتخاب شده
+    intensityGraphs, // نموداری که نمایش میده
+    pointData, // مقطه ای که انتخاب شده
     message,
     type,
     verticalLinesValue, // مقطه ای که انتخاب شده
@@ -14,9 +14,9 @@ export const AccuracyLineByStepUtil = (data: any) => {
     setAccuracyLinesHandler
   } = data
 
-  if (!chartValueSelected.length) return Toast("error", message);
+  if (!intensityGraphs.length) return Toast("error", message);
 
-  const filterDataLength = filters.length ? Object.keys(filters[0].data).length : false;
+  const filterDataLength = pointData ? Object.keys(pointData).length : false;
   let newline: any = [0];
   let newPos: any = [0];
 
@@ -29,7 +29,7 @@ export const AccuracyLineByStepUtil = (data: any) => {
         case "default":
           const find = allRecord.find((item: any) => Math.round(item.id * percent) === increase || Math.round(item.id * percent) === decrease)
           if (find) {
-            newline = [(find.id * percent)];
+            newline = [Math.round(find.id * percent)];
             return true
           } else {
             increase++;
@@ -40,7 +40,7 @@ export const AccuracyLineByStepUtil = (data: any) => {
           if (increase <= chartLength - 1) {
             const find = allRecord.find((item: any) => Math.round(item.id * percent) === increase + 1)
             if (find) {
-              newline = [(find.id * percent)];
+              newline = [Math.round(find.id * percent)];
               return true
             } else {
               increase++;
@@ -52,7 +52,7 @@ export const AccuracyLineByStepUtil = (data: any) => {
           if (decrease > 0) {
             const find = allRecord.find((item: any) => Math.round(item.id * percent) === decrease - 1)
             if (find) {
-              newline = [(find.id * percent)];
+              newline = [Math.round(find.id * percent)];
               return true
             } else {
               decrease--;
@@ -76,7 +76,6 @@ export const AccuracyLineByStepUtil = (data: any) => {
     // else return {
     //   status: false,
     // }
-
     newline && setAccuracyLinesHandler(0, newPos, newline)
   } else {
     // return {

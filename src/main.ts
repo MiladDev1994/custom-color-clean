@@ -7,6 +7,7 @@ import selectedPath from './handler/windows/selectPath';
 import quitApp from './handler/windows/quitApp';
 import minimizeApp from './handler/windows/minimizeApp';
 import SaveAs from './handler/saveAsFile/saveAsFile.handler';
+import reloadApp from "./handler/windows/reloadApp";
 dotenv.config({ path: path.join(__dirname, '.env') })
 
 if (require('electron-squirrel-startup')) {
@@ -17,7 +18,8 @@ const windowAction = {
   selectedPath,
   quitApp,
   minimizeApp,
-  SaveAs
+  SaveAs,
+  reloadApp
 }
 
 SEED.create()

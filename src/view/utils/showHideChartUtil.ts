@@ -3,27 +3,27 @@ import { Toast } from "./Toast";
 
 export const showHideChartUtil = (data: any) => {
     const {
-        chartValueSelected,
+        intensityGraphs,
+        setIntensityGraphs,
+        chartData,
         nickname,
         type,
-        setChartValueSelected,
-        chartData,
         message
     } = data
-    if (!chartValueSelected.length) return Toast("error", message);
+    if (!intensityGraphs.length) return Toast("error", message);
 
-    const findChart = chartValueSelected.find((item: any) => item.label.replaceAll(" ", "") === nickname)
+    const findChart = intensityGraphs.find((item: any) => item.label.replaceAll(" ", "") === nickname)
     if (findChart) {
-      const filterChartValueSelected = chartValueSelected.filter((item: any) => item.label.replaceAll(" ", "") !== nickname)
-      chartValueSelected.length > 1 && setChartValueSelected(filterChartValueSelected)
+      const filterChartValueSelected = intensityGraphs.filter((item: any) => item.label.replaceAll(" ", "") !== nickname)
+      intensityGraphs.length > 1 && setIntensityGraphs(filterChartValueSelected)
     } else {
-      const newChartValueSelected = [...chartValueSelected];
+      const newChartValueSelected = [...intensityGraphs];
       const createHorizontalData = {
         ...chartTheme.public, 
         ...chartTheme[type],
         data: chartData[type],
       }
       newChartValueSelected.push(createHorizontalData)
-      setChartValueSelected(newChartValueSelected)
+      setIntensityGraphs(newChartValueSelected)
     }
 }

@@ -4,8 +4,8 @@ export function AddFilterFormValidation(values: any) {
     
     if (!values?.filter_name.trim()) {
         error.filter_name = "نام فیلتر را وارد کنید"
-    } else if (values.filter_name.trim().length < 5) {
-        error.filter_name = "باید بیشتر از 4 کاراکتر باشد"
+    } else if (values.filter_name.trim().length < 5 || values.filter_name.trim().length > 15) {
+        error.filter_name = "نام فیلتر باید بین 5 تا 15 کاراکتر باشد"
     } else {
         delete error.filter_name
     }

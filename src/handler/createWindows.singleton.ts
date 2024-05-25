@@ -15,10 +15,13 @@ class WindowSingleton {
 
     private createWindow(action?: any){
       const mainWindow = new BrowserWindow({
-        height: 600,
-        width: 800,
+        height: 768,
+        width: 1024,
         frame: false,
         webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: true,
+          webSecurity: false,
           preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
         },
       });
@@ -26,7 +29,7 @@ class WindowSingleton {
       
       mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
       mainWindow.maximize()
-      mainWindow.webContents.openDevTools();
+      // mainWindow.webContents.openDevTools();
 
       Object.keys(action).forEach(act => {
         action[act as any](mainWindow)

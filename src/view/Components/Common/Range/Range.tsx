@@ -9,7 +9,7 @@ const Range = (props: any) => {
         max = 100, 
         step = 1,
         label = "",
-        value,
+        value = "0.5",
         onChange,
         Percent
     } = props;
@@ -46,7 +46,7 @@ const Range = (props: any) => {
 
     const divisibleChecker = () => {
         const data = [];
-        for (let i=2; i<=Math.floor((range.length - 1) / 2); i++) {
+        for (let i=2; i<=Math.floor((range.length - 1) / 4); i++) { // برای نمایش  50% مقدار 2 به 4 تغییر کرد
             if ((range.length - 1) % i === 0) data.push(i)
         }
         return data
@@ -80,7 +80,7 @@ const Range = (props: any) => {
             
             <div className={styles.descriptionBox} style={{height: 0}}>
                 {range.map((item) =>
-                    <div key={item} className={styles.description}>
+                    <div key={item} className={styles.description}> 
                         {item === +value ?
                             <div className={styles.bigLine}>
                                 <div className={styles.inValue}>

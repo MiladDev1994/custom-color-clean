@@ -9,14 +9,14 @@ import "swiper/css/pagination";
 import { FilesPathState } from "../../../recoils/GlobalRecoil";
 
 
-const ImagesSwiper = () => {
-  
-    const filesPath = useRecoilValue(FilesPathState)
+const ImagesSwiper = ({filesPath}: any) => {
+
     const [healthySwitch, setHealthySwitch] = useState<any>({
       healthy: true,
       nonHealthy: true,
     })
   
+    // console.log(filesPath)
     return (
       <div className={styles.imageContainer}>
         {!!Object.entries(filesPath).length && Object.entries(filesPath).map(([keys, value]) => {
@@ -42,7 +42,7 @@ const ImagesSwiper = () => {
                 {Object.entries(value).map(([folderPath, files]: any) => 
                   <div key={folderPath} className={styles.sliderBox}>
                     <div className={styles.titleBox}>
-                      <h4>{folderPath.split("/").pop().replace("~", "").split("_").reverse().join("_")}</h4>
+                      <h4>{folderPath.replaceAll('"', '').split("/").pop().replace("~", "").split("_").reverse().join("_")}</h4>
                       {/* <h4>{folderPath.includes("/Accept/") ? "Accept" : "Reject"}</h4> */}
                     </div>
                     <div className={styles.swiperBox}>

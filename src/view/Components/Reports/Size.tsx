@@ -135,7 +135,7 @@ const SIZE = () => {
         setChartInforms(convertDatasetToChartData(histsData[filterActiveId.size_type]))
     }, [filterActiveId])
 
-    console.log(filterActiveId.size_type)
+    // console.log(filterActiveId.size_type)
 
     return (
         <div className="w-full flex items-center justify-center h-[calc(100vh-115px)] p-3">

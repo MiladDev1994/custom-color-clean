@@ -3,11 +3,9 @@ import * as ChartData from "./getChartData.service"
 
 ipcMain.on("getChartData", async (event, value) => {
     const {filter_type} = value
-    const dimension = filter_type === "SCATTER" ? "TWO" : "ONE"
-    const newValue = {...value, dimension}
 
     try {
-        await ChartData[dimension](event, newValue)
+        await ChartData[filter_type as "SCATTER"](event, value)
     } catch (error) {
         return event.sender.send("getChartData_chanel", error)
     }

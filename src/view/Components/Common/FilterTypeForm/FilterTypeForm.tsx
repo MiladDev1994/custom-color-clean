@@ -63,7 +63,7 @@ export function SCATTER(props: any) {
     return (
         <>
             {/* <Radio {...props}/> */}
-            {rangeInput?.map(item => 
+            {/* {rangeInput?.map(item => 
                 <Range
                     key={item.type}
                     label={item.label}
@@ -74,7 +74,7 @@ export function SCATTER(props: any) {
                     value={value[item.type]}
                     onChange={(e: any) => setValue({...value, [item.type]: e.target.value})}
                 />
-            )}
+            )} */}
         </>
     )
 }
@@ -211,79 +211,6 @@ export function LINE(props: any) {
     }, [])
     
 
-    const ChartType = useMemo(() => {
-        return (
-            <>
-                {
-                    Object.keys(chartInforms).length > 0 &&
-                    Object.keys(chartInforms).filter(key => !key.toLowerCase().startsWith("size")).map((key) => (
-                        <div 
-                            key={key}
-                            className={`h-44 flex items-center justify-center border border-gray-200 shadow-lg shadow-gray-200 rounded-md relative p-1  transition-all duration-300 ${value.chart_type === key ? "bg-sky-200" : "hover:bg-gray-100"}`}
-                        >
-                            <input 
-                                type="radio" 
-                                name="chart_type"
-                                className="absolute w-full h-full opacity-0 cursor-pointer"
-                                value={key}
-                                onChange={changeHandler}
-                            />
-                            <SingleScatterChart
-                                // chartKey={"filters[activeIndex].chartKey"}
-                                labels={[...Array(260).keys()]}
-                                datas={chartInforms[key] ?? []}
-                                steChartSize={steChartSize}
-                                height="220px"
-                                // width="220px"
-                                options={{
-                                    plugins: {
-                                      legend: {
-                                        display: false,
-                                        position: "bottom"
-                                      },
-                                      // tooltip: {
-                                      //   callbacks: {
-                                      //     label: function(context, data) {
-                                      //       return context.dataset.label;
-                                      //     }
-                                      //   }
-                                      // },
-                                      title: {
-                                        display: true,
-                                        text: key,
-                                        font: {
-                                          size: 14,
-                                          family: "IranSans"
-                                        }
-                                      },
-                                    },
-                                    scales:{
-                                      y: {
-                                          ticks: {
-                                            //   display: false,
-                                                font: {
-                                                    size: 9,
-                                                    family: "IranSans",
-                                              },
-                                          },
-                                      },
-                                      x: {
-                                          ticks: {
-                                            //   display: false,
-                                                font: {
-                                                    size: 9,
-                                                    family: "IranSans",
-                                              },
-                                          },
-                                      }
-                                    }
-                                }}
-                            />
-                        </div>
-                ))}
-            </>
-        )
-    }, [chartInforms])
 
     return (
         <>
@@ -310,7 +237,7 @@ export function LINE(props: any) {
                                 value={key}
                                 onChange={changeHandler}
                             />
-                            <FakeChar
+                            <FakeChart
                                 keys={key}
                                 chartInforms={chartInforms}
                                 steChartSize={steChartSize}
@@ -327,7 +254,7 @@ export function LINE(props: any) {
 
 
 
-const FakeChar = ({chartInforms, keys, steChartSize}: any) => {
+const FakeChart = ({chartInforms, keys, steChartSize}: any) => {
 
     const ChartMemo = useMemo(() => {
         return (

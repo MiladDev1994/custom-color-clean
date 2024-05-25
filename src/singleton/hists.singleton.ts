@@ -1,4 +1,5 @@
 
+import { WriteFiltersFile } from "../handler/utils/WriteFiltersFile";
 let histsInstance: any;
 
 
@@ -15,9 +16,14 @@ class SingletonHistsClass {
         return this.hists;
     }
 
-    set(newHists: any) {
+    async set(newHists: any) {
         this.hists = newHists;
+        // await WriteFiltersFile()
         return newHists;
+    }
+
+    reset() {
+        this.hists = {}
     }
 
 }

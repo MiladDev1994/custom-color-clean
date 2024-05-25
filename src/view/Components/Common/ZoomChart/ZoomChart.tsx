@@ -9,6 +9,7 @@ function ZoomChart(props: any) {
     const container = useRef(null)
     const bothRef = useRef(null)
     const [onClick, setOnClick] = useState<any>("")
+    const [touchType, setTouchType] = useState<any>("")
     const [btnLocation, setBtnLocation] = useState<any>({
         min: 0,
         max: boxHeight,
@@ -158,6 +159,49 @@ function ZoomChart(props: any) {
 
 
     useEffect(() => {
+        if (touchType === "max") {
+            if (btnLocation.max > boxHeight) {
+                setBtnLocation({
+                    ...btnLocation,
+                    max: boxHeight
+                })
+                setOnClick(false)
+            } else if (btnLocation.max < btnLocation.min + minimumDistanceBetweenButton) {
+                setBtnLocation({
+                    ...btnLocation,
+                    max: btnLocation.min + minimumDistanceBetweenButton
+                })
+                setOnClick(false)
+            }
+        } else if (touchType === "min") {
+            if (btnLocation.min < 0) {
+                setBtnLocation({
+                    ...btnLocation,
+                    min: 0
+                })
+                setOnClick(false)
+            } else if (btnLocation.min > btnLocation.max - minimumDistanceBetweenButton) {
+                setBtnLocation({
+                    ...btnLocation,
+                    min: btnLocation.max - minimumDistanceBetweenButton
+                })
+                setOnClick(false)
+            }
+        } else if (touchType === "both") {
+            if (btnLocation.min < 0) {
+                setBtnLocation({
+                    max: distanceBetween,
+                    min: 0
+                })
+                setOnClick(false)
+            } else if (btnLocation.max > boxHeight+2) {
+                setBtnLocation({
+                    max: boxHeight,
+                    min: boxHeight - distanceBetween
+                })
+                setOnClick(false)
+            }
+        }
         setZoom({
             min: btnLocation.min / boxHeight,
             max: btnLocation.max / boxHeight,
@@ -172,14 +216,34 @@ function ZoomChart(props: any) {
     } , [])
     
 
+    const touchMoveHandler = (e: any, type: any) => {
+        if (!onClick) return
+        const Y = e.targetTouches[0].clientY
+        setBtnLocation({
+            ...btnLocation,
+            [type]: (containerTop+boxHeight - scroll) - Y 
+        })
+        setDistanceBetween(btnLocation.max - btnLocation.min)
+    }
+
+    const bothTouchMoveHAndler = (e: any, type: any) => {
+        if (!onClick) return
+        const Y = e.targetTouches[0].clientY
+        const minValue = (containerTop+boxHeight - scroll) - Y - (distanceBetween * 0.5)
+        setBtnLocation({
+            min: minValue,
+            max: minValue + distanceBetween,
+        })
+    }
+
     return (
         <div 
             ref={container}
             className={styles.container} 
             style={{height: `${boxHeight}px`}}
             onMouseDown={() => setAnimation(false)}
-            onTouchStart={() => setAnimation(false)}
             onMouseUp={() => setAnimation(true)}
+            onTouchStart={() => setAnimation(false)}
             onTouchEnd={() => setAnimation(true)}
         >
             <div className={styles.maxBtn} style={{bottom: btnLocation.max ? btnLocation.max : 0, zIndex: onClick === "max" ? 10 : 9}}>
@@ -196,15 +260,19 @@ function ZoomChart(props: any) {
                             setOnClick("max")
                             setMouseWalk("")
                         }}
-                        onTouchStart={() => {
-                            setOnClick("max")
-                            setMouseWalk("")
-                        }}
                         onMouseUp={() => setOnClick("")}
-                        onTouchEnd={() => setOnClick("")}
-                        onMouseLeave={() => setOnClick("")}
+                        onMouseLeave={() => {
+                            setOnClick("")
+                            setOnClick(false)
+                        }}
                         onMouseMove={(e) => mouseMoveHandler(e, "max")}
-                        onTouchMove={(e) => mouseMoveHandler(e, "max")}
+
+                        onTouchStart={() => {
+                            setTouchType("max")
+                            setOnClick(true)
+                        }}
+                        onTouchMove={(e) => touchMoveHandler(e, "max")}
+                        // onTouchStart={}
                         style={{width: onClick ? "65px" : "25px", height: onClick ? "80px" : "25px",}}
                     ></div>
                     <div className={styles.showLocation}>
@@ -232,17 +300,7 @@ function ZoomChart(props: any) {
                             setBothOnClick(true)
                             distanceHandler(e)
                         }}
-                        onTouchStart={(e) => {
-                            setMouseWalk("")
-                            mouseNewLocation = undefined
-                            setBothOnClick(true)
-                            distanceHandler(e)
-                        }}
                         onMouseUp={() => {
-                            mouseNewLocation = undefined
-                            setBothOnClick(false)
-                        }}
-                        onTouchEnd={() => {
                             mouseNewLocation = undefined
                             setBothOnClick(false)
                         }}
@@ -254,10 +312,12 @@ function ZoomChart(props: any) {
                             mouseNewLocation = undefined
                             bothMouseMoveHandler(e)
                         }}
-                        onTouchMove={(e) => {
-                            mouseNewLocation = undefined
-                            bothMouseMoveHandler(e)
+
+                        onTouchStart={() => {
+                            setTouchType("both")
+                            setOnClick(true)
                         }}
+                        onTouchMove={(e) => bothTouchMoveHAndler(e, "both")}
                         className={styles.clickBox}
                         style={{
                             width: bothOnClick ? "85px" : "100%",
@@ -283,15 +343,18 @@ function ZoomChart(props: any) {
                             setMouseWalk("")
                             setOnClick("min")
                         }}
-                        onTouchStart={() => {
-                            setMouseWalk("")
-                            setOnClick("min")
-                        }}
                         onMouseUp={() => setOnClick("")}
-                        onTouchEnd={() => setOnClick("")}
-                        onMouseLeave={() => setOnClick("")}
+                        onMouseLeave={() => {
+                            setOnClick("")
+                            setOnClick(false)
+                        }}
                         onMouseMove={(e) => mouseMoveHandler(e, "min")}
-                        onTouchMove={(e) => mouseMoveHandler(e, "min")}
+
+                        onTouchStart={() => {
+                            setTouchType("min")
+                            setOnClick(true)
+                        }}
+                        onTouchMoveCapture={(e) => touchMoveHandler(e, "min")}
                         style={{width: onClick ? "65px" : "25px", height: onClick ? "80px" : "25px",}}
                     ></div>
                     <div className={styles.showLocation}>

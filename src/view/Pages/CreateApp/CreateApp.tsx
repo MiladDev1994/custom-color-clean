@@ -21,7 +21,7 @@ function CreateApp() {
     ]
     const NamesInput = [
         {label: "نام برنامه", name: "app_name"},
-        {label: "نام فیلتر",  name: "filter_name"}
+        // {label: "نام فیلتر",  name: "filter_name"}
     ]
     // const ProductType = [
     //     {id: 1, name: "ماش", value: "MUNG"},
@@ -119,7 +119,7 @@ function CreateApp() {
     }
 
     UseOnDataFromIpcMain("getChartData_chanel", (event: any, data: any) => {
-        console.log(data)
+        // console.log(data)
     })
 
     UseOnDataFromIpcMain("readConfusion_chanel", async (event: any, data: any) => {
@@ -128,8 +128,8 @@ function CreateApp() {
             const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
             setFilterActiveId(findLastFilter)
             setFilters(filters)
-            setAppData(appData)
             Toast("success", data.message)
+            setAppData(appData)
             navigate("/report")
         } else {
             Toast("error", data.message)
@@ -166,6 +166,14 @@ function CreateApp() {
         }
     })
 
+    UseOnDataFromIpcMain("createApp_chanel", (event: any, data: any) => {
+        if (data.status) {
+            setAppData(data.addData)
+            setFilterActiveId({})
+            navigate("/report")
+        }
+    })
+
     const submitHandler = () => {
         if (progress < 100) return
         if (Object.values(error).join("")) {
@@ -182,11 +190,12 @@ function CreateApp() {
             })
             return Toast("error" , "تمام فیلد هار را پر کنید")
         } 
-        setProgress(0)
-        window.api_electron.getChartData(value)
-        interval.current = setInterval(() => {
-          api_electron.progress(value.filter_type)
-        } , 500)
+        api_electron.createApp(value)
+        // setProgress(0)
+        // window.api_electron.getChartData(value)
+        // interval.current = setInterval(() => {
+        //   api_electron.progress(value.filter_type)
+        // } , 500)
     }
 
     const FilterTypeComponent = FilterTypeForm[value.filter_type as "SCATTER"]
@@ -230,8 +239,9 @@ function CreateApp() {
                 hasNew={false}
                 hasSave={false}
                 hasSaveAs={false}
+                hasAppDetails={false}
             />
-            <div className={`w-full flex items-start justify-center my-20`}>
+            <div className={`w-full flex items-center justify-center my-20`}>
                 <div className={`w-[1000px] p-1 rounded-xl bg-white border border-gray-200 shadow-2xl shadow-gray-400`}>
                     <h5 className='text-lg p-2 border-b border-gray-200'> ایجاد برنامه جدید </h5>
                     <div className={`grid grid-cols-2 p-2 gap-7`}>
@@ -247,7 +257,7 @@ function CreateApp() {
                                 focus={focus[ele.name]}
                                 onChange={changeHandler}
                                 classNames={{
-                                    // container: "col-span-full"
+                                    container: "col-span-full"
                                 }}
                             />
                         )}
@@ -277,7 +287,7 @@ function CreateApp() {
                             />
                         )}
 
-                        <FilterTypeForm.Radio
+                        {/* <FilterTypeForm.Radio
                             value={value}
                             error={error.filter_type}
                             focus={focus.filter_type}
@@ -285,18 +295,18 @@ function CreateApp() {
                             title="نوع فیلتر"
                             changeHandler={changeHandler}
                             filterTypeItem={filterTypeItem}
-                        />
+                        /> */}
 
-                        {value.filter_type && <FilterTypeComponent {...filterTypeComponentProps[value.filter_type as "SCATTER"]}/>}
+                        {/* {value.filter_type && <FilterTypeComponent {...filterTypeComponentProps[value.filter_type as "SCATTER"]}/>} */}
                         
                         <div className={`flex items-center justify-start`}>
-                            <label className='w-full p-1 flex items-center'>
+                            <label className='w-full p-1 flex items-center cursor-pointer'>
                                 <input 
                                     type='checkbox' 
                                     name='removeBlueBack'
                                     value={value.removeBlueBack}
                                     onChange={changeHandler}
-                                    className='w-5 h-5 mx-3' 
+                                    className='w-5 h-5 mx-3 cursor-pointer' 
                                 />
                                 حذف بک گراند آبی
                             </label>

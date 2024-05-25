@@ -199,7 +199,7 @@ export const IsModalOpenState: RecoilState<any> = atom({
   default: false,
 });
 
-export const ModalTypeState: RecoilState<undefined | "NewOrOpen" | "AddFilter" | "AppDetails" | "FilterDetails"> = atom({
+export const ModalTypeState: RecoilState<undefined | "OpenFilter" | "NewFilter" | "AddFilter" | "AppDetails" | "FilterDetails" | "ShowImage" | "HV_Images"> = atom({
   key: "ModalTypeState",
   default: undefined,
 });
@@ -281,6 +281,24 @@ export const IdealPointMatris: RecoilState<any> = atom({
 export const activeIndexStateAtom: RecoilState<any> = atom({
   key: "activeIndexStateAtom",
   default: 0,
+});
+
+export const GlobalLoadingState: RecoilState<any> = atom({
+  key: "GlobalLoadingState",
+  default: false,
+});
+
+
+
+export const ImageActiveState: RecoilState<any> = atom({
+  key: "ImageActiveState",
+  default: {},
+});
+
+
+export const AnyFilterChanged: RecoilState<any> = atom({
+  key: "AnyFilterChanged",
+  default: true,
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

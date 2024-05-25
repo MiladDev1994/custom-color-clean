@@ -33,7 +33,7 @@ const LineChartPreview = ({
     chart.options.plugins.tooltip = false;
   }, [chartRef]);
 
-  console.log(data)
+  // console.log(data)
   
   return (
     <div className={styles.container}>

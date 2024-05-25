@@ -1,9 +1,9 @@
 import SCATTER from "./Scatter";
 import LINE from "./Line";
-import SIZE from "./Size"
+import Conclusion from "./Conclusion"
 
 export {
     SCATTER,
     LINE,
-    SIZE
+    Conclusion
 }

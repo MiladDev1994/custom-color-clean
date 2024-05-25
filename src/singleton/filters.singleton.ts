@@ -1,3 +1,5 @@
+
+import { WriteFiltersFile } from "../handler/utils/WriteFiltersFile";
 let FiltersInstance: any
 
 class FiltersSingleton {
@@ -9,11 +11,12 @@ class FiltersSingleton {
         FiltersInstance = this;
     }
 
-    set(filter: any) {
+    async set(filter: any) {
+        // await WriteFiltersFile()
         return this.filters = filter
     }
     
-    push(data: any) {
+    async push(data: any) {
         const { 
             filter_name,
             filter_type, 
@@ -21,7 +24,13 @@ class FiltersSingleton {
             chart_type, 
             influenceTop, 
             influenceDown, 
-            confusion = false 
+            confusion = false,
+            optimalPoint,
+            images,
+            result,
+            userData,
+            filterValues,
+            HV_images
         } = data
         
         const findMaxId = this.filters.length ? this.filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
@@ -33,13 +42,20 @@ class FiltersSingleton {
             chart_type,
             influenceTop,
             influenceDown,
-            confusion
+            confusion,
+            optimalPoint,
+            images,
+            result,
+            userData,
+            filterValues,
+            HV_images
         }
         this.filters.push(newFilter)
+        // await WriteFiltersFile()
         return this.filters
     }
 
-    update(id: any, newData: any) {
+    async update(id: any, newData: any) {
         const oldFilters = [...this.filters]
         const findIndex = oldFilters.findIndex(ele => ele.id === id)
         const spliceFilters = oldFilters.splice(findIndex, 1)
@@ -49,11 +65,23 @@ class FiltersSingleton {
         }
         oldFilters.splice(findIndex, 0, newFilter)
         this.filters = oldFilters
+        // await WriteFiltersFile()
     }
 
-    deleteById(id: any) {
+    async patch(id: any, value: any) {
+        const oldFilters = [...this.filters]
+        const findIndex = oldFilters.findIndex(ele => ele.id === id)
+        oldFilters.splice(findIndex, 1)
+        oldFilters.splice(findIndex, 0, {id, ...value})
+        this.filters = oldFilters
+        // await WriteFiltersFile()
+        return oldFilters
+    }
+
+    async deleteById(id: any) {
         const newFilters = this.filters.filter(ele => ele.id !== id)
         this.filters = newFilters
+        // await WriteFiltersFile()
         return this.filters
     }
 
@@ -65,6 +93,10 @@ class FiltersSingleton {
         return this.filters
     }
     
+    reset() {
+        this.filters = []
+        return this.filters
+    }
 }
 
 const FILTERS = new FiltersSingleton()

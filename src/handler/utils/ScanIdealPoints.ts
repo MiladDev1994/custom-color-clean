@@ -1,5 +1,5 @@
 
-import path from "path"
+// import path from "path"
 import fs from "fs"
 import ENV from "../../singleton/env";
 import { DECIMAL } from "../../singleton/confusion.singleton";
@@ -27,7 +27,7 @@ export function scanIdealPoint(delta: any) {
                 for (let key in pointData) {
                     pointData[key].push({
                         x: Math.round(delta * Math.pow(10, DECIMAL.get())),
-                        y: 1 - Number(xml.opencv_storage[key]),
+                        y: Number(xml.opencv_storage[key]),
                         labels: key
                     })
                 }

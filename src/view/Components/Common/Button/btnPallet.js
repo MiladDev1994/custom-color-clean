@@ -3,9 +3,9 @@ const btnPallet = {
     colorWhite: "#ffffff",
 
     // Primary
-    colorLightBlue: "#EDF6FD",
-    colorBaseBlue: "#4DA9E4",
-    colorBlueHover: "#4089C1",
+    colorLightBlue: "#e0f2fe",
+    colorBaseBlue: "#0ea5e9",
+    colorBlueHover: "#0284c7",
 
     // Secondary
     colorLightOrange: "#FFF5EE",

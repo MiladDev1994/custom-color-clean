@@ -4,6 +4,8 @@ declare namespace api_electron {
   function selectedPath(): any;
   function minimize(): void;
   function quit(): void;
+  function reload(): void;
+  function createApp(value: any): void;
   function getChartData(value: any): void;
   function progress(type: string): void;
   function readConfusion(): void;
@@ -12,11 +14,17 @@ declare namespace api_electron {
   function existAppDataChecker(): void;
   function saveAsFile(): Promise<any>;
   function selectFolder(): Promise<any>;
-  function saveFile(directoryPath: any, filters: any, configs: any): Promise<any>;
+  function saveFilter(path: any): Promise<any>;
+  function openFilters(path: any): Promise<any>;
   function completeSorterConfigData(value: any): Promise<any>;
   function addFilter(value: any): void;
   function deleteFilter(id: any): void;
   function calculateAcc(data: any): void;
+  function resultGenerator(data: any): void;
+  function resultGeneratorProgress(): void;
+  function readResultData(id: number): void;
+  function randomImage(data: any): void;
+  function resultGenerator_conclusion(count?: any): void;
   function onDataFromIpcMain(channel:string, func: ()=>void): () => Electron.IpcRenderer;
 }
 

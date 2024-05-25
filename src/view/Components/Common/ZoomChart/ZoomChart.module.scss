@@ -38,6 +38,7 @@
                 position: absolute;
                 cursor: pointer;
                 z-index: 1;
+                touch-action: none;
             }
             .showLocation {
                 width: 35px;
@@ -77,6 +78,7 @@
             .clickBox {
                 position: absolute;
                 cursor: ns-resize;
+                touch-action: none;
             }
             .btn {
                 width: 100%;

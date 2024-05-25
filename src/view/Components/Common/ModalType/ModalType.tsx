@@ -2,16 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { AppDataState, FilterActiveIdState, FilterState, HistsDataState, IsModalOpenState, ProgressState } from "../../../recoils/GlobalRecoil";
+import { AppDataState, FilterActiveIdState, FilterState, GlobalLoadingState, HistsDataState, ImageActiveState, IsModalOpenState, ModalTypeState, ProgressState } from "../../../recoils/GlobalRecoil";
 import * as FilterTypeForm from "../FilterTypeForm/FilterTypeForm"
 import ProgressBtn from "../ProgressBtn/ProgressBtn"
 import { AddFilterFormValidation } from "../FilterTypeForm/validation";
 import { Toast } from "../../../utils/Toast";
 import { UseOnDataFromIpcMain } from "../../../hooks/UseOnDataFromIpcMain";
 import { useNavigate } from "react-router-dom";
+import Image from "../Images/Images";
+import Icon from "../Icon/Icon";
 
 
-export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileType}: any) {
+export function OpenFilter({ saveAsHandler, saveHandler }: any) {
+
+    const [appData, setAppData] = useRecoilState(AppDataState)
+    const [modalType, setModalType] = useRecoilState(ModalTypeState);
+    const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
+    const [histsData, setHistsData] = useRecoilState(HistsDataState)
+    const [filters, setFilters] = useRecoilState(FilterState)
+    const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
 
     return (
         <div className={"w-[800px] text-center p-2"}>
@@ -34,7 +43,7 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
                         container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200 ring-1 ring-gray-400 shadow-md shadow-gray-300",
                         section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                     }}
-                    onClick={() => !disableSave && handleSaveFile("save")}
+                    onClick={() => saveHandler("OpenFilter")}
                 />
                 <Button
                     title="ذخیره کردن با نام جدید"
@@ -49,7 +58,7 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
                         container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200 ring-1 ring-gray-400 shadow-md shadow-gray-300",
                         section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                     }}
-                    onClick={() => !disableSave && handleSaveFile("saveAs")}
+                    onClick={() => saveAsHandler("OpenFilter")}
                 />
                 <Button
                     title="ذخیره نشود"
@@ -64,7 +73,18 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
                         container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200 ring-1 ring-gray-400 shadow-md shadow-gray-300",
                         section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                     }}
-                    onClick={() => handleSaveFile()}
+                    onClick={() => {
+                        api_electron.selectedPath().then((path: any) => {
+                            if (path) {
+                                api_electron.openFilters(path)
+                                setIsModalOpen(false);
+                                setFilters([])
+                                setAppData({})
+                                setHistsData({})
+                                setFilterActiveId({})
+                            }
+                        })
+                    }}
                 />
                 <Button
                     title="انصراف"
@@ -81,7 +101,6 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
                     }}
                     onClick={() => {
                         setIsModalOpen(false);
-                        setFileType("");
                     }}
                 />
             </div>
@@ -91,13 +110,106 @@ export function NewOrOpen({disableSave, handleSaveFile, setIsModalOpen, setFileT
 }
 
 
-export function AddFilter() {
+export function NewFilter({ saveAsHandler, saveHandler }: any) {
+
+    const navigate = useNavigate()
+    const [appData, setAppData] = useRecoilState(AppDataState)
+    const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
+    const [histsData, setHistsData] = useRecoilState(HistsDataState)
+    const [filters, setFilters] = useRecoilState(FilterState)
+    const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
+
+    return (
+        <div className={"w-[800px] text-center p-2"}>
+            <div className={`w-full text-lg before:content-["اخطار:"] before:text-red-400 before:mx-1`}>
+                قبل از باز کردن برنامه جدید، وضعیت برنامه فعلی را مشخص کنید 
+            </div>
+            <div className={"flex items-center justify-around mt-10 gap-4"}>
+                
+                <Button
+                    title="ذخیره کردن"
+                    // icon='box-arrow-in-down'
+                    expand='block'
+                    fill='info'
+                    color='gray'
+                    shape="round"
+                    iconWidth="1.6rem"
+                    iconHeight="1.6rem"
+                    outlineColor="lightgray"
+                    classNames={{
+                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200 ring-1 ring-gray-400 shadow-md shadow-gray-300",
+                        section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                    }}
+                    onClick={() => saveHandler("NewFilter")}
+                />
+                <Button
+                    title="ذخیره کردن با نام جدید"
+                    expand='block'
+                    fill='info'
+                    color='gray'
+                    shape="round"
+                    iconWidth="1.6rem"
+                    iconHeight="1.6rem"
+                    outlineColor="lightgray"
+                    classNames={{
+                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200 ring-1 ring-gray-400 shadow-md shadow-gray-300",
+                        section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                    }}
+                    onClick={() => saveAsHandler("NewFilter")}
+                />
+                <Button
+                    title="ذخیره نشود"
+                    expand='block'
+                    fill='info'
+                    color='gray'
+                    shape="round"
+                    iconWidth="1.6rem"
+                    iconHeight="1.6rem"
+                    outlineColor="lightgray"
+                    classNames={{
+                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200 ring-1 ring-gray-400 shadow-md shadow-gray-300",
+                        section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                    }}
+                    onClick={() => {
+                        setIsModalOpen(false)
+                        setFilters([])
+                        setAppData({})
+                        setHistsData({})
+                        setFilterActiveId({})
+                        navigate("/")
+                    }}
+                />
+                <Button
+                    title="انصراف"
+                    expand='block'
+                    fill='info'
+                    color='gray'
+                    shape="round"
+                    iconWidth="1.6rem"
+                    iconHeight="1.6rem"
+                    outlineColor="lightgray"
+                    classNames={{
+                        container: "!h-12 !w-[25%] !flex !items-center !justify-center !rounded-md duration-200 ring-1 ring-gray-400 shadow-md shadow-gray-300",
+                        section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                    }}
+                    onClick={() => {
+                        setIsModalOpen(false);
+                    }}
+                />
+            </div>
+        </div>
+        
+    )
+}
+
+
+export function AddFilter({onSubmit}: any) {
 
     const filterTypeItem = [
-        {id: 1, name: "دیپ لرنینگ", value: "DEEP", disable: true},
-        {id: 2, name: "سایز", value: "SIZE", disable: false},
-        {id: 3, name: "تک بعدی", value: "LINE", disable: false},
-        {id: 4, name: "دو بعدی", value: "SCATTER", disable: false},
+        // {id: 1, name: "دیپ لرنینگ", value: "DEEP", disable: true},
+        // {id: 2, name: "سایز", value: "SIZE", disable: false},
+        {id: 1, name: "تک بعدی", value: "LINE", disable: false},
+        {id: 2, name: "دو بعدی", value: "SCATTER", disable: false},
     ]
 
     const navigate = useNavigate()
@@ -109,10 +221,11 @@ export function AddFilter() {
     const [filters, setFilters] = useRecoilState(FilterState)
     const [appData, setAppData] = useRecoilState(AppDataState)
     const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
+    const [globalLoading, setGlobalLoading] = useRecoilState(GlobalLoadingState)
     const [value, setValue] = useState({
         filter_name: "",
-        influenceTop: "0",
-        influenceDown: "0",
+        influenceTop: "0.5",
+        influenceDown: "0.5",
         filter_type: "",
         size_type: "",
         chart_type: "",
@@ -176,62 +289,60 @@ export function AddFilter() {
         }
     }
 
-    UseOnDataFromIpcMain("addFilter_chanel", (event: any, data: any) => {
-        if (data.status) {
-            const {filters} = data
-            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
-            setFilterActiveId(findLastFilter)
-            setFilters(filters)
-            setIsModalOpen(false)
-        }
-    })
+    // UseOnDataFromIpcMain("addFilter_chanel", (event: any, data: any) => {
+    //     if (data.status) {
+    //         const {filters} = data
+    //         const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
+    //         setFilterActiveId(findLastFilter)
+    //         setFilters(filters)
+    //         setIsModalOpen(false)
+    //     }
+    // })
 
-    UseOnDataFromIpcMain("readConfusion_chanel", async (event: any, data: any) => {
-        console.log(data)
-        if (data.status) {
-            const {filters, appData} = data.data
-            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
-            setFilterActiveId(findLastFilter)
-            setFilters(filters)
-            setAppData(appData)
-            Toast("success", data.message)
-            setIsModalOpen(false)
-        } else {
-            Toast("error", data.message)
-        }
-    })
+    // UseOnDataFromIpcMain("readConfusion_chanel", async (event: any, data: any) => {
+    //     if (data.status) {
+    //         const {filters, appData} = data.data
+    //         const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
+    //         setFilterActiveId(findLastFilter)
+    //         setFilters(filters)
+    //         setAppData(appData)
+    //         Toast("success", data.message)
+    //         setIsModalOpen(false)
+    //     } else {
+    //         Toast("error", data.message)
+    //     }
+    // })
 
-    UseOnDataFromIpcMain("redHists_chanel", async (event: any, data: any) => {
-        console.log(data, "11111111111111111111111111111111111111111")
-        if (data.status) {
-            const {hists, filters, appData} = data.data
-            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
-            setFilterActiveId(findLastFilter)
-            setFilters(filters)
-            setAppData(appData)
-            setHistsData(hists)
-            Toast("success", data.message)
-            setIsModalOpen(false)
-        } else {
-            Toast("error", data.message)
-        }
-    })
+    // UseOnDataFromIpcMain("redHists_chanel", async (event: any, data: any) => {
+    //     if (data.status) {
+    //         const {hists, filters, appData} = data.data
+    //         const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : 0
+    //         setFilterActiveId(findLastFilter)
+    //         setFilters(filters)
+    //         setAppData(appData)
+    //         setHistsData(hists)
+    //         Toast("success", data.message)
+    //         setIsModalOpen(false)
+    //     } else {
+    //         Toast("error", data.message)
+    //     }
+    // })
 
-    UseOnDataFromIpcMain("progress_chanel", (event: any, data: any) => {
-        console.log(data)
-        const {progress, filter_type} = data
-        setProgress(progress)
-        if (progress >= 100) {
-            clearInterval(interval.current)
-            // setAppData(value)
-            if (filter_type === "SCATTER") {
-                window.api_electron.readConfusion()
-                api_electron.moveMash2DHVFile()
-            } else {
-                api_electron.redHists()
-            }
-        }
-    })
+    // UseOnDataFromIpcMain("progress_chanel", (event: any, data: any) => {
+    //     console.log(data)
+    //     const {progress, filter_type} = data
+    //     setProgress(progress)
+    //     if (progress >= 100) {
+    //         clearInterval(interval.current)
+    //         // setAppData(value)
+    //         if (filter_type === "SCATTER") {
+    //             window.api_electron.readConfusion()
+    //             api_electron.moveMash2DHVFile()
+    //         } else {
+    //             api_electron.redHists()
+    //         }
+    //     }
+    // })
 
     const submitHandler = () => {
         if (progress < 100) return
@@ -246,14 +357,17 @@ export function AddFilter() {
         } 
         if (Object.keys(histsData).length && value.filter_type !== "SCATTER") {
             // console.log("OK")
-            window.api_electron.addFilter(value)
+            window.api_electron.addFilter(value) // فقط به حالت تکبعدی فیلتر اضافه میشه
         } else {
             // console.log("NO")
             setProgress(0)
-            window.api_electron.getChartData(value)
-            interval.current = setInterval(() => {
-              api_electron.progress(value.filter_type)
-            } , 500)
+            setGlobalLoading(true)
+            onSubmit(value, value.filter_type)
+            // submitCreateFilter()
+            // window.api_electron.getChartData(value)
+            // interval.current = setInterval(() => {
+            //   api_electron.progress(value.filter_type)
+            // } , 500)
         }
     }
 
@@ -270,7 +384,26 @@ export function AddFilter() {
 
     return (
         <div className="w-[1000px]">
-            <h5 className="p-1 border-b border-gray-200 text-xl">افزودن فیلتر</h5>
+            <div className="flex items-center justify-between pb-1 border-b border-gray-200 ">
+                <h5 className="text-xl">افزودن فیلتر</h5>
+                <Button
+                    icon='x'
+                    expand='block'
+                    fill='light'
+                    color='gray'
+                    shape="pill"
+                    iconWidth="2rem"
+                    iconHeight="2rem"
+                    outlineColor="lightgray"
+                    // iconColor={`${ele.id === filterActiveId ? "white" : ""}`}
+                    classNames={{
+                        container: "w-8 h-8 !rounded-md !flex !items-center !justify-center duration-200 !flex-none",
+                        section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                    }}
+                    onClick={() => setIsModalOpen(false)}
+                    //
+                />
+            </div>
             <div className="p-2 grid grid-cols-2 gap-10">
                 
                 <Input
@@ -388,6 +521,162 @@ export function FilterDetails() {
                     </li>
                 )}
             </ul>
+        </div>
+    )
+}
+
+
+export function ShowImage() {
+
+    const imageBoxRef = useRef<any>(null)
+    const [imageActive, setImageActive] = useRecoilState(ImageActiveState)
+    const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
+    const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
+    // const images = filterActiveId?.images?.[imageActive?.type]
+    const modalName = imageActive?.type === "healthy" ? "سالم ها" : "خراب ها"
+
+    const [imageSize, setImageSize] = useState({
+        width: 0,
+        height: 0,
+    })
+    const [boxSize, setBoxSize] = useState({
+        width: 0,
+        height: 0,
+    })
+
+    const imageLoadHandler = (e: any) => {
+        setImageSize({
+            width: e.target.naturalWidth,
+            height: e.target.naturalHeight,
+        })
+    }
+
+    const sliderHandler = (type: any) => {
+        const allImages = [...filterActiveId?.images?.[imageActive?.type]]
+        const findActiveIndex = allImages.findIndex((ele: any) => ele.id === imageActive.id)
+        const showIndex = type === "right" ? findActiveIndex+1 : findActiveIndex-1
+        const showImage = allImages[showIndex]
+        const imageData = {
+            ...showImage,
+            type: imageActive?.type
+        }
+        if (showImage) setImageActive(imageData)
+        // console.log(findActiveIndex)
+    }
+
+    useEffect(() => {
+        setBoxSize({
+            width: imageBoxRef.current.clientWidth,
+            height: imageBoxRef.current.clientHeight,
+        })
+    }, [])
+
+
+    return (
+        <div className="w-[1000px] h-[700px]">
+            <div className="flex items-center justify-between pb-1 border-b border-gray-200 ">
+                <h5 className="text-xl">{modalName}</h5>
+                <h5 className="text-xs">{imageActive.path}</h5>
+                <Button
+                    icon='x'
+                    expand='block'
+                    fill='light'
+                    color='gray'
+                    shape="pill"
+                    iconWidth="2rem"
+                    iconHeight="2rem"
+                    outlineColor="lightgray"
+                    // iconColor={`${ele.id === filterActiveId ? "white" : ""}`}
+                    classNames={{
+                        container: "w-8 h-8 !rounded-md !flex !items-center !justify-center duration-200 !flex-none",
+                        section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                    }}
+                    onClick={() => setIsModalOpen(false)}
+                    // classNames={{container: styles.submitBtn}}
+                />
+            </div>
+            <div className="h-[calc(100%-32px)] flex items-stretch">
+                <div className="flex-auto flex items-stretch justify-between">
+                    <div 
+                        onClick={() => sliderHandler("right")}
+                        className="w-10 flex-none flex items-center justify-center hover:bg-gray-100 transition-all duration-200 cursor-pointer"
+                    >
+                        <Icon
+                            name="chevron-right"
+                            width="2rem"
+                            height="2rem"
+                            color="gray"
+                        />
+                    </div>
+                    <div ref={imageBoxRef} className="flex-auto flex items-center justify-center p-2">
+                        <img 
+                            src={`data:image/jpeg;base64,${imageActive.image}`} 
+                            onLoad={imageLoadHandler}
+                            style={{
+                                width: (boxSize.width / boxSize.height) >= (imageSize.width / imageSize.height) ? "unset" : "100%",
+                                height: (boxSize.width / boxSize.height) >= (imageSize.width / imageSize.height) ? "100%" : "unset",
+                            }}
+                        />
+                    </div>
+                    <div 
+                        onClick={() => sliderHandler("left")}
+                        className="w-10 flex-none flex items-center justify-center hover:bg-gray-100 transition-all duration-200 cursor-pointer"
+                    >
+                        <Icon
+                            name="chevron-left"
+                            width="2rem"
+                            height="2rem"
+                            color="gray"
+                        />
+                    </div>
+                </div>
+                <div className="flex-none w-48 border-r border-gray-200 overflow-auto flex flex-wrap gap-2 p-2">
+                    {filterActiveId?.images?.[imageActive?.type]?.length && filterActiveId?.images?.[imageActive?.type].map((ele: any, index: any) =>
+                        <Image key={index} image={ele} type={imageActive?.type}/>
+                    )}
+                </div>
+            </div>
+            
+        </div>
+    )
+}
+
+
+export function HV_Images() {
+
+    const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
+    const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
+
+    return (
+        <div className="">
+        <div className="flex items-center justify-between pb-1 border-b border-gray-200 ">
+            <h5 className="text-xl">HV_Images</h5>
+            <Button
+                icon='x'
+                expand='block'
+                fill='light'
+                color='gray'
+                shape="pill"
+                iconWidth="2rem"
+                iconHeight="2rem"
+                outlineColor="lightgray"
+                // iconColor={`${ele.id === filterActiveId ? "white" : ""}`}
+                classNames={{
+                    container: "w-8 h-8 !rounded-md !flex !items-center !justify-center duration-200 !flex-none",
+                    section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                }}
+                onClick={() => setIsModalOpen(false)}
+                // classNames={{container: styles.submitBtn}}
+            />
+        </div>
+            <div className="flex items-center justify-center gap-4 p-2">
+                {filterActiveId?.HV_images && Object.entries(filterActiveId?.HV_images)?.map(([name, image]: any) =>
+                    <div key={name} className="rounded-md overflow-hidden ring-2 ring-gray-300 bg-black">
+                        <img src={`data:image/jpeg;base64,${image}`}/>
+                        <div className="text-center p-2 bg-gray-200">{name}</div>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

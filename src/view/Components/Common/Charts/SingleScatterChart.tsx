@@ -85,6 +85,8 @@ const SingleScatterChart = ({
       newX = Math.abs((event.nativeEvent.offsetX - xTop) / (xBottom - xTop));
       newX = newX * Math.abs(xMax - xMin) + xMin;
     }
+    // console.log(newY)
+    // console.log(newX)
 
     let vLines: any = [...verticalLines];
     let vLinesCanvasPos: any = [...verticalLinesCanvasPos];
@@ -96,13 +98,14 @@ const SingleScatterChart = ({
       }
       vLines = [newX];
       vLinesCanvasPos = [event.nativeEvent.offsetX];
-      // console.log(vLines)
+      // console.log(Math.round(vLines[0]))
       setLines(0, [Math.round(vLinesCanvasPos[0])], [Math.round(vLines[0])]);
       setVertAndExtLinesIntersects(
         extendedLines, extendedLinesCanvasPos, vLines, vLinesCanvasPos, setLines);
     } else if (lineTypeToDraw === 1) {
       setLines(1, [Math.round(event.nativeEvent.offsetY[0])], [Math.round(newY)]);
     } else if (lineTypeToDraw === 2) {
+      setLines(2, Math.round(newX), Math.round(newY*100));
       setVertAndExtLinesIntersects(
         extendedLines, extendedLinesCanvasPos, vLines, vLinesCanvasPos, setLines);
     }
@@ -168,9 +171,9 @@ const SingleScatterChart = ({
     ctx.restore();
   };
 
-  useEffect(() => {
-    drawLines();
-  }, [updateCount]);
+  // useEffect(() => {
+  //   drawLines();
+  // }, [updateCount]);
 
   const redrawLines = (chart: any, vLines: any, hlines: any, eLines: any, goodDirection: any) => {
     const ctx = chart.ctx;

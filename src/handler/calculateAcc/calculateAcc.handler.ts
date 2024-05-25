@@ -12,6 +12,7 @@ import { scanIdealPoint } from "../utils/ScanIdealPoints"
 import { RemoveFile } from "../utils/RemoveFile"
 import { WriteXmlFile } from "../utils/WriteXmlFile"
 import FILTERS from "../../singleton/filters.singleton"
+import { chartTheme } from "../../view/Components/IntensityChart/Theme"
 const { json2xml, js2xml, xml2js } = require('xml-js');
 
 const toXmlOption =  { 
@@ -25,14 +26,14 @@ ipcMain.on("calculateAcc", async (event, data) => {
     // readIdealPointController(event, data)
     // function readIdealPointController(event, data) {
     
-        const {verticalLinesValueIntensity, verticalLinesValue, id, filtersArea, filtersIntensity, pointSelectedData, chartValueSelected, intensityChartValueSelected} = data;
-        const {influenceTop, influenceDown} = FILTERS.getById(id)
+        const {id, verticalLinesValueIntensity, verticalLinesValueArea, intensityPointSelectedData, areaPointSelectedData, areaGraphs, intensityGraphs} = data;
+        const {influenceTop, influenceDown, allIdealPoints: oldIdealPoint = []} = FILTERS.getById(id)
       
         if (
           !APP_DATA.getAppData().healthy ||
           !APP_DATA.getAppData().not_healthy ||
           !verticalLinesValueIntensity ||
-          !verticalLinesValue
+          !verticalLinesValueArea
         ) return event.sender.send("calculateAcc_chanel", {status:  false, message: "ابتدا فهرست را کامل کنید"})
       
         // const newConfig = {
@@ -43,7 +44,7 @@ ipcMain.on("calculateAcc", async (event, data) => {
       
         // APP_DATA.set(newConfig);
         const delta = verticalLinesValueIntensity / Math.pow(10, DECIMAL.get());
-        const area = verticalLinesValue / 100 ;
+        const area = verticalLinesValueArea / 100 ;
       
         let parameters = {
           "_instruction": { "xml": { "_attributes": { "version": "1.0" } } },
@@ -57,9 +58,9 @@ ipcMain.on("calculateAcc", async (event, data) => {
           }
         };
       
-        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab\\confusions"))
-        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab\\parameters.xml"))
-        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab\\folders.xml"))
+        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab", "confusions"))
+        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab", "parameters.xml"))
+        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab", "folders.xml"))
         const parametersJson = js2xml(parameters, toXmlOption)
         await WriteXmlFile(parametersJson, path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab\\parameters.xml"))
         execFile("./CalculateAcc.exe", [], { cwd: path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab")}, (error: any, stdout: any, stderr: any) => {
@@ -67,15 +68,39 @@ ipcMain.on("calculateAcc", async (event, data) => {
             if (stderr) return event.sender.send('calculateAcc_chanel', {status: false, message: stderr});
             if(stdout) {
                 if (stderr.includes("error:")) return event.sender.send('calculateAcc_chanel', {status: false, message: stderr}) 
-                const filesPath = readfilePath()
-                const idealConfusion = readIdealConfusionTest(delta)
-                FILTERS.update(id, {delta, area, filesPath, idealConfusion, filtersArea, filtersIntensity, pointSelectedData, chartValueSelected, intensityChartValueSelected})
+                const filesPath = readImagesPath()
+                const idealConfusion: any = readIdealConfusionTest(delta)
+                const allIdealPoints = [...oldIdealPoint]
+                const newIdealPoint = {
+                  X: intensityPointSelectedData?.position?.verticalLines[0],
+                  Y: Math.round(idealConfusion.record.e8 * 100),
+                  filesPath,
+                  idealConfusion,
+                  intensityPointSelectedData,
+                  areaPointSelectedData,
+                  areaGraphs
+                }
+                allIdealPoints.push(newIdealPoint)
+
+                const newIntensityGraphs = [...intensityGraphs]
+                const newGraph = {
+                  ...chartTheme.public, 
+                  ...chartTheme["e8_ideal"],
+                  data: idealConfusion.pointData["e8"],
+                }
+
+                newIntensityGraphs.unshift(newGraph)
+                FILTERS.update(id, {allIdealPoints, delta, area, intensityGraphs: newIntensityGraphs})
+                APP_DATA.setIsChanged()
                 const data = {
                 status: true, 
                 data: {
                     ...APP_DATA.getAppData(), 
                     stdout,
-                    filters: FILTERS.getAll()
+                    filters: FILTERS.getAll(),
+                    idealPoint: newIdealPoint,
+                    graph: newGraph,
+                    appData: APP_DATA.getAppData()
                 }, 
                 message: "created"
                 }
@@ -83,7 +108,7 @@ ipcMain.on("calculateAcc", async (event, data) => {
             } 
         });
     
-    const readfilePath = () => {
+    const readImagesPath = () => {
         const filePath = `${ENV.FEATURE_ANALYZER_PATH}\\Hesaab\\folders.xml`;
         try {
           const readFilesPathXML = fs.readFileSync(filePath, "utf8");
@@ -91,19 +116,22 @@ ipcMain.on("calculateAcc", async (event, data) => {
             ignoreAttributes: false,
           });
           const parsXML = parser.parse(readFilesPathXML)
+          // console.log(parsXML, "parsXML")
           const healthy = {};
           const nonHealthy = {};
           Object.entries(parsXML.opencv_storage).forEach(([key, value]: any) => {
             const imagesName: any = []
-            Object.entries(value).map(([fileKey, fileValue]: any) => fileKey.includes("im") && imagesName.push(fileValue.split("/").pop()))
-            const readDir = fs.readdirSync(value.folder);
+            Object.entries(value).map(([fileKey, fileValue]: any) => fileKey.includes("im") && imagesName.push(fileValue.replaceAll('"', '').split("/").pop()))
+            const readDir = fs.readdirSync(value.folder.replaceAll('"', ''));
+            // console.log(readDir, "readDir")
             const fileHealthy: any = key.includes("Non") ? nonHealthy : healthy
             fileHealthy[value.folder] = {isInXml: [], isOutXml: []}
             if (readDir.length) {
               readDir.forEach(fileName => {
                 if (fileName.includes("_image.bmp")) {
-                  const filePath = path.join(value.folder, fileName);
+                  const filePath = path.join(value.folder.replaceAll('"', ''), fileName);
                   const readImage = readImageUtil(filePath)
+                  // console.log(readImage, "readDir")
                   if (imagesName.includes(fileName)) {
                     fileHealthy[value.folder]["isInXml"].push(readImage)
                   } else {
