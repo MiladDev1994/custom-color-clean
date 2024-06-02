@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { AppDataState, FilterActiveIdState, FilterState, GlobalLoadingState, HistsDataState, ImageActiveState, IsModalOpenState, ModalTypeState, ProgressState } from "../../../recoils/GlobalRecoil";
+import { AppDataState, FilterActiveIdState, FilterState, GlobalLoadingState, HistsDataState, ImageActiveState, IsModalOpenState, ModalParamsState, ModalTypeState, ProgressState } from "../../../recoils/GlobalRecoil";
 import * as FilterTypeForm from "../FilterTypeForm/FilterTypeForm"
 import ProgressBtn from "../ProgressBtn/ProgressBtn"
 import { AddFilterFormValidation } from "../FilterTypeForm/validation";
@@ -205,12 +205,6 @@ export function NewFilter({ saveAsHandler, saveHandler }: any) {
 
 export function AddFilter({onSubmit}: any) {
 
-    const filterTypeItem = [
-        // {id: 1, name: "دیپ لرنینگ", value: "DEEP", disable: true},
-        // {id: 2, name: "سایز", value: "SIZE", disable: false},
-        {id: 1, name: "تک بعدی", value: "LINE", disable: false},
-        {id: 2, name: "دو بعدی", value: "SCATTER", disable: false},
-    ]
 
     const navigate = useNavigate()
     const interval = useRef(null)
@@ -242,6 +236,17 @@ export function AddFilter({onSubmit}: any) {
         size_type: "",
         chart_type: "",
     })
+
+    
+    const filterTypeItem = [
+        // {id: 1, name: "دیپ لرنینگ", value: "DEEP", disable: true},
+        // {id: 2, name: "سایز", value: "SIZE", disable: false},
+        {id: 1, name: "تک بعدی", value: "LINE", disable: false},
+        {id: 2, name: "دو بعدی", value: "SCATTER", disable: false},
+        // {id: 2, name: "دو بعدی", value: "SCATTER", disable: (!!filters?.find((ele: any) => ele.filter_type === "SCATTER"))}, // برای غیر فعال کردن داشتن دو فیلتر روبعدی به صورت همزمان
+    ]
+
+
     const changeHandler = (e: any) => {
         const inputName = e.target.name
         if (inputName === "chart_type") {
@@ -676,6 +681,85 @@ export function HV_Images() {
                         <div className="text-center p-2 bg-gray-200">{name}</div>
                     </div>
                 )}
+            </div>
+        </div>
+    )
+}
+
+
+
+export function DeleteIdealPoints() {
+
+    return (        
+        <div className="flex items-center justify-center gap-4 p-5 text-2xl text-red-700">
+            نقطه پیشنهادی دریافت نشد!!!
+        </div>
+    )
+}
+
+
+export function MatrixNan() {
+    
+
+    return (        
+        <div className="flex items-center justify-center gap-4 p-5 text-2xl text-red-700">
+            مقدار NAN در ماتریس مشاهده شد!!!
+        </div>
+    )
+}
+
+
+export function DeleteFilter() {
+    const [modalParams, setModalParams] = useRecoilState(ModalParamsState)
+    const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
+
+    UseOnDataFromIpcMain("deleteApp_chanel", (event: any, data: any) => {
+        if (!data.status) return Toast("error", data.message)
+        api_electron.getAppsList()
+        setIsModalOpen(false)
+        Toast("success", data.message)
+    })
+    const deleteFilterHandler = () => {
+        api_electron.deleteApp(modalParams)
+    }
+
+    return (
+        <div className="w-72 flex flex-col gap-10 p-3">
+            <h3 className="text-2xl text-center">فیلتر حذف شود؟</h3>
+            <div className="flex items-center justify-between gap-5">
+                <Button
+                    title="انصراف"
+                    expand='block'
+                    fill='basic'
+                    color='danger'
+                    iconWidth="2rem"
+                    iconHeight="2rem"
+                    outlineColor="lightgray"
+                    // iconColor={`${ele.id === filterActiveId ? "white" : ""}`}
+                    classNames={{
+                        container: "h-12 !rounded-md !flex !items-center !justify-center duration-200 !flex-auto",
+                        section: "!text-lg !overflow-hidden !flex !items-center !justify-center"
+                    }}
+                    onClick={() => setIsModalOpen(false)}
+                    // classNames={{container: styles.submitBtn}}
+                />
+                <Button
+                    title="حذف"
+                    expand='block'
+                    fill='basic'
+                    color='primary'
+                    iconWidth="2rem"
+                    iconHeight="2rem"
+                    outlineColor="lightgray"
+                    // iconColor={`${ele.id === filterActiveId ? "white" : ""}`}
+                    classNames={{
+                        container: "h-12 !rounded-md !flex !items-center !justify-center duration-200 !flex-auto",
+                        section: "!text-lg !overflow-hidden !flex !items-center !justify-center"
+                    }}
+                    onClick={deleteFilterHandler}
+                    // classNames={{container: styles.submitBtn}}
+                />
+
             </div>
         </div>
     )

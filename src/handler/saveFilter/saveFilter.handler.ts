@@ -8,10 +8,14 @@ import APP_DATA from "../../singleton/appData.singleton";
 import { RemoveFile } from "../utils/RemoveFile";
 
 
-let numberOfChart: any = {}
+
 ipcMain.handle('dialog:saveFilter', async (event, data) => {
     const appData = APP_DATA.getAppData()
-    const {savePath, type} = data
+    const {savePath, type, scatterPointLocation} = data
+    const saveDirectory = "C:\\scpc\\saves"
+    if (!fs.existsSync(saveDirectory)) fs.mkdirSync(saveDirectory)
+
+
     try {
 
         let timestamp = new Date().getTime()
@@ -24,29 +28,18 @@ ipcMain.handle('dialog:saveFilter', async (event, data) => {
             const newSavePath = splitSavePath.join("\\")
             saveAddress = newSavePath
         }
-        const folderName = `customProgramDir_${timestamp}`;
+        const folderName = `${appData.app_name}_${timestamp}`;
         if (!fs.existsSync(path.join(saveAddress, folderName))) fs.mkdirSync(path.join(saveAddress, folderName))
-            
-        FILTERS.getAll().forEach(async (filter: any) => {
-            if (filter.filter_type === "Conclusion") return;
-    
-            const filterBaseName = `${filter?.filter_type.toLowerCase()}${filter?.chart_type ?? ""}` // example ==> lineHue | lineVal
-            if (!numberOfChart?.[filterBaseName]) numberOfChart[filterBaseName] = 1
-            else numberOfChart[filterBaseName]++
-    
-            const fileData = {
-                savePath: saveAddress,
-                filter,
-                folderName,
-                filterBaseName,
-                numberOfChart: numberOfChart[filterBaseName] < 10 ? `0${numberOfChart[filterBaseName]}` : numberOfChart[filterBaseName]
-            }
-            await filterType[filter.filter_type as "LINE"](fileData)
-            numberOfChart = {}
-        })
 
+        const saveResult = await filterType.SaveFilter({
+            filters: FILTERS.getAll(),
+            savePath: saveAddress,
+            folderName,
+            scatterPointLocation
+        })
+        
         APP_DATA.setSavePath(path.join(saveAddress, folderName))
-        await WriteFiltersFile(timestamp)
+        await WriteFiltersFile(folderName)
     
         event.sender.send("saveFilter_chanel", {status: true, appData: APP_DATA.getAppData()})
     } catch (error) {

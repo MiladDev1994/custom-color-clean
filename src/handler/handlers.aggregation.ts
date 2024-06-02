@@ -14,6 +14,11 @@ import ReadResultData from "./readResultData/readResultData.handler"
 import RandomImage from "./randomImage/randomImage.handler"
 import ResultGenerator_Conclusion from "./conclusion/resultGenerator/runResultGenerator.handler"
 import OpenFilters from "./openFilters/openFilters.handler"
+import DeleteIdealPoints from "./deleteIdealPoints/deleteIdealPoints.handler"
+import ReadPrograms from "./readPrograms/readPrograms.handler"
+import GetAppsList from "./getAppsList/getAppsList.handler"
+import AddFilterPathToProgram from "./addFilterPathToProgram/addFilterPathToProgram.handler"
+import DeleteApp from "./deleteApp/deleteApp.handler"
 
 
 export {
@@ -31,5 +36,10 @@ export {
     ReadResultData,
     RandomImage,
     ResultGenerator_Conclusion,
-    OpenFilters
+    OpenFilters,
+    DeleteIdealPoints,
+    ReadPrograms,
+    GetAppsList,
+    AddFilterPathToProgram,
+    DeleteApp
 }

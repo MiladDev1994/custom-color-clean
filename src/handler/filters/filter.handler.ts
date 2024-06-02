@@ -9,7 +9,8 @@ ipcMain.on("addFilter", async (event, value) => {
 })
 
 ipcMain.on("deleteFilter", async (event, id) => {
-    const filters = FILTERS.deleteById(id)
+    FILTERS.deleteById(id)
+    const filters = FILTERS.getAll()
     return event.sender.send("deleteFilter_chanel", {status: true, filters, deleted: id})
 })
 

@@ -1,9 +1,11 @@
 
 import path from "path"
 import fs from "fs"
+import colors from "colors"
 import {CONFUSION, DECIMAL} from "../../singleton/confusion.singleton";
 import { XMLParser, XMLBuilder } from 'fast-xml-parser'
 import { readImageUtil } from "../utils/readImageUtil";
+import { xml2js } from "xml-js";
 
 
 function walkDirectory(directory: string) {
@@ -61,7 +63,7 @@ function walkDirectory(directory: string) {
 
 
 
-function scanConfusion(directory: string){  
+async function scanConfusion(directory: string){  
     try {
         const walk: any = walkDirectory(directory);
         if (!walk.status) return {status: false, message: walk.message};
@@ -126,7 +128,7 @@ function scanConfusion(directory: string){
 
 
 
-function readOptimalPoint(address: any) {
+async function readOptimalPoint(address: any) {
     if (fs.existsSync(address)) {
         const readFile = fs.readFileSync(address, "utf8")
         const values = readFile.replace("accuracy: ", "accuracy:").replace("best Area: ", " best_area:").replace("best Delta: ", "best_delta:").split(" ")
@@ -141,12 +143,12 @@ function readOptimalPoint(address: any) {
         chartData.x = Math.pow(10, DECIMAL.get()) * (+values[2].split(":").pop())
         chartData.y = +(+values[0].split(":").pop()).toFixed(2)
         return {record, chartData}
-    } else return {}
+    } else return undefined
     
 }
 
 
-function readHVImages(address: any) {
+async function readHVImages(address: any) {
     const findImageOnPath = fs.readdirSync(address)
     const mimeType = ["jpg", "jpeg", "png", "bmp"]
     const imagesPaths = findImageOnPath.filter((ele) => ele.split(".").some(item => mimeType.includes(item)))
@@ -155,13 +157,29 @@ function readHVImages(address: any) {
         imageData[image.split(".")[0]] = readImageUtil(`${address}\\${image}`)
     })
     return imageData;
-  }
+}
+
+
+async function readMash2DH_V(address: any) {
+    console.log(address)
+    try {
+        const readFile = fs.readFileSync(address, "utf8")
+        console.log(readFile)
+        const options = { compact: true, ignoreDeclaration: false, spaces: 4 };
+        let parsXML = xml2js(readFile, options);
+        return parsXML
+    } catch (error) {
+        console.log(colors.red(error))
+        return {}
+    }
+}
 
 
 export {
     scanConfusion,
     readOptimalPoint,
-    readHVImages
+    readHVImages,
+    readMash2DH_V
 }
 
 

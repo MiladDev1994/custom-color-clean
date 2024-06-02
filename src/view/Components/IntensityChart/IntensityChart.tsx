@@ -3,7 +3,7 @@ import styles from "./IntensityChart.module.scss"
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil"
 // import { AllRecordState, AreaFilterState, ChartDataState, ChartLengthState, FilesPathState, IntensityChartValueSelected, IntensityFilterState, PointSelectedData } from "../Recoil/Atoms"
 import SingleScatterChart from "../Common/Charts/SingleScatterChart"
-import { AreaFilterState, FilesPathState, FilterActiveIdState, IntensityChartValueSelected, IntensityFilterState, IsModalOpenState, ModalTypeState, PointSelectedData } from "../../recoils/GlobalRecoil"
+import { AreaFilterState, FilesPathState, FilterActiveIdState, FilterState, IntensityChartValueSelected, IntensityFilterState, IsModalOpenState, ModalTypeState, PointSelectedData } from "../../recoils/GlobalRecoil"
 // import ZoomChart from "../Common/ZoomChart/ZoomChart"
 // import StepButton from "../Common/StepButton/StepButton"
 // import Matris from "../Common/Matris/Matris"
@@ -16,6 +16,7 @@ import ZoomChart from "../Common/ZoomChart/ZoomChart"
 import StepButton from "../Common/StepButton/StepButton"
 import Button from "../Common/Button/Button"
 import Icon from "../Common/Icon/Icon"
+import { UseOnDataFromIpcMain } from "../../../view/hooks/UseOnDataFromIpcMain"
 // import { AccuracyLineByStepUtil } from "../../Utils/Front/LineByStepUtils"
 // import { changeStepByKeyUtil } from "../../Utils/Front/changeStepByKeyUtil"
 // import { showHideChartUtil } from "../../Utils/Front/showHideChartUtil"
@@ -47,6 +48,8 @@ const IntensityChart = ({
     const [chartAnimation, setChartAnimation] = useState(true)
     const [modalType, setModalType] = useRecoilState(ModalTypeState);
     const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
+    const [trashLoading, setTrashLoading] = useState(false)
+    const [filters, setFilters] = useRecoilState(FilterState)
     const [chartZoom, setChartZoom] = useState<any>({
       min: 1,
       max: 1,
@@ -175,6 +178,14 @@ const IntensityChart = ({
 
     // console.log(lineTypeToDraw)
 
+    UseOnDataFromIpcMain("deleteIdealPoints_chanel", (event: any, data: any) => {
+      const filterActive = data.find((ele: any) => ele.id === filterActiveId.id)
+      setFilters(data)
+      setFilterActiveId(filterActive)
+      setTrashLoading(false)
+    })
+
+    
     return (
       <div className={styles.chartBox} tabIndex={0} onKeyDown={(e) => changeStepByKeyUtil(e, stepData)}>
         
@@ -271,41 +282,72 @@ const IntensityChart = ({
             <h4 className="font-bold flex-none opacity-60">نمودار شدت خرابی</h4>
             
 
-            <div className="w-96 h-full flex items-center justify-center">
-              <div className="w-full text-sm flex items-start justify-center">
-                <div className="w-4 aspect-square bg-green-600 rounded-full mx-1" />
-                <span>دقت پیشنهادی</span>
+            <div className="w-96 h-full flex-auto flex flex-col items-center justify-start">
+              <div className="w-full text-xs flex items-center justify-end px-2">
+                {(!filterActiveId.optimalPoint || !Object.keys(filterActiveId?.optimalPoint ?? {}).length) ?
+                  <span className="mx-1 text-red-500">(اطلاعات دریافت نشد)</span> :
+                  <div className="">
+                    <span className="px-1">(مساحت: %{filterActiveId?.optimalPoint?.record?.best_area.toFixed(0)})</span>
+                    <span className="px-1">(دلتا: {filterActiveId?.optimalPoint?.record?.best_delta.toFixed(0)})</span>
+                    <span className="px-1">(دقت: %{filterActiveId?.optimalPoint?.record?.accuracy * 100})</span>
+                  </div>
+                }
+                <span>مقادیر پیشنهادی</span>
+                <div className="w-3 aspect-square bg-green-600 rounded-full mx-1" />
               </div>
-              <div className="w-full text-sm flex items-start justify-center">
-                <div className="w-4 aspect-square bg-blue-400 rounded-full mx-1" />
+              <div className="w-full text-xs flex items-center justify-end px-2">
                 <span>دقت مطلوب</span>
+                <div className="w-3 aspect-square bg-blue-400 rounded-full mx-1" />
               </div>
             </div>
 
             
-            <Button
-              icon="image"
-              title="H_V عکس‌های"
-              expand='block'
-              fill={"info"}
-              shape="round"
-              color='primary'
-              iconWidth="1.5rem"
-              iconHeight="1.5rem"
-              direction="row_reverse"
-              disabled={!filterActiveId?.HV_images}
-              onClick={() => {
-                setIsModalOpen(true)
-                setModalType("HV_Images")
-              }}
-              classNames={{
-                  // container: styles.windowBtn
-                  container: "!h-8 !m-0 !flex !items-center !justify-center flex-none transition-all duration-300 !rounded-md",
-                  section: "!text-lg !flex !items-center !justify-center !overflow-hidden !text-sm"
-              }}
-            />
 
-            <div className="flex gap-2">
+            <div className="flex flex-none gap-2 border-r ps-3">
+              <Button
+                icon="image"
+                title="H_V عکس‌های"
+                expand='block'
+                fill={"info"}
+                shape="round"
+                color='primary'
+                iconWidth="1.5rem"
+                iconHeight="1.5rem"
+                direction="row_reverse"
+                disabled={!filterActiveId?.HV_images}
+                onClick={() => {
+                  setIsModalOpen(true)
+                  setModalType("HV_Images")
+                }}
+                classNames={{
+                    // container: styles.windowBtn
+                    container: "!h-8 !m-0 !flex !items-center !justify-center flex-none transition-all duration-300 !rounded-md",
+                    section: "!text-lg !flex !items-center !justify-center !overflow-hidden !text-sm"
+                }}
+              />
+              <span className="border-r mx-3"/>
+              <Button
+                icon="trash3-fill"
+                // title="فیلترها"
+                expand='block'
+                fill="info"
+                shape="round"
+                color='primary'
+                iconWidth="1.5rem"
+                iconHeight="1.5rem"
+                direction="row_reverse"
+                loading={trashLoading}
+                disabled={!filterActiveId?.allIdealPoints?.length}
+                onClick={() => {
+                  setTrashLoading(true)
+                  api_electron.deleteIdealPoints(filterActiveId.id)
+                }}
+                classNames={{
+                    // container: styles.windowBtn
+                    container: "!w-10 !h-8 !m-0 !flex !items-center !justify-center flex-none transition-all duration-300 !rounded-md",
+                    section: "!text-lg !flex !items-center !justify-center !overflow-hidden"
+                }}
+              />
               <Button
                   icon="crosshair"
                   // title="فیلترها"
@@ -316,7 +358,7 @@ const IntensityChart = ({
                   iconWidth="1.5rem"
                   iconHeight="1.5rem"
                   direction="row_reverse"
-                  disabled={!filterActiveId?.allIdealPoints}
+                  disabled={!filterActiveId?.allIdealPoints?.length}
                   onClick={() => setLineTypeToDraw(2)}
                   classNames={{
                       // container: styles.windowBtn
@@ -325,21 +367,21 @@ const IntensityChart = ({
                   }}
               />
               <Button
-                  icon="verticalLine"
-                  // title="فیلترها"
-                  expand='block'
-                  fill={lineTypeToDraw === 0 ? "basic" : "info"}
-                  shape="round"
-                  color='primary'
-                  iconWidth="1.5rem"
-                  iconHeight="1.5rem"
-                  direction="row_reverse"
-                  onClick={() => setLineTypeToDraw(0)}
-                  classNames={{
-                      // container: styles.windowBtn
-                      container: "!w-10 !h-8 !m-0 !flex !items-center !justify-center flex-none transition-all duration-300 !rounded-md",
-                      section: "!text-lg !flex !items-center !justify-center !overflow-hidden"
-                  }}
+                icon="verticalLine"
+                // title="فیلترها"
+                expand='block'
+                fill={lineTypeToDraw === 0 ? "basic" : "info"}
+                shape="round"
+                color='primary'
+                iconWidth="1.5rem"
+                iconHeight="1.5rem"
+                direction="row_reverse"
+                onClick={() => setLineTypeToDraw(0)}
+                classNames={{
+                    // container: styles.windowBtn
+                    container: "!w-10 !h-8 !m-0 !flex !items-center !justify-center flex-none transition-all duration-300 !rounded-md",
+                    section: "!text-lg !flex !items-center !justify-center !overflow-hidden"
+                }}
               />
             </div>
             

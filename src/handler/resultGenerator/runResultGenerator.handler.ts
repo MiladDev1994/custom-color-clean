@@ -6,6 +6,8 @@ import ENV from "../../singleton/env";
 import APP_DATA from "../../singleton/appData.singleton";
 import FILTERS from "../../singleton/filters.singleton";
 import { execFile } from "child_process";
+import { Json2Xml } from "../utils/Json2Xml";
+import { WriteXmlFile } from "../utils/WriteXmlFile";
 
   
 ipcMain.on('resultGenerator', async (event, value) => {
@@ -56,6 +58,33 @@ ipcMain.on('resultGenerator', async (event, value) => {
     }
     
     fs.writeFileSync(path.join(ENV.FEATURE_ANALYZER_PATH, "userData.json"), JSON.stringify(json, null, 4))
+
+
+
+    
+    await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, 'config.xml'))
+    const appData = APP_DATA.getAppData()
+    let isBackgroundBlue = false;
+    switch (appData.product_type.toUpperCase()) {
+    case "MUNG":
+    case "SUNFLOWERSEED":
+        isBackgroundBlue = true;
+        break;
+    }
+    let config = {
+        "_instruction": { "xml": { "_attributes": { "version": "1.0" } } },
+        "opencv_storage": {
+          "healthy": `"${appData?.healthy.replace(/\\/g, "/")}"`,
+          "nonhealthy": `"${appData?.not_healthy.replace(/\\/g, "/")}"`,
+          "ObjectType": appData?.product_type.toLowerCase(),
+          "IsBackgroundBlue" : isBackgroundBlue,
+          "AddHoleHistogram": true,
+          "removeBlueBack": appData?.removeBlueBack
+        }
+    };
+    const objToXml = await Json2Xml(config)
+    await WriteXmlFile(objToXml, path.join(ENV.FEATURE_ANALYZER_PATH, "config.xml"))
+
     FILTERS.update(id, {userData: json, data, goodDirection: goodDirection, filterValues: {count, isActive, influence} })
     execFile(`ResultGenerator.exe`, [], { cwd: ENV.FEATURE_ANALYZER_PATH }, (error, stdout, stderr) => {
         if (error) {

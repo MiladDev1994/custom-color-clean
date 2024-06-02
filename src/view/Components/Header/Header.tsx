@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState 
 import Button from "../Common/Button/Button";
 import Modal from "../Common/Modal/Modal";
 import { useState } from "react";
-import { AnyFilterChanged, AppDataState, FilterActiveIdState, FilterState, GlobalLoadingState, HistsDataState, IsModalOpenState, ModalTypeState, directoryPathSaveStateAtom } from "../../recoils/GlobalRecoil";
+import { AnyFilterChanged, AppDataState, FilterActiveIdState, FilterState, GlobalLoadingState, HistsDataState, IsModalOpenState, ModalParamsState, ModalTypeState, ScatterPointLocationState, directoryPathSaveStateAtom } from "../../recoils/GlobalRecoil";
 import { isLoadingSaveFileStateAtom } from "../../recoils/GlobalRecoil";
 import { filtersListStateAtom } from "../../recoils/GlobalRecoil";
 import { generalFilterConfigsListCopyAtom } from "../../recoils/GlobalRecoil";
@@ -29,6 +29,8 @@ export default function Header({
     hasNew = true,
     hasOpen = true,
     hasAppDetails = true,
+    hasProgram = true,
+    hasFilter = true,
     onSubmit
 
 }: any) {
@@ -62,6 +64,8 @@ export default function Header({
     const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
     const [globalLoading, setGlobalLoading] = useRecoilState(GlobalLoadingState)
     const [histsData, setHistsData] = useRecoilState(HistsDataState)
+    const [scatterPointLocation, setScatterPointLocation] = useRecoilState(ScatterPointLocationState) 
+    const [modalParams, setModalParams] = useRecoilState(ModalParamsState)
     const saveActive = filters.find((ele: any) => ele.allIdealPoints || ele.userData)
 
 
@@ -81,13 +85,13 @@ export default function Header({
         if (!appData?.savePath) {
             api_electron.selectedPath().then((path: any) => {
                 if (path) {
-                    api_electron.saveFilter({savePath: path, type: "save"})
+                    api_electron.saveFilter({savePath: path, scatterPointLocation, type: "save"})
                     afterSave(type)
                     setIsModalOpen(false)
                 }
             })
         } else {
-            api_electron.saveFilter({savePath: appData?.savePath, type: "save"})
+            api_electron.saveFilter({savePath: appData?.savePath, scatterPointLocation, type: "save"})
             afterSave(type)
             setIsModalOpen(false)
         } 
@@ -96,7 +100,7 @@ export default function Header({
     const saveAsHandler = (type?: "NewFilter" | "OpenFilter") => {
         api_electron.selectedPath().then((path: any) => {
             if (path) {
-                api_electron.saveFilter({savePath: path, type: "saveAs"})
+                api_electron.saveFilter({savePath: path, scatterPointLocation, type: "saveAs"})
                 afterSave(type)
                 setIsModalOpen(false)
             }
@@ -106,25 +110,19 @@ export default function Header({
     UseOnDataFromIpcMain("openFilters_chanel", (event: any, data: any) => {
         if (!data.status) return Toast("error", data.error)
         // const {filters, appData, hists} = data.filters
+        setScatterPointLocation({})
+        setFilters(data.filters.filters)
+        setAppData(data.filters.appData)
+        setHistsData(data.filters.hists)
         const existConclusionFilters = data.filters.filters.find((ele: any) => ele.filter_type === "Conclusion")
         if (existConclusionFilters) {
             setFilterActiveId(existConclusionFilters)
-            setFilters(data.filters.filters)
-            setAppData(data.filters.appData)
-            setHistsData(data.filters.hists)
-            navigate("/report")
         } else {
-            // if (Object.keys(appData).length) {
-                const findLastFilter = data.filters.filters.length ? data.filters.filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : {}
-                setFilterActiveId(findLastFilter)
-                setFilters(data.filters.filters)
-                setAppData(data.filters.appData)
-                setHistsData(data.filters.hists)
-                navigate("/report")
-            // } else navigate("/")
+            const findLastFilter = data.filters.filters.length ? data.filters.filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : {}
+            setFilterActiveId(findLastFilter)
         }
-
         navigate("/report")
+
     })
 
     
@@ -149,6 +147,12 @@ export default function Header({
         ShowImage: {
         },
         HV_Images: {
+        },
+        DeleteIdealPoints: {
+        },
+        MatrixNan: {
+        },
+        DeleteFilter: {
         }
     }
 
@@ -218,6 +222,46 @@ export default function Header({
                 <h3 className="flex items-center justify-center px-2 text-xl text-gray-600 font-bold">{appData.app_name}</h3>
 
                 <div className="flex items-center justify-between gap-2">
+                    {hasProgram && 
+                        <Button
+                            title="پروگرم"
+                            // icon='box-arrow-in-down'
+                            expand='block'
+                            fill='transparent'
+                            color='gray'
+                            shape="round"
+                            iconWidth="1.6rem"
+                            iconHeight="1.6rem"
+                            outlineColor="lightgray"
+                            onClick={() => navigate("/program")}
+                            classNames={{
+                                container: "!h-full !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
+                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                            }}
+                            // onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.saveAs)}
+                            // classNames={{container: styles.submitBtn}}
+                        />
+                    }
+                    {hasFilter && 
+                        <Button
+                            title="کاستوم کالر"
+                            // icon='box-arrow-in-down'
+                            expand='block'
+                            fill='transparent'
+                            color='gray'
+                            shape="round"
+                            iconWidth="1.6rem"
+                            iconHeight="1.6rem"
+                            outlineColor="lightgray"
+                            onClick={() => navigate("/report")}
+                            classNames={{
+                                container: "!h-full !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
+                                section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
+                            }}
+                            // onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.saveAs)}
+                            // classNames={{container: styles.submitBtn}}
+                        />
+                    }
                     {hasSaveAs && 
                         <Button
                             title="ذخیره جدید"
@@ -232,7 +276,7 @@ export default function Header({
                             disabled={!saveActive}
                             onClick={saveAsHandler}
                             classNames={{
-                                container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
+                                container: "!h-full !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
                                 section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                             }}
                             // onClick={() => !isLoading && !disableSave && handleSaveFile(typeOfSave.saveAs)}
@@ -253,7 +297,7 @@ export default function Header({
                             disabled={!saveActive}
                             onClick={saveHandler}
                             classNames={{
-                                container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
+                                container: "!h-full !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
                                 section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                             }}
                             // classNames={{container: styles.submitBtn}}
@@ -271,7 +315,7 @@ export default function Header({
                             iconHeight="1.6rem"
                             outlineColor="lightgray"
                             classNames={{
-                                container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
+                                container: "!h-full !flex !items-center !justify-center !rounded-md duration-200",
                                 section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                             }}
                             onClick={() => {
@@ -279,8 +323,8 @@ export default function Header({
                                     api_electron.selectedPath().then((path: any) => {
                                         if (path) {
                                             api_electron.openFilters(path)
-                                            setFilters([])
-                                            setAppData({})
+                                            // setFilters([])
+                                            // setAppData({})
                                         }
                                         
                                     })
@@ -306,7 +350,7 @@ export default function Header({
                             iconHeight="1.6rem"
                             outlineColor="lightgray"
                             classNames={{
-                                container: "!h-7 !flex !items-center !justify-center !rounded-md duration-200",
+                                container: "!h-full !flex !items-center !justify-center !rounded-md duration-200",
                                 section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                             }}
                             onClick={() => {
@@ -336,7 +380,7 @@ export default function Header({
                             iconHeight="1.6rem"
                             outlineColor="lightgray"
                             classNames={{
-                                container: "!h-7 !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
+                                container: "!h-full !flex !items-center !justify-center !rounded-sm !bg-transparent !border-0 duration-200",
                                 section: "!text-sm !overflow-hidden !flex !items-center !justify-center"
                             }}
                             onClick={() => {

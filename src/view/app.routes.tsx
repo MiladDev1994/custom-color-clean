@@ -8,6 +8,7 @@ import { AllRecordState, AppDataState, ChartDataState, ChartLengthState, Directo
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { UseOnDataFromIpcMain } from "./hooks/UseOnDataFromIpcMain";
 import { Toast } from "./utils/Toast";
+import Programs from "./Pages/Programs/Programs";
 // import Conclusion from "./Components/Reports/Conclusion";
 
 const AppRoutes = () => {
@@ -22,21 +23,16 @@ const AppRoutes = () => {
     UseOnDataFromIpcMain("existAppDataChecker_chanel", (event: any, data: any) => {
         const {appData, hists, filters} = data
         const existConclusionFilters = filters.find((ele: any) => ele.filter_type === "Conclusion")
+        if (!Object.keys(appData).length) return navigate("/")
+        setFilters(filters)
+        setAppData(appData)
+        setHistsData(hists)
+        navigate("/report")
         if (existConclusionFilters) {
             setFilterActiveId(existConclusionFilters)
-            setFilters(filters)
-            setAppData(appData)
-            setHistsData(hists)
-            navigate("/report")
         } else {
-            if (Object.keys(appData).length) {
-                const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : {}
-                setFilterActiveId(findLastFilter)
-                setFilters(filters)
-                setAppData(appData)
-                setHistsData(hists)
-                navigate("/report")
-            } else navigate("/")
+            const findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : {}
+            setFilterActiveId(findLastFilter)
         }
 
     })
@@ -52,6 +48,7 @@ const AppRoutes = () => {
             <Routes>
                 <Route path="/" element={<CreateApp />} />
                 <Route path="/report" element={<Report />} />
+                <Route path="/program" element={<Programs />} />
                 {/* <Route path="/conclusion" element={<Conclusion />} /> */}
             </Routes>
             {globalLoading && <div className="w-screen h-screen fixed top-0 right-0 z-50" onClick={() => Toast("error", "درحال اجرای عملیات. لطفا منتظر بمانید")}/>}

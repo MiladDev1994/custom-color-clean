@@ -78,6 +78,7 @@ const svgsNames = [
  'three-dots',
  'Total',
  'Trash',
+ 'trash3-fill',
  'trash3',
  'Unknown',
  'upArrow',

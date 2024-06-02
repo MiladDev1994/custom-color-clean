@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from "./Matris.module.scss"
 import Icon from '../Icon/Icon';
 import { Structure } from './matrixStructure';
 import Button from '../Button/Button';
+import { IsModalOpenState } from '../../../recoils/GlobalRecoil';
+import { ModalTypeState } from '../../../recoils/GlobalRecoil';
+import { useRecoilState } from 'recoil';
 
 function Matris({
     data, 
@@ -12,6 +15,26 @@ function Matris({
     name,
 }: any) {
 
+
+    const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
+    const [modalType, setModalType] = useRecoilState(ModalTypeState);
+
+    const findNanValue = () => {
+        if (!Object.keys(pointSelected).length) return
+        const matrixItem = ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8"]
+        matrixItem.forEach((value: string) => {
+            // console.log(value)
+            if(isNaN(pointSelected?.[value])) {
+                setIsModalOpen(true)
+                setModalType("MatrixNan")
+                return;
+            }
+        })
+
+    }
+
+
+    useEffect(findNanValue, [pointSelected])
 
     return (
         

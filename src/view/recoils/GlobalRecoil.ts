@@ -199,7 +199,27 @@ export const IsModalOpenState: RecoilState<any> = atom({
   default: false,
 });
 
-export const ModalTypeState: RecoilState<undefined | "OpenFilter" | "NewFilter" | "AddFilter" | "AppDetails" | "FilterDetails" | "ShowImage" | "HV_Images"> = atom({
+export const ModalParamsState: RecoilState<any> = atom({
+  key: "ModalParamsState",
+  default: "",
+});
+
+
+// const regex: RegExp = /(OpenFilter|NewFilter|AddFilter|AppDetails|FilterDetails|ShowImage|HV_Images|DeleteIdealPoints|MatrixNan|DeleteFilter)(?![A-Z]|[a-z])_?(\w+)?/g
+
+type ModalType = 
+  | undefined 
+  | "OpenFilter" 
+  | "NewFilter" 
+  | "AddFilter" 
+  | "AppDetails" 
+  | "FilterDetails" 
+  | "ShowImage" 
+  | "HV_Images" 
+  | "DeleteIdealPoints" 
+  | "MatrixNan"
+  | "DeleteFilter"
+export const ModalTypeState: RecoilState<ModalType> = atom({
   key: "ModalTypeState",
   default: undefined,
 });
@@ -256,6 +276,12 @@ export const PointSelectedData: RecoilState<any> = atom({
 
 export const FilesPathState: RecoilState<any> = atom({
     key: 'FilesPathState',
+    default: {},
+});
+
+
+export const ScatterPointLocationState: RecoilState<any> = atom({
+    key: 'ScatterPointLocationState',
     default: {},
 });
 

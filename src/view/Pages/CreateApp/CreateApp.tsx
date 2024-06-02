@@ -159,7 +159,7 @@ function CreateApp() {
             // setAppData(value)
             if (filter_type === "SCATTER") {
                 window.api_electron.readConfusion()
-                api_electron.moveMash2DHVFile()
+                // api_electron.moveMash2DHVFile()
             } else {
                 api_electron.redHists()
             }
@@ -240,6 +240,7 @@ function CreateApp() {
                 hasSave={false}
                 hasSaveAs={false}
                 hasAppDetails={false}
+                hasFilter={false}
             />
             <div className={`w-full flex items-center justify-center my-20`}>
                 <div className={`w-[1000px] p-1 rounded-xl bg-white border border-gray-200 shadow-2xl shadow-gray-400`}>

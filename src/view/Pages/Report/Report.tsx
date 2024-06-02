@@ -1,6 +1,6 @@
 import { useRecoilState, useSetRecoilState } from "recoil";
 import Header, { FiltersHandler } from "../../Components/Header/Header";
-import { AppDataState, Filter1DState, Filter2DState, FilterActiveIdState, FilterState, GlobalLoadingState, HistsDataState, IsModalOpenState, ProgressState } from "../../recoils/GlobalRecoil";
+import { AppDataState, Filter1DState, Filter2DState, FilterActiveIdState, FilterState, GlobalLoadingState, HistsDataState, IsModalOpenState, ModalTypeState, ProgressState } from "../../recoils/GlobalRecoil";
 import Select from "../../Components/Common/Select/Select";
 import Range from "../../Components/Common/Range/Range";
 import { useEffect, useRef, useState } from "react";
@@ -18,6 +18,7 @@ export default function Report() {
     const interval = useRef(null)
     const [filterActiveId, setFilterActiveId] = useRecoilState(FilterActiveIdState)
     const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
+    const [modalType, setModalType] = useRecoilState(ModalTypeState);
     const [progress, setProgress] = useRecoilState(ProgressState)
     const [filters, setFilters] = useRecoilState(FilterState)
     const [appData, setAppData] = useRecoilState(AppDataState)
@@ -36,13 +37,16 @@ export default function Report() {
     })
 
     UseOnDataFromIpcMain("readConfusion_chanel", async (event: any, data: any) => {
-        console.log(data)
         if (data.status) {
             const {filters, appData} = data.data
             let findLastFilter = filters.length ? filters.reduce((a: any, b: any) => a.id > b.id ? a : b) : {}
             if (data.data.type === "patch") {
                 findLastFilter = filters.length ? filters.find((ele: any) => ele.id === filterActiveId.id) : {}
             } 
+            if (!findLastFilter.optimalPoint) {
+                setIsModalOpen(true)
+                setModalType("DeleteIdealPoints")
+            }
             setFilterActiveId(findLastFilter)
             setFilters(filters)
             setAppData(appData)
@@ -53,6 +57,7 @@ export default function Report() {
             Toast("error", data.message)
         }
     })
+
 
     UseOnDataFromIpcMain("redHists_chanel", async (event: any, data: any) => {
         if (data.status) {
@@ -73,14 +78,13 @@ export default function Report() {
 
     UseOnDataFromIpcMain("progress_chanel", (event: any, data: any) => {
         const {progress, filter_type} = data
-        console.log(data)
         setProgress(progress)
         if (progress >= 100) {
             clearInterval(interval.current)
             // setAppData(value)
             if (filter_type === "SCATTER") {
                 window.api_electron.readConfusion()
-                api_electron.moveMash2DHVFile()
+                // api_electron.moveMash2DHVFile()
             } else {
                 api_electron.redHists()
             }
@@ -104,7 +108,7 @@ export default function Report() {
 
     return (
         <div className="w-full mt-28">
-            <Header onSubmit={submitCreateFilter}>
+            <Header onSubmit={submitCreateFilter} hasFilter={false}>
                 <FiltersHandler />
             </Header>
             {ReportComponent ? <ReportComponent {...ReportComponentProps[filterActiveId?.filter_type as "SCATTER"]}/> : 

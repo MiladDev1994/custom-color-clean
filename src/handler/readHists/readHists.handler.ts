@@ -23,7 +23,7 @@ ipcMain.on("redHists", async (event) => {
           HISTS.set(chartData)
           return event.sender.send('redHists_chanel', {
             status: true,
-            data: { hists: chartData, appData: APP_DATA.getAppData(), filters},
+            data: { hists: HISTS.get(), appData: APP_DATA.getAppData(), filters},
             message: "اطلاعات دریافت شد"
           });
         } catch (error) {

@@ -19,11 +19,16 @@ declare namespace api_electron {
   function completeSorterConfigData(value: any): Promise<any>;
   function addFilter(value: any): void;
   function deleteFilter(id: any): void;
+  function deleteIdealPoints(id: any): void;
   function calculateAcc(data: any): void;
   function resultGenerator(data: any): void;
   function resultGeneratorProgress(): void;
   function readResultData(id: number): void;
   function randomImage(data: any): void;
+  function readPrograms(): void;
+  function getAppsList(): void;
+  function deleteApp(appName: string): void;
+  function addFilterPathToProgram(values: any): void;
   function resultGenerator_conclusion(count?: any): void;
   function onDataFromIpcMain(channel:string, func: ()=>void): () => Electron.IpcRenderer;
 }

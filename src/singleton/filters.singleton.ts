@@ -30,7 +30,8 @@ class FiltersSingleton {
             result,
             userData,
             filterValues,
-            HV_images
+            HV_images,
+            Mean2DH_V
         } = data
         
         const findMaxId = this.filters.length ? this.filters.reduce((a: any, b: any) => a.id > b.id ? a : b).id : 0
@@ -48,7 +49,8 @@ class FiltersSingleton {
             result,
             userData,
             filterValues,
-            HV_images
+            HV_images,
+            Mean2DH_V
         }
         this.filters.push(newFilter)
         // await WriteFiltersFile()
@@ -79,10 +81,10 @@ class FiltersSingleton {
     }
 
     async deleteById(id: any) {
-        const newFilters = this.filters.filter(ele => ele.id !== id)
+        const newFilters = this.filters.filter(ele => ele.id !== +id)
         this.filters = newFilters
         // await WriteFiltersFile()
-        return this.filters
+        return newFilters
     }
 
     getById(id: number) {
@@ -96,6 +98,20 @@ class FiltersSingleton {
     reset() {
         this.filters = []
         return this.filters
+    }
+
+    deleteIdealPoints(id: any) {
+        const oldFilters = [...this.filters]
+        const findIndex = oldFilters.findIndex(ele => ele.id === id)
+        const spliceFilters = oldFilters.splice(findIndex, 1)?.[0] ?? {}
+        if (spliceFilters.filter_type !== "SCATTER") return;
+        const intensityGraphs = [...spliceFilters.intensityGraphs]
+        const newIntensityGraphs = intensityGraphs.filter((ele) => ele.label !== "Accuracy_ideal")
+        spliceFilters.intensityGraphs = newIntensityGraphs
+        spliceFilters.allIdealPoints = []
+        oldFilters.splice(findIndex, 0, spliceFilters)
+        this.filters = oldFilters
+        return true
     }
 }
 

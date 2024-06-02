@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "../IntensityChart/IntensityChart.module.scss"
 import { useRecoilState } from "recoil";
-import { AppDataState, FilterActiveIdState, FilterState, GlobalLoadingState, IsModalOpenState, ProgressState } from "../../recoils/GlobalRecoil"
+import { AppDataState, FilterActiveIdState, FilterState, GlobalLoadingState, IsModalOpenState, ProgressState, ScatterPointLocationState } from "../../recoils/GlobalRecoil"
 import Button from "../Common/Button/Button";
 import SingleScatterChart from "../Common/Charts/SingleScatterChart";
 import ZoomChart from "../Common/ZoomChart/ZoomChart";
@@ -56,6 +56,7 @@ const AreaChart = ({
     const [isModalOpen, setIsModalOpen] = useRecoilState(IsModalOpenState);
     const [globalLoading, setGlobalLoading] = useRecoilState(GlobalLoadingState)
     const [idealLoading, setIdealLoading] = useState(false)
+    const [scatterPointLocation, setScatterPointLocation] = useRecoilState(ScatterPointLocationState)
     const [chartZoom, setChartZoom] = useState<any>({
       min: 1,
       max: 1,
@@ -145,11 +146,15 @@ const AreaChart = ({
     }
   
     UseOnDataFromIpcMain("calculateAcc_chanel", (event: any, data: any) => {
-      console.log(data)
       if (data.status) {
         const {filters, idealPoint, graph, appData} = data.data
         setFilters(filters)
         setAppData(appData)
+        
+        const newScatterPointLocation = {...scatterPointLocation}
+        delete newScatterPointLocation?.[filterActiveId.id]
+        setScatterPointLocation(newScatterPointLocation)
+
         if (idealPoint.areaGraphs) setAreaGraph(idealPoint.areaGraphs)
         if (idealPoint.areaPointSelectedData) setAreaPointSelectedData(idealPoint.areaPointSelectedData)
         if (idealPoint.intensityPointSelectedData) setIntensityPointSelectedData(idealPoint.intensityPointSelectedData)

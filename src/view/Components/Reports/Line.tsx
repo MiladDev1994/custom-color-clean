@@ -158,7 +158,6 @@ const LINE = () => {
     })
 
     UseOnDataFromIpcMain("readResultData_chanel", (event: any, data: any) => {
-        console.log(data.appData)
         if (!data.status) {
             setGlobalLoading(false)
             return Toast("error", data.error)  
@@ -228,7 +227,6 @@ const LINE = () => {
         api_electron.randomImage({type, id: filterActiveId.id})
     }
     
-    console.log(appData)
 
     const ChartMemo = useMemo(() => {
         return (

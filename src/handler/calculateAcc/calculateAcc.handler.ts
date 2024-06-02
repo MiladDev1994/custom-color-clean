@@ -1,6 +1,7 @@
 import { ipcMain } from "electron"
 import path from "path"
 import fs from "fs"
+import colors from "colors"
 import fspromises from "fs/promises"
 import APP_DATA from "../../singleton/appData.singleton"
 import { DECIMAL } from "../../singleton/confusion.singleton"
@@ -13,11 +14,11 @@ import { RemoveFile } from "../utils/RemoveFile"
 import { WriteXmlFile } from "../utils/WriteXmlFile"
 import FILTERS from "../../singleton/filters.singleton"
 import { chartTheme } from "../../view/Components/IntensityChart/Theme"
-const { json2xml, js2xml, xml2js } = require('xml-js');
+import { json2xml, js2xml, xml2js } from "xml-js"
 
 const toXmlOption =  { 
     compact: true,
-    ignoreComment: true,
+    // ignoreComment: true,
     ignoreDeclaration: false,
     spaces: 4
 }
@@ -27,8 +28,13 @@ ipcMain.on("calculateAcc", async (event, data) => {
     // function readIdealPointController(event, data) {
     
         const {id, verticalLinesValueIntensity, verticalLinesValueArea, intensityPointSelectedData, areaPointSelectedData, areaGraphs, intensityGraphs} = data;
-        const {influenceTop, influenceDown, allIdealPoints: oldIdealPoint = []} = FILTERS.getById(id)
+        const {influenceTop, influenceDown, allIdealPoints: oldIdealPoint = [], Mean2DH_V} = FILTERS.getById(id)
       
+        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab", "confusions"))
+        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab", "parameters.xml"))
+        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab", "folders.xml"))
+        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab", "Mean2DH_V.xml"))
+
         if (
           !APP_DATA.getAppData().healthy ||
           !APP_DATA.getAppData().not_healthy ||
@@ -36,6 +42,9 @@ ipcMain.on("calculateAcc", async (event, data) => {
           !verticalLinesValueArea
         ) return event.sender.send("calculateAcc_chanel", {status:  false, message: "ابتدا فهرست را کامل کنید"})
       
+        if (!Mean2DH_V) return event.sender.send("calculateAcc_chanel", {status:  false, message: "فایل Mean2DH_V.xml یافت نشد"})
+          const Mean2DStructureXml = js2xml(Mean2DH_V ?? {} as any, toXmlOption);
+          await WriteXmlFile(Mean2DStructureXml, path.join("C:\\scpc\\featureAnalyzer\\Hesaab", "Mean2DH_V.xml"))
         // const newConfig = {
         //   ...APP_DATA.getAppData(),
         //   delta: verticalLinesValueIntensity / Math.pow(10, DECIMAL.get()),
@@ -58,10 +67,7 @@ ipcMain.on("calculateAcc", async (event, data) => {
           }
         };
       
-        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab", "confusions"))
-        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab", "parameters.xml"))
-        await RemoveFile(path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab", "folders.xml"))
-        const parametersJson = js2xml(parameters, toXmlOption)
+        const parametersJson = js2xml(parameters as any, toXmlOption)
         await WriteXmlFile(parametersJson, path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab\\parameters.xml"))
         execFile("./CalculateAcc.exe", [], { cwd: path.join(ENV.FEATURE_ANALYZER_PATH, "Hesaab")}, (error: any, stdout: any, stderr: any) => {
             if (error) return event.sender.send('calculateAcc_chanel', {status: false, message: error});
@@ -78,7 +84,7 @@ ipcMain.on("calculateAcc", async (event, data) => {
                   idealConfusion,
                   intensityPointSelectedData,
                   areaPointSelectedData,
-                  areaGraphs
+                  areaGraphs,
                 }
                 allIdealPoints.push(newIdealPoint)
 
@@ -151,7 +157,8 @@ ipcMain.on("calculateAcc", async (event, data) => {
       const scanFolders = scanIdealPoint(delta);
       return scanFolders.status ? scanFolders.data : {}
     }
-        
+
+    
 })
 
 

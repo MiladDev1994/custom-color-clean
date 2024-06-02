@@ -2,7 +2,7 @@ import { useRecoilState } from "recoil"
 import AreaChart from "../AreaChart/AreaChart"
 import ImagesSwiper from "../Common/ImagesSwiper/ImagesSwiper"
 import IntensityChart from "../IntensityChart/IntensityChart"
-import { FilterActiveIdState, FilterState } from "../../recoils/GlobalRecoil"
+import { FilterActiveIdState, FilterState, ScatterPointLocationState } from "../../recoils/GlobalRecoil"
 import { useEffect, useState } from "react"
 import { chartTheme } from "../IntensityChart/Theme"
 
@@ -26,6 +26,7 @@ const SCATTER = (props: any) => {
   const [intensityChartSize, steIntensityChartSize] = useState<any>({});
   const [areaChartSize, steAreaChartSize] = useState<any>({});
   const [lineTypeToDraw, setLineTypeToDraw] = useState(0);
+  const [scatterPointLocation, setScatterPointLocation] = useRecoilState(ScatterPointLocationState) 
   
 
     const intensityOnClick = (lineType: any, canvasPos: any, getLines: any) => {
@@ -75,15 +76,21 @@ const SCATTER = (props: any) => {
           }
         }
       } else if (lineType === 2) {
-        // console.log(getLines)
-        // console.log(filterActiveId)
         const allIdealPoints = filterActiveId?.allIdealPoints?.find((point: any) => point.X === canvasPos && ((point.Y-2) <= getLines && (point.Y+2) >= getLines))
         if (allIdealPoints) {
+          
           setAreaPointSelectedData(allIdealPoints.areaPointSelectedData)
           setIntensityPointSelectedData(allIdealPoints.intensityPointSelectedData)
           setAreaGraph(allIdealPoints.areaGraphs)
           setFilesPath(allIdealPoints.filesPath)
           setMatrixData(allIdealPoints.idealConfusion.record)
+          setScatterPointLocation({
+            ...scatterPointLocation, 
+            [filterActiveId.id]: {
+              delta: allIdealPoints.X, 
+              area: allIdealPoints?.areaPointSelectedData?.verticalLines?.[0] ?? 0
+            }
+          })
         }
 
         // console.log(Math.round(filterActiveId.allIdealPoints.find((point: any) => point.X === canvasPos).Y))
@@ -100,6 +107,8 @@ const SCATTER = (props: any) => {
         setAreaPointSelectedData(pointSelected);
     }
 
+    
+    
     useEffect(() => {
       if (filterActiveId?.intensityGraphs) {
         setIntensityGraphs(filterActiveId?.intensityGraphs)
@@ -111,7 +120,7 @@ const SCATTER = (props: any) => {
             data: filterActiveId.confusion.chartData["e8"],
           }
         ]
-        if (Object.keys(filterActiveId.optimalPoint).length) {
+        if (filterActiveId.optimalPoint && Object.keys(filterActiveId.optimalPoint).length) {
           const optimalPoint = {
             ...chartTheme.public, 
             ...chartTheme[`optimal`],
@@ -122,13 +131,20 @@ const SCATTER = (props: any) => {
         setIntensityGraphs(graphs)
       }
       
-      if (filterActiveId?.allIdealPoints?.length) {
-        const lastPoint = [...filterActiveId?.allIdealPoints].pop()
-        setAreaPointSelectedData(lastPoint.areaPointSelectedData)
-        setIntensityPointSelectedData(lastPoint.intensityPointSelectedData)
-        setAreaGraph(lastPoint.areaGraphs)
-        setFilesPath(lastPoint.filesPath)
-        setMatrixData(lastPoint.idealConfusion.record)
+      if (scatterPointLocation?.[filterActiveId.id]) {
+        const idealPointSelected = filterActiveId?.allIdealPoints?.find((ele: any) => ele.X === scatterPointLocation?.[filterActiveId.id]?.delta) 
+        setAreaPointSelectedData(idealPointSelected.areaPointSelectedData)
+        setIntensityPointSelectedData(idealPointSelected.intensityPointSelectedData)
+        setAreaGraph(idealPointSelected.areaGraphs)
+        setFilesPath(idealPointSelected.filesPath)
+        setMatrixData(idealPointSelected.idealConfusion.record)
+      } else if (filterActiveId?.allIdealPoints?.length) {
+          const lastPoint = [...filterActiveId?.allIdealPoints].pop()
+          setAreaPointSelectedData(lastPoint.areaPointSelectedData)
+          setIntensityPointSelectedData(lastPoint.intensityPointSelectedData)
+          setAreaGraph(lastPoint.areaGraphs)
+          setFilesPath(lastPoint.filesPath)
+          setMatrixData(lastPoint.idealConfusion.record)
       } else {
         setAreaPointSelectedData({})
         setIntensityPointSelectedData({})
@@ -143,6 +159,29 @@ const SCATTER = (props: any) => {
           n8: "", numsLength: 0
         })
       }
+
+      // برای نمایش آخرین نقطه ایده آل
+      // if (filterActiveId?.allIdealPoints?.length) {
+      //   const lastPoint = [...filterActiveId?.allIdealPoints].pop()
+      //   setAreaPointSelectedData(lastPoint.areaPointSelectedData)
+      //   setIntensityPointSelectedData(lastPoint.intensityPointSelectedData)
+      //   setAreaGraph(lastPoint.areaGraphs)
+      //   setFilesPath(lastPoint.filesPath)
+      //   setMatrixData(lastPoint.idealConfusion.record)
+      // } else {
+      //   setAreaPointSelectedData({})
+      //   setIntensityPointSelectedData({})
+      //   setAreaGraph([])
+      //   setFilesPath({})
+      //   setMatrixData({
+      //     e0: "", e1: "", e4: "", e2: "", 
+      //     e3: "", e5: "", e6: "", e7: "", 
+      //     e8: "",
+      //     n0: "", n1: "", n4: "", n2: "", 
+      //     n3: "", n5: "", n6: "", n7: "", 
+      //     n8: "", numsLength: 0
+      //   })
+      // }
 
     }, [filterActiveId])
 

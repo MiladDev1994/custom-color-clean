@@ -1,113 +1,112 @@
- import fs from "fs"
- import path from "path"
- import colors from "colors"
- import fspromises from "fs/promises"
-import { js2xml } from "xml-js";
-import { prepareFilterForGettingResult } from "../utils/preparersAndConverters";
-import { capitalizeFirstLetter } from "../utils/strUtilities";
-import APP_DATA from "../../singleton/appData.singleton";
-import { WriteXmlFile } from "../utils/WriteXmlFile";
-const toXmlOption =  { 
-    compact: true,
-    ignoreComment: true,
-    ignoreDeclaration: false,
-    spaces: 4
-}
- 
- 
-export async function LINE(data: any) {
+
+import * as filterType from "./FilterType.condition"
+export async function SaveFilter(data: any) {
 
     const {
+        filters,
         savePath,
-        filter,
         folderName,
-        numberOfChart,
-        filterBaseName
-    } = data;
+        scatterPointLocation
+    } = data
 
+    let numberOfChart: any = {}
+    filters.forEach(async (filter: any) => {
+        if (filter.filter_type === "Conclusion") return;
 
-    try {
+        const filterBaseName = `${filter?.filter_type.toLowerCase()}${filter?.chart_type ?? ""}` // example ==> lineHue | lineVal
+        if (!numberOfChart?.[filterBaseName]) numberOfChart[filterBaseName] = 1
+        else numberOfChart[filterBaseName]++
 
-        const chartPositionData = filter?.userData?.[filter?.chart_type.toLowerCase()]?.[0]
-        let xmlStructure = {
-          "_instruction": { "xml": { "_attributes": { "version": "1.0" } } },
-          opencv_storage: {
-            active: chartPositionData?.isActive ?? 1,
-            filterType: `"${filter.filter_type.toLowerCase()}"`,
-            chartKey: `"${filter.chart_type}"`,
-            p1: {
-                x: chartPositionData?.p1?.x ?? 0,
-                y: chartPositionData?.p1?.y ?? 0
-            },
-            p2: {
-                x: chartPositionData?.p2?.x ?? 255,
-                y: chartPositionData?.p2?.y ?? 0
-            },
-            isTopSelected: chartPositionData?.isTopSelected ?? true,
-            isGoodSelected: APP_DATA.getAppData().app_type ? 1 : 0,
-            influence: chartPositionData?.influence ?? 50,
-          }
+        const fileData: any = {
+            savePath,
+            filter,
+            folderName,
+            filterBaseName,
+            numberOfChart: numberOfChart[filterBaseName] < 10 ? `0${numberOfChart[filterBaseName]}` : numberOfChart[filterBaseName]
         }
-        const xml = js2xml(xmlStructure as any, toXmlOption);
-        const fileName = `${filterBaseName}_${numberOfChart}_sorchin_custom.xml`
-        await WriteXmlFile(xml, path.join(savePath, folderName, fileName))
-        return true
-    } catch (error) {
-        console.log(colors.red(error))
-        return true
-    }
+        if (filter.filter_type === "SCATTER" && scatterPointLocation && Object.keys(scatterPointLocation?.[filter.id]?? {}).length) fileData.scatterPointLocation = scatterPointLocation?.[filter.id];
+        
+        await filterType[filter.filter_type as "LINE"](fileData)
+        numberOfChart = {}
+    })
+
+    return savePath
 }
+ 
 
 
 
-let counter: number = 0
-export async function SCATTER(data: any) {
 
-    const {
-        savePath,
-        filter,
-        folderName,
-        numberOfChart,
-        filterBaseName
-    } = data;
 
-    try {
-        filter?.allIdealPoints?.forEach( async (ele: any) => {
-            counter++
-            let fileNumber = counter < 10 ? `0${counter}` : `${counter}`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// let counter: number = 0
+// export async function SCATTER(data: any) {
+
+//     const {
+//         savePath,
+//         filter,
+//         folderName,
+//         numberOfChart,
+//         filterBaseName
+//     } = data;
+
+//     try {
+//         filter?.allIdealPoints?.forEach( async (ele: any) => {
+//             counter++
+//             let fileNumber = counter < 10 ? `0${counter}` : `${counter}`
+//             // const Mash2DH_V = {...filter.Mash2DH_V}
             
-            
 
-            let xmlStructure: any = {
-              "_instruction": { "xml": { "_attributes": { "version": "1.0" } } },
-            }
-            const data = {
-                delta: ele.X ?? 0,
-                area: ele?.areaPointSelectedData?.verticalLines?.[0] ?? 0,
-                influenceTop: filter?.influenceTop ?? "0.5",
-                influenceDown: filter?.influenceDown ?? "0.5"
-            }
-            xmlStructure.opencv_storage = data;
+//             let xmlStructure: any = {
+//               "_instruction": { "xml": { "_attributes": { "version": "1.0" } } },
+//             }
+//             const data = {
+//                 // ...Mash2DH_V,
+//                 delta: ele.X ?? 0,
+//                 area: ele?.areaPointSelectedData?.verticalLines?.[0] ?? 0,
+//                 influenceTop: filter?.influenceTop ?? "0.5",
+//                 influenceDown: filter?.influenceDown ?? "0.5"
+//             }
+//             xmlStructure.opencv_storage = data;
 
-            const xml = js2xml(xmlStructure as any, toXmlOption);
-            const fileName = `${filterBaseName}_${numberOfChart}_${fileNumber}_sorchin_custom.xml`
-            await WriteXmlFile(xml, path.join(savePath, folderName, fileName))
+//             const xml = js2xml(xmlStructure as any, toXmlOption);
+//             const fileName = `${filterBaseName}_${numberOfChart}_${fileNumber}_sorchin_custom.xml`
+//             await WriteXmlFile(xml, path.join(savePath, folderName, fileName))
 
-        })
-        counter = 0
-        return true
-    } catch (error) {
-        console.log(colors.red(error))
-        return true
-    }
-}
-
-
-
-
-
-
-
+//         })
+//         counter = 0
+//         return true
+//     } catch (error) {
+//         console.log(colors.red(error))
+//         return true
+//     }
+// }
 
 
 
