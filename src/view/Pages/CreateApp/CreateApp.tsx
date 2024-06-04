@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CreateAppFormValidation } from './Validation'
 import { Toast } from '../../utils/Toast'
-import { AllRecordState, AppDataState, ChartDataState, ChartLengthState, DirectoryValueState, Filter1DState, Filter2DState, FilterActiveIdState, FilterState, HistsDataState, ProgressState } from '../../recoils/GlobalRecoil'
+import { AllRecordState, AppDataState, ChartDataState, ChartLengthState, DirectoryValueState, Filter1DState, Filter2DState, FilterActiveIdState, FilterState, HistsDataState, ProgressState, ScatterPointLocationState } from '../../recoils/GlobalRecoil'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import Button from '../../Components/Common/Button/Button'
 import Range from '../../Components/Common/Range/Range'
@@ -69,6 +69,7 @@ function CreateApp() {
     const [filters, setFilters] = useRecoilState(FilterState)
     const [appData, setAppData] = useRecoilState(AppDataState)
     const [chartType, setChartType] = useState("")
+    const [scatterPointLocation, setScatterPointLocation] = useRecoilState(ScatterPointLocationState) 
     const [value, setValue] = useState<any>({
         app_name: "",
         filter_name: "",
@@ -117,10 +118,6 @@ function CreateApp() {
             })
         }
     }
-
-    UseOnDataFromIpcMain("getChartData_chanel", (event: any, data: any) => {
-        // console.log(data)
-    })
 
     UseOnDataFromIpcMain("readConfusion_chanel", async (event: any, data: any) => {
         if (data.status) {
@@ -191,6 +188,7 @@ function CreateApp() {
             return Toast("error" , "تمام فیلد هار را پر کنید")
         } 
         api_electron.createApp(value)
+        setScatterPointLocation({})
         // setProgress(0)
         // window.api_electron.getChartData(value)
         // interval.current = setInterval(() => {

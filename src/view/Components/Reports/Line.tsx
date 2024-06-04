@@ -154,7 +154,12 @@ const LINE = () => {
     };
 
     UseOnDataFromIpcMain("resultGenerator_chanel", (event: any, data: any) => {
-        // console.log(data)
+        if (!data.status) {
+            clearInterval(interval.current)
+            setProgress(100)
+            setGlobalLoading(false)
+            Toast("error", data.message + "مشکل در دریافت اطلاعات")
+        }
     })
 
     UseOnDataFromIpcMain("readResultData_chanel", (event: any, data: any) => {

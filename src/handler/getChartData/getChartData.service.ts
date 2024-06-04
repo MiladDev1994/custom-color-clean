@@ -53,7 +53,7 @@ export async function LINE(event: any, value: any) {
     execFile(`HistogramGenerator.exe`, { cwd: featurePath }, (error: any, stdout: any, stderr: any) => {
       if (error) {
         // APP_DATA.reset()
-        return event.sender.send("getChartData_chanel", {status: false, message: error.message})
+        return event.sender.send("getChartData_chanel", {status: false, message: error?.message})
       }
       if(stdout) {
         return event.sender.send("getChartData_chanel", {status: true, data: stdout})
@@ -120,13 +120,16 @@ export async function SCATTER(event: any, value: any) {
 
   execFile(`HistogramSearch.exe`, { cwd: path.join(featurePath, "BehIabi") }, (error: any, stdout: any, stderr: any) => {
     if (error) {
+      console.log("error", error)
       // APP_DATA.reset()
       return event.sender.send("getChartData_chanel", {status: false, message: error.message})
     }
     if(stdout) {
+      // console.log("stdout", stderr)
       return event.sender.send("getChartData_chanel", {status: true, data: stdout})
     }
     if (stderr) {
+      console.log("stderr", stderr)
       // APP_DATA.reset()
       return event.sender.send("getChartData_chanel", {status: false, message: error?.message})
     }

@@ -161,10 +161,8 @@ async function readHVImages(address: any) {
 
 
 async function readMash2DH_V(address: any) {
-    console.log(address)
     try {
         const readFile = fs.readFileSync(address, "utf8")
-        console.log(readFile)
         const options = { compact: true, ignoreDeclaration: false, spaces: 4 };
         let parsXML = xml2js(readFile, options);
         return parsXML

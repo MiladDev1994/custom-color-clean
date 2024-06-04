@@ -88,13 +88,13 @@ ipcMain.on('resultGenerator', async (event, value) => {
     FILTERS.update(id, {userData: json, data, goodDirection: goodDirection, filterValues: {count, isActive, influence} })
     execFile(`ResultGenerator.exe`, [], { cwd: ENV.FEATURE_ANALYZER_PATH }, (error, stdout, stderr) => {
         if (error) {
-            return event.sender.send('resultGenerator_chanel', {error: error});
+            return event.sender.send('resultGenerator_chanel', {status: false, error: error});
         }
         if(stdout) {
-            return event.sender.send('resultGenerator_chanel', {data: stdout});
+            return event.sender.send('resultGenerator_chanel', {status: true, data: stdout});
         }
         if (stderr) {
-            return event.sender.send('resultGenerator_chanel', {error: stderr});
+            return event.sender.send('resultGenerator_chanel', {status: false, error: stderr});
         }
     });
 

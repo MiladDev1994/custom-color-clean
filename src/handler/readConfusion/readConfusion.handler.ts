@@ -12,8 +12,7 @@ ipcMain.on("readConfusion", async (event) => {
   const tempFilter = APP_DATA.getTempValue()
   const optimalPoint = await readOptimalPoint(path.join(featurePath, "BehIabi", "optimal.txt"))
   const HV_images = await readHVImages(path.join(featurePath, "BehIabi"))
-  const Mean2DH_V = await readMash2DH_V(path.join(ENV.FEATURE_ANALYZER_PATH, "BehIabi", "Mean2DH_V.xml")) // برای اضافه کردن اطلاعات فایل Mash2DH_V.xml به فیلتر
-  console.log(Mean2DH_V)
+  const Mean2DH_V = await readMash2DH_V(path.join(ENV.FEATURE_ANALYZER_PATH, "BehIabi", "Mean2DH_V.xml")) // برای اضافه کردن اطلاعات فایل Mash2DH_V.xml به فیلتر 
   
   let type = "create";
   if (tempFilter.id) {

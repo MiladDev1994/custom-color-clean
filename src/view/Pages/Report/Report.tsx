@@ -25,6 +25,15 @@ export default function Report() {
     const setHistsData = useSetRecoilState(HistsDataState)
     const [globalLoading, setGlobalLoading] = useRecoilState(GlobalLoadingState)
 
+
+    UseOnDataFromIpcMain("getChartData_chanel", (event: any, data: any) => {
+        if (!data.status) {
+            clearInterval(interval.current)
+            setGlobalLoading(false)
+            setProgress(100)
+            Toast("error", data.message + "مشکل در دریافت اطلاعات. لطفا در انتخاب استاندارد تصویربرداری دقت کنید")
+        }
+    })
     
     UseOnDataFromIpcMain("addFilter_chanel", (event: any, data: any) => {
         if (data.status) {
